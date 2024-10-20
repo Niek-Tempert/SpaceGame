@@ -38,7 +38,7 @@ public:
 		return get(id);
 	}
 
-	bool is_valid(const vec3i &id) const {
+	static bool is_valid(const vec3i &id) {
 		return id.x >= 0 && id.x < SIZE_X
 				&& id.y >= 0 && id.y < SIZE_Y
 				&& id.z >= 0 && id.z < SIZE_Z;
@@ -47,11 +47,11 @@ public:
 private:
 	TType _data[SIZE];
 
-	int id_to_index(const vec3i &id) const {
+	static int id_to_index(const vec3i &id) {
 		return id.x + id.y * SIZE_X + id.z * SIZE_X * SIZE_Y;
 	}
 
-	vec3i index_to_id(int index) const {
+	static vec3i index_to_id(int index) {
 		int rect = SIZE_X * SIZE_Y;
 		return { index % SIZE_X, index % rect / SIZE_X, index / rect };
 	}

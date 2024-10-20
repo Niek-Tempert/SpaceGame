@@ -5,6 +5,8 @@
 #include "macros.h"
 #include "types.h"
 
+namespace nixemath {
+
 #define DEFINE_INT_MATH(int_t) \
 static inline NODISCARD bool is_even(int_t a) { \
 	return (a % 2) == 0; \
@@ -92,3 +94,5 @@ DEFINE_NUMBER_MATH(f64);
 #undef DEFINE_FLOAT_MATH
 #undef DEFINE_FLOAT_INT_MATH
 #undef DEFINE_NUMBER_MATH
+
+}

@@ -8,7 +8,7 @@ Voxel::~Voxel() {
 	}
 }
 
-BlockUser &Voxel::get_user(const vec3i &id) {
+BlockUser &Voxel::get(const vec3i &id) {
 	vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
@@ -25,7 +25,7 @@ BlockUser &Voxel::get_user(const vec3i &id) {
 	return chunk->get(subid);
 }
 
-BlockUser *Voxel::get_user(const vec3i &id) const {
+BlockUser *Voxel::get(const vec3i &id) const {
 	const vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
@@ -36,23 +36,27 @@ BlockUser *Voxel::get_user(const vec3i &id) const {
 	return &it->second->get(subid);
 }
 
-vec3i Voxel::id_to_chunkid(const vec3i &id) const {
-	return vec3i( // TODO: Check if double precision helps prevent rounding errors
-			floor_to_i32((f32)id.x / VoxelChunk::size.x),
-			floor_to_i32((f32)id.y / VoxelChunk::size.y),
-			floor_to_i32((f32)id.z / VoxelChunk::size.z));
+vec3i Voxel::id_to_chunkid(const vec3i &id) {
+	// TODO: Check if double precision helps prevent rounding errors
+	return {
+		nixemath::floor_to_i32((f32)id.x / VoxelChunk::size.x),
+		nixemath::floor_to_i32((f32)id.y / VoxelChunk::size.y),
+		nixemath::floor_to_i32((f32)id.z / VoxelChunk::size.z)
+	};
 }
 
-vec3i Voxel::id_to_subid(const vec3i &id) const {
-	return vec3i(
-			floor_mod(id.x, VoxelChunk::size.x),
-			floor_mod(id.y, VoxelChunk::size.y),
-			floor_mod(id.z, VoxelChunk::size.z));
+vec3i Voxel::id_to_subid(const vec3i &id) {
+	return {
+		nixemath::floor_mod(id.x, VoxelChunk::size.x),
+		nixemath::floor_mod(id.y, VoxelChunk::size.y),
+		nixemath::floor_mod(id.z, VoxelChunk::size.z)
+	};
 }
 
-vec3i Voxel::compound_id(const vec3i &chunkid, const vec3i &subid) const {
-	return vec3i(
-			chunkid.x * VoxelChunk::size.x + subid.x,
-			chunkid.y * VoxelChunk::size.y + subid.y,
-			chunkid.z * VoxelChunk::size.z + subid.z);
+vec3i Voxel::compound_id(const vec3i &chunkid, const vec3i &subid) {
+	return {
+		chunkid.x * VoxelChunk::size.x + subid.x,
+		chunkid.y * VoxelChunk::size.y + subid.y,
+		chunkid.z * VoxelChunk::size.z + subid.z
+	};
 }
