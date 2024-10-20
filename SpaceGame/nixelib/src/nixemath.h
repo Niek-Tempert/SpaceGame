@@ -47,7 +47,7 @@ static inline NODISCARD number_t max(number_t a, number_t b) { \
 	return a > b ? a : b; \
 } \
 static inline NODISCARD number_t clamp(number_t x, number_t a, number_t b) { \
-	return max(a, max(b, x)); \
+	return max(a, min(b, x)); \
 }
 
 DEFINE_INT_MATH(i8);
