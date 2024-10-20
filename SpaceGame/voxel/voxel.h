@@ -14,7 +14,6 @@ typedef vec3i SubID;
 
 class Voxel {
 public:
-
 	~Voxel();
 
 	BlockUser &get_user(const vec3i &id);

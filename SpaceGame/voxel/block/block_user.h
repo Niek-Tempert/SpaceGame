@@ -3,6 +3,6 @@
 #include "voxel_block.h"
 
 struct BlockUser {
-	VoxelBlock* block = nullptr;
+	VoxelBlock *block = nullptr;
 	void *data = nullptr;
 };

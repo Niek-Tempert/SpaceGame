@@ -9,8 +9,8 @@ public:
 	// Data manager
 	// Block mesher / meshing type enum
 
-	const IVoxelMesher& get_mesher() const;
+	const IVoxelMesher &get_mesher() const;
 
 private:
-	const IVoxelMesher* _mesher;
+	const IVoxelMesher *_mesher;
 };
