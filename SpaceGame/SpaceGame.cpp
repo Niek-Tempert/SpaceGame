@@ -53,7 +53,15 @@ static void error_callback(int error, const char *description) {
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+
+	if (action == GLFW_PRESS) {
+		switch (key) {
+			case GLFW_KEY_ESCAPE:
+				glfwSetWindowShouldClose(window, GLFW_TRUE);
+				break;
+		}
+		
 	}
 	
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -63,7 +71,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 				break;
 
 			case GLFW_KEY_A:
-				player.position[0] += 0.1f;
+				player.position[0] -= 0.1f;
 				break;
 			
 			case GLFW_KEY_S:
@@ -71,7 +79,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 				break;
 
 			case GLFW_KEY_D:
-				player.position[0] -= 0.1f;
+				player.position[0] += 0.1f;
 				break;
 		}
 	}
@@ -155,13 +163,13 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		mat4x4 m, p, t, r, mvp;
-		mat4x4_identity(m);
-		mat4x4_translate(t, player.position[0], player.position[1], player.position[2]);
-		mat4x4_rotate_X(r, m, player.rotation[0]);
-		mat4x4_rotate_Y(r, r, player.rotation[1]);
-		mat4x4_mul(m, t, r); // Combine translation and rotation
-		mat4x4_perspective(p, 90.f, ratio, 0.1f, 100.f);
-		mat4x4_mul(mvp, p, m);
+		mat4x4_identity(m); // Initialize the model matrix to identity
+		mat4x4_translate(t, player.position[0], player.position[1], player.position[2]); // Apply translation
+		mat4x4_rotate_X(r, m, player.rotation[0]); // Apply rotation around the X-axis
+		mat4x4_rotate_Y(r, r, player.rotation[1]); // Apply rotation around the Y-axis
+		mat4x4_mul(m, r, t); // Combine translation and rotation into the model matrix
+		mat4x4_perspective(p, 60.f, ratio, 0.001f, 100.f); // Create the projection matrix
+		mat4x4_mul(mvp, p, m); // Combine projection and model matrices to get the final MVP matrix
 
 		glUseProgram(program);
 		glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat *)&mvp);
