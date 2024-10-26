@@ -17,7 +17,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include "models/traingle.h"
+#include "models/monkey.h"
 
 static constexpr float walk_speed = 0.1f;
 static constexpr float look_speed = 0.01f;
@@ -52,7 +52,7 @@ static void error_callback(int error, const char *description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-void update() {
+void update() { // TODO: Move to Player.cs
 	
 	Input& input = *state.input;
 	Player& player = *state.player;
@@ -94,6 +94,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DEPTH_BITS, GL_TRUE);
 
 	GLFWwindow *window = glfwCreateWindow(1920, 1080, "OpenGL Triangle", NULL, NULL);
 	if (!window) {
@@ -102,6 +103,7 @@ int main() {
 	}
 
 	state.player = new Player();
+	state.player->position = { 0, 0, 2 };
 	state.input = Input::init(window);
 
 	// glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
@@ -110,6 +112,9 @@ int main() {
 	glfwMakeContextCurrent(window);
 	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(1);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	GLuint vertex_buffer;
 	glGenBuffers(1, &vertex_buffer);
@@ -137,31 +142,30 @@ int main() {
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 	glEnableVertexAttribArray(vpos_location);
-	glVertexAttribPointer(vpos_location, VERT_COUNT, GL_FLOAT, GL_FALSE,
+	glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE,
 			sizeof(vertex), (void *)offsetof(vertex, pos));
 	glEnableVertexAttribArray(vcol_location);
-	glVertexAttribPointer(vcol_location, VERT_COUNT, GL_FLOAT, GL_FALSE,
+	glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
 			sizeof(vertex), (void *)offsetof(vertex, col));
-
-
-	glfwGetTime();
+	
 	while (!glfwWindowShouldClose(window)) {
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		const float ratio = width / (float)height;
 
 		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		update();
 
-		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << state.player->rotation.x << ", " << state.player->rotation.y << "}" << std::endl;
+		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << glm::degrees(state.player->rotation.x) << ", " << glm::degrees(state.player->rotation.y) << "}" << std::endl;
 
 		glm::mat4 trans = glm::translate(glm::mat4(1.0f), state.player->position);
 		glm::mat4 rot = glm::rotate(glm::mat4(1.0f), -state.player->rotation.x, glm::vec3(1, 0, 0));
 		rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
 
 		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1, 0, 0));
 		glm::mat4 view = rot * trans;
 		glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 100.0f);
 		glm::mat4 mvp = proj * view * model;

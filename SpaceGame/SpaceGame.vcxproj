@@ -171,6 +171,7 @@
     <ClCompile Include="voxel\voxel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="models\monkey.h" />
     <ClInclude Include="models\traingle.h" />
     <ClInclude Include="models\vertex.h" />
     <ClInclude Include="nixelib\nixelib.h" />
