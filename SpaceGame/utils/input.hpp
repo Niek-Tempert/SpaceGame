@@ -17,6 +17,11 @@ public:
 		glfwSetCursorPosCallback(window, _cursor_callback);
 		glfwSetMouseButtonCallback(window, _mouse_callback);
 		glfwSetKeyCallback(window, _keyboard_callback);
+
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		_input->cursor = _input->last_cursor = { xpos, ypos };
+		
 		return _input;
 	}
 

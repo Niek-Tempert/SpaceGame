@@ -1,9 +1,12 @@
-﻿#version 330
+#version 330
 
-in vec3 color;
-out vec4 fragment;
+uniform mat4 MVP;
+in vec3 vCol;
+in vec3 vPos;
+out vec3 color;
 
 void main()
 {
-    fragment = vec4(color, 1.0);
+    gl_Position = MVP * vec4(vPos, 1.0);
+    color = vCol;
 };
