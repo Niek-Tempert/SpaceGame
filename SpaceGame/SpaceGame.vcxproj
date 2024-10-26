@@ -171,6 +171,8 @@
     <ClCompile Include="voxel\voxel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="models\traingle.h" />
+    <ClInclude Include="models\vertex.h" />
     <ClInclude Include="nixelib\nixelib.h" />
     <ClInclude Include="nixelib\src\macros.h" />
     <ClInclude Include="nixelib\src\nixemath.h" />
@@ -181,8 +183,8 @@
     <ClInclude Include="nixelib\src\types\vec3i.h" />
     <ClInclude Include="nixelib\src\types\vec4.h" />
     <ClInclude Include="nixelib\src\types\vec4i.h" />
-    <ClInclude Include="third_party\linmath.h" />
     <ClInclude Include="utils\array_3d.h" />
+    <ClInclude Include="utils\Input.hpp" />
     <ClInclude Include="utils\mesh_consts.h" />
     <ClInclude Include="utils\player.h" />
     <ClInclude Include="voxel\block\block_user.h" />

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-template <typename TType>
+template <typename TType = i32>
 struct vec3i {
 	TType x;
 	TType y;
@@ -138,5 +138,4 @@ typedef vec3i<u16> vec3u16;
 typedef vec3i<u32> vec3u32;
 typedef vec3i<u64> vec3u64;
 
-typedef vec3i32 vec3i;
-typedef vec3u32 vec3i;
+typedef vec3u32 vec3u;

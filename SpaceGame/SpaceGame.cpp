@@ -5,26 +5,27 @@
 
 #include <GLFW/glfw3.h>
 
-#include "third_party/linmath.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "utils/Input.hpp"
 #include "utils/player.h"
 
 #include <cstdlib>
 #include <cstddef>
 #include <cstdio>
+#include <iostream>
 
-static Player player;
+#include "models/traingle.h"
 
-struct Vertex {
-	vec3 pos;
-	vec3 col;
-};
+static constexpr float walk_speed = 0.1f;
+static constexpr float look_speed = 0.01f;
 
-static const Vertex vertices[3] =
-{
-	{ { -0.6f, -0.4f, -1.f }, { 1.f, 0.f, 0.f } },
-	{ { 0.6f, -0.4f, -1.f }, { 0.f, 1.f, 0.f } },
-	{ { 0.f, 0.6f, -1.f }, { 0.f, 0.f, 1.f } }
-};
+struct state {
+	Player *player;
+	Input *input;
+} state;
 
 static const char *vertex_shader_text =
 		"#version 330\n"
@@ -51,49 +52,36 @@ static void error_callback(int error, const char *description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+void update() {
+	
+	Input& input = *state.input;
+	Player& player = *state.player;
+	
+	glm::vec2 delta = { input.get_cursor_delta().x, input.get_cursor_delta().y };
+	
+	player.rotation.x = glm::clamp(player.rotation.x + delta.y * look_speed, -1.f, 1.f);
+	player.rotation.y = nixemath::wrap(player.rotation.y + delta.x * look_speed, -glm::pi<f32>(), glm::pi<f32>());
+
+	glm::vec3 dir = { 0, 0, 0};
+	if (input.is_key_down(GLFW_KEY_W)) {
+		dir += glm::vec3(glm::sin(player.rotation.y), 0, glm::cos(player.rotation.y));
 	}
 
-	if (action == GLFW_PRESS) {
-		switch (key) {
-			case GLFW_KEY_ESCAPE:
-				glfwSetWindowShouldClose(window, GLFW_TRUE);
-				break;
-		}
-		
+	if (input.is_key_down(GLFW_KEY_A)) {
+		dir += glm::vec3(glm::cos(player.rotation.y), 0, -glm::sin(player.rotation.y));
 	}
 	
-	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-		switch (key) {
-			case GLFW_KEY_W:
-				player.position[2] += 0.1f;
-				break;
-
-			case GLFW_KEY_A:
-				player.position[0] -= 0.1f;
-				break;
-			
-			case GLFW_KEY_S:
-				player.position[2] -= 0.1f;
-				break;
-
-			case GLFW_KEY_D:
-				player.position[0] += 0.1f;
-				break;
-		}
+	if (input.is_key_down(GLFW_KEY_S)) {
+		dir += glm::vec3(-glm::sin(player.rotation.y), 0, -glm::cos(player.rotation.y));
 	}
-}
 
-float last_x, last_y;
+	if (input.is_key_down(GLFW_KEY_D)) {
+		dir += glm::vec3(-glm::cos(player.rotation.y), 0, glm::sin(player.rotation.y));
+	}
 
-static void cursor_callback(GLFWwindow *window, double xpos, double ypos) {
-	xpos *= .01f;
-	ypos *= .01f;
-	player.rotation[0] = nixemath::clamp(player.rotation[0] + last_y - (float)ypos, -1.f, 1.f);
-	player.rotation[1] += last_x - (float)xpos;
-	last_x = xpos;
-	last_y = ypos;
+	if (glm::length(dir) > 0) {
+		player.position += glm::normalize(dir) * walk_speed;
+	}
 }
 
 int main() {
@@ -107,15 +95,16 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow *window = glfwCreateWindow(640, 480, "OpenGL Triangle", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(1920, 1080, "OpenGL Triangle", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, cursor_callback);
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
+	state.player = new Player();
+	state.input = Input::init(window);
+
+	// glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	glfwMakeContextCurrent(window);
@@ -148,12 +137,14 @@ int main() {
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 	glEnableVertexAttribArray(vpos_location);
-	glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void *)offsetof(Vertex, pos));
+	glVertexAttribPointer(vpos_location, VERT_COUNT, GL_FLOAT, GL_FALSE,
+			sizeof(vertex), (void *)offsetof(vertex, pos));
 	glEnableVertexAttribArray(vcol_location);
-	glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void *)offsetof(Vertex, col));
+	glVertexAttribPointer(vcol_location, VERT_COUNT, GL_FLOAT, GL_FALSE,
+			sizeof(vertex), (void *)offsetof(vertex, col));
 
+
+	glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
@@ -162,19 +153,25 @@ int main() {
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		mat4x4 m, p, t, r, mvp;
-		mat4x4_identity(m); // Initialize the model matrix to identity
-		mat4x4_translate(t, player.position[0], player.position[1], player.position[2]); // Apply translation
-		mat4x4_rotate_X(r, m, player.rotation[0]); // Apply rotation around the X-axis
-		mat4x4_rotate_Y(r, r, player.rotation[1]); // Apply rotation around the Y-axis
-		mat4x4_mul(m, r, t); // Combine translation and rotation into the model matrix
-		mat4x4_perspective(p, 90.f, ratio, 0.001f, 100.f); // Create the projection matrix
-		mat4x4_mul(mvp, p, m); // Combine projection and model matrices to get the final MVP matrix
+		update();
 
+		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << state.player->rotation.x << ", " << state.player->rotation.y << "}" << std::endl;
+
+		glm::mat4 trans = glm::translate(glm::mat4(1.0f), state.player->position);
+		glm::mat4 rot = glm::rotate(glm::mat4(1.0f), -state.player->rotation.x, glm::vec3(1, 0, 0));
+		rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
+
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = rot * trans;
+		glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 100.0f);
+		glm::mat4 mvp = proj * view * model;
+		
+		state.input->next();
+		
 		glUseProgram(program);
-		glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat *)&mvp);
+		glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
 		glBindVertexArray(vertex_array);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, VERT_COUNT);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
