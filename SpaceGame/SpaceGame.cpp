@@ -168,7 +168,7 @@ int main() {
 		mat4x4_rotate_X(r, m, player.rotation[0]); // Apply rotation around the X-axis
 		mat4x4_rotate_Y(r, r, player.rotation[1]); // Apply rotation around the Y-axis
 		mat4x4_mul(m, r, t); // Combine translation and rotation into the model matrix
-		mat4x4_perspective(p, 60.f, ratio, 0.001f, 100.f); // Create the projection matrix
+		mat4x4_perspective(p, 90.f, ratio, 0.001f, 100.f); // Create the projection matrix
 		mat4x4_mul(mvp, p, m); // Combine projection and model matrices to get the final MVP matrix
 
 		glUseProgram(program);

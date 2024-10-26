@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "vec3i.h"
+#include "../nixelib/nixelib.h"
 
 template <class TType, i64 SIZE_X, i64 SIZE_Y, i64 SIZE_Z>
 class Array3D {

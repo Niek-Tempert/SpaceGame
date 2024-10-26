@@ -1,5 +1,13 @@
 ﻿#pragma once
 
 #include "src/macros.h"
-#include "src/types.h"
+#include "src/typedefs.h"
 #include "src/nixemath.h"
+
+#include "src/types/vec2.h"
+#include "src/types/vec3.h"
+#include "src/types/vec4.h"
+
+#include "src/types/vec2i.h"
+#include "src/types/vec3i.h"
+#include "src/types/vec4i.h"
