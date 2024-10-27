@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../third_party/linmath.h"
-#include "../nixelib/nixelib.h"
+#include "third_party/linmath.h"
+#include "nixelib/nixelib.h"
 
 namespace mesh_consts {
 
-constexpr vec3 cube_vertices[6][4] {
+constexpr vec3_t cube_vertices[6][4] {
 	{ { 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 } },
 	{ { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } },
 	{ { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 1, 1, 1 } },
@@ -14,7 +14,7 @@ constexpr vec3 cube_vertices[6][4] {
 	{ { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 }, { 0, 0, 0 } }
 };
 
-constexpr vec3 cube_split_vertices[6][6] {
+constexpr vec3_t cube_split_vertices[6][6] {
 	{ { 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 1 }, { 1, 0, 0 } },
 	{ { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } },
 	{ { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 1 } },
@@ -33,7 +33,7 @@ constexpr i32 cube_split_indices[6] {
 };
 
 // One normal per face
-constexpr vec3 cube_normals[6] {
+constexpr vec3_t cube_normals[6] {
 	{ 1, 0, 0 },
 	{ -1, 0, 0 },
 	{ 0, 1, 0 },

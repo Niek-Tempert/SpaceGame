@@ -1,28 +1,28 @@
 #pragma once
 
-#include "../utils/vec3i.h"
-#include "../utils/array_3d.h"
-#include "block/block_user.h"
+#include "nixelib/nixelib.h"
+#include "utils/array_3d.h"
+#include "cell/user.h"
 
 #include <map>
 
-typedef Array3D<BlockUser, 16, 16, 16> VoxelChunk;
-
-typedef vec3i BlockID;
-typedef vec3i ChunkID;
-typedef vec3i SubID;
-
 class Voxel {
 public:
+	typedef vec3i cell_id;
+	typedef vec3i chunk_id;
+	typedef vec3i sub_id;
+	
+	typedef Array3D<cell_user, 16, 16, 16> Chunk;
+
 	~Voxel();
 
-	BlockUser &get(const vec3i &id);
-	BlockUser *get(const vec3i &id) const; // TODO: Make an optional reference / pointer type
+	cell_user &get(const vec3i &id);
+	cell_user *get(const vec3i &id) const; // TODO: Make an optional reference / pointer type
+
+	static vec3i id_to_chunkid(const cell_id &id);
+	static vec3i id_to_subid(const cell_id &cell_id);
+	static vec3i compound_id(const chunk_id &chunk_id, const sub_id &sub_id);
 
 private:
-	std::map<vec3i, VoxelChunk *> _chunks;
-
-	static vec3i id_to_chunkid(const BlockID &id);
-	static vec3i id_to_subid(const BlockID &id);
-	static vec3i compound_id(const ChunkID &chunkid, const SubID &subid);
+	std::map<vec3i, Chunk *> _chunks;
 };

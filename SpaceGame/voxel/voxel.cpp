@@ -1,31 +1,31 @@
 #include "voxel.h"
 
-#include "../utils/vec3i.h"
+#include "nixelib/nixelib.h"
 
 Voxel::~Voxel() {
-	for (std::pair<const vec3i, VoxelChunk *> &pair : _chunks) {
+	for (std::pair<const vec3i, Chunk *> &pair : _chunks) {
 		delete pair.second;
 	}
 }
 
-BlockUser &Voxel::get(const vec3i &id) {
+cell_user &Voxel::get(const vec3i &id) {
 	vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
-	VoxelChunk *chunk;
+	Chunk *chunk;
 
 	const auto it = _chunks.find(chunkid);
 	if (it != _chunks.end()) {
 		chunk = it->second;
 	} else {
-		chunk = new VoxelChunk();
+		chunk = new Chunk();
 		_chunks.insert({ chunkid, chunk });
 	}
 
 	return chunk->get(subid);
 }
 
-BlockUser *Voxel::get(const vec3i &id) const {
+cell_user *Voxel::get(const vec3i &id) const {
 	const vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
@@ -37,26 +37,25 @@ BlockUser *Voxel::get(const vec3i &id) const {
 }
 
 vec3i Voxel::id_to_chunkid(const vec3i &id) {
-	// TODO: Check if double precision helps prevent rounding errors
 	return {
-		nixemath::floor_to_i32((f32)id.x / VoxelChunk::size.x),
-		nixemath::floor_to_i32((f32)id.y / VoxelChunk::size.y),
-		nixemath::floor_to_i32((f32)id.z / VoxelChunk::size.z)
+		nixemath::floor_to_i32((f64)id.x / Chunk::size.x),
+		nixemath::floor_to_i32((f64)id.y / Chunk::size.y),
+		nixemath::floor_to_i32((f64)id.z / Chunk::size.z)
 	};
 }
 
-vec3i Voxel::id_to_subid(const vec3i &id) {
+vec3i Voxel::id_to_subid(const vec3i &cell_id) {
 	return {
-		nixemath::floor_mod(id.x, VoxelChunk::size.x),
-		nixemath::floor_mod(id.y, VoxelChunk::size.y),
-		nixemath::floor_mod(id.z, VoxelChunk::size.z)
+		nixemath::floor_mod(cell_id.x, Chunk::size.x),
+		nixemath::floor_mod(cell_id.y, Chunk::size.y),
+		nixemath::floor_mod(cell_id.z, Chunk::size.z)
 	};
 }
 
-vec3i Voxel::compound_id(const vec3i &chunkid, const vec3i &subid) {
+vec3i Voxel::compound_id(const vec3i &chunk_id, const vec3i &sub_id) {
 	return {
-		chunkid.x * VoxelChunk::size.x + subid.x,
-		chunkid.y * VoxelChunk::size.y + subid.y,
-		chunkid.z * VoxelChunk::size.z + subid.z
+		chunk_id.x * Chunk::size.x + sub_id.x,
+		chunk_id.y * Chunk::size.y + sub_id.y,
+		chunk_id.z * Chunk::size.z + sub_id.z
 	};
 }

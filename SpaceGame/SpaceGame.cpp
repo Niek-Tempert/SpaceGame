@@ -66,14 +66,16 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	const char *vert_shader_str = load_text("shaders/vert/basic.glsl").data();
+	std::string vert_shader_str = load_text("shaders/vert/basic.glsl");
+	const char *vert_str_data = vert_shader_str.data(); // TODO: Figure out why this breaks otherwise
 	const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex_shader, 1, &vert_shader_str, NULL);
+	glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
 	glCompileShader(vertex_shader);
 
-	const char *frag_shader_str = load_text("shaders/frag/basic.glsl").data();
+	std::string frag_shader_str = load_text("shaders/frag/basic.glsl");
+	const char *frag_str_data = frag_shader_str.data();
 	const GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &frag_shader_str, NULL);
+	glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
 	glCompileShader(fragment_shader);
 
 	const GLuint program = glCreateProgram();

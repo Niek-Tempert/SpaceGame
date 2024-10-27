@@ -1,10 +1,8 @@
 #pragma once
 
-#include "../nixelib/nixelib.h"
+#include "nixelib/nixelib.h"
 
 #include <GLFW/glfw3.h>
-
-#include <iostream>
 
 #define KEY_COUNT (GLFW_KEY_LAST + 1)
 #define MOUSE_COUNT (GLFW_MOUSE_BUTTON_LAST + 1)

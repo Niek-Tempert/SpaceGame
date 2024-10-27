@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../utils/vec3i.h"
+#include "nixelib/nixelib.h"
 
 class Voxel;
 
-struct VoxelExplorer {
-	VoxelExplorer() : voxel(nullptr), cursor({ 0, 0, 0 }) {};
-	VoxelExplorer(Voxel *voxel, vec3i cursor) : voxel(voxel), cursor(cursor) {};
+struct voxel_explorer {
+	voxel_explorer() : voxel(nullptr), cursor({ 0, 0, 0 }) {}
+	voxel_explorer(Voxel *voxel, vec3i cursor) : voxel(voxel), cursor(cursor) {}
 
 	Voxel *voxel;
 	vec3i cursor;

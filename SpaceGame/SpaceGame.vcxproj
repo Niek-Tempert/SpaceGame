@@ -111,7 +111,8 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;$(SolutionDir)SpaceGame;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +153,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;$(SolutionDir)SpaceGame;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -167,7 +168,6 @@
   <ItemGroup>
     <ClCompile Include="SpaceGame.cpp" />
     <ClCompile Include="third_party\gl.c" />
-    <ClCompile Include="voxel\block\voxel_block.cpp" />
     <ClCompile Include="voxel\voxel.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,10 +189,12 @@
     <ClInclude Include="utils\input.hpp" />
     <ClInclude Include="utils\mesh_consts.h" />
     <ClInclude Include="utils\player.h" />
-    <ClInclude Include="voxel\block\block_user.h" />
-    <ClInclude Include="voxel\block\voxel_block.h" />
-    <ClInclude Include="voxel\mesher\block_mesher.h" />
-    <ClInclude Include="voxel\mesher\ivoxel_mesher.h" />
+    <ClInclude Include="voxel\cell\cell_mesher.h" />
+    <ClInclude Include="voxel\cell\physic_rule.h" />
+    <ClInclude Include="voxel\voxel_mesher.h" />
+    <ClInclude Include="voxel\cell\user.h" />
+    <ClInclude Include="voxel\cell\cell.h" />
+    <ClInclude Include="voxel\cell\shape.h" />
     <ClInclude Include="voxel\voxel_explorer.h" />
     <ClInclude Include="voxel\voxel.h" />
   </ItemGroup>

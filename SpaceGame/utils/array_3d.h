@@ -2,13 +2,13 @@
 
 #include <stdexcept>
 
-#include "../nixelib/nixelib.h"
+#include "nixelib/nixelib.h"
 
-template <class TType, i64 SIZE_X, i64 SIZE_Y, i64 SIZE_Z>
+template <class TType, i64 SizeX, i64 SizeY, i64 SizeZ>
 class Array3D {
 public:
-#define SIZE (SIZE_X * SIZE_Y * SIZE_Z)
-	static inline const vec3i size = { SIZE_X, SIZE_Y, SIZE_Z };
+#define SIZE (SizeX * SizeY * SizeZ)
+	static inline const vec3i size = { SizeX, SizeY, SizeZ };
 
 	Array3D() = default;
 
@@ -39,21 +39,22 @@ public:
 	}
 
 	static bool is_valid(const vec3i &id) {
-		return id.x >= 0 && id.x < SIZE_X
-				&& id.y >= 0 && id.y < SIZE_Y
-				&& id.z >= 0 && id.z < SIZE_Z;
+		return id.x >= 0 && id.x < SizeX
+				&& id.y >= 0 && id.y < SizeY
+				&& id.z >= 0 && id.z < SizeZ;
+	}
+
+	static int id_to_index(const vec3i &id) {
+		return id.x + id.y * SizeX + id.z * SizeX * SizeY;
+	}
+
+	static vec3i index_to_id(int index) {
+		int rect = SizeX * SizeY;
+		return { index % SizeX, index % rect / SizeX, index / rect };
 	}
 
 private:
 	TType _data[SIZE];
-
-	static int id_to_index(const vec3i &id) {
-		return id.x + id.y * SIZE_X + id.z * SIZE_X * SIZE_Y;
-	}
-
-	static vec3i index_to_id(int index) {
-		int rect = SIZE_X * SIZE_Y;
-		return { index % SIZE_X, index % rect / SIZE_X, index / rect };
-	}
 };
+
 #undef SIZE
