@@ -1,5 +1,6 @@
 #pragma once
 
+#include "voxel_mesh.h"
 #include "nixelib/nixelib.h"
 #include "utils/array_3d.h"
 #include "cell/user.h"
@@ -14,6 +15,8 @@ public:
 	
 	typedef Array3D<cell_user, 16, 16, 16> Chunk;
 
+	VoxelMesh *mesh;
+	
 	~Voxel();
 
 	cell_user &get(const vec3i &id);

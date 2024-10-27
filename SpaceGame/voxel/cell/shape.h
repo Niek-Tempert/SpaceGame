@@ -4,7 +4,7 @@
 
 /* All mesh types */
 /* Implemented this way for possible gpu mesh generation */
-enum cell_shape : u8 {
+enum class cell_shape : u8 {
 	none = 0,
 	custom = 1,
 	cube = 2,
