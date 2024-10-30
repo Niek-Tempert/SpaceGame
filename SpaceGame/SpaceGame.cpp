@@ -87,7 +87,7 @@ int main() {
 		/* Handle input */
 		state.player->update(state.input);
 
-		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << glm::degrees(state.player->rotation.x) << ", " << glm::degrees(state.player->rotation.y) << "}" << std::endl;
+		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << glm::degrees(state.player->rotation.x) << ", " << glm::degrees(state.player->rotation.y) << ", " << glm::degrees(state.player->rotation.z) << "}" << std::endl;
 
 		/* Cleanup buffer */
 		int width, height;

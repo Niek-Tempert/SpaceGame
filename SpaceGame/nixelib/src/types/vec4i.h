@@ -4,10 +4,7 @@ template <typename TType>
 struct vec4i_t {
 	union {
 		struct {
-			TType x;
-			TType y;
-			TType z;
-			TType w;
+			TType x, y, z, w;
 		};
 		TType data[3];
 	};

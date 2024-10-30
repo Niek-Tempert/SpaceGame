@@ -4,8 +4,7 @@ template <typename TType>
 struct vec2i_t {
 	union {
 		struct {
-			TType x;
-			TType y;
+			TType x, y;
 		};
 		TType data[2];
 	};

@@ -4,9 +4,7 @@ template <typename TType>
 struct vec3i_t {
 	union {
 		struct {
-			TType x;
-			TType y;
-			TType z;
+			TType x, y, z;
 		};
 		TType data[3];
 	};
