@@ -24,15 +24,24 @@ const vec3f cube_split_vertices[6][6] {
 
 // Table for all faces
 constexpr u32 cube_indices[6] {
-	0, 1, 2, 0, 2, 3
+	2, 1, 0, 3, 2, 0
 };
 
 constexpr u32 cube_split_indices[6] {
-	0, 1, 2, 3, 4, 5
+	2, 1, 0, 5, 4, 3
 };
 
 // One normal per face
 const vec3f cube_normals[6] {
+	{ 1, 0, 0 },
+	{ -1, 0, 0 },
+	{ 0, 1, 0 },
+	{ 0, -1, 0 },
+	{ 0, 0, 1 },
+	{ 0, 0, -1 }
+};
+
+const vec3i cube_directions[6] {
 	{ 1, 0, 0 },
 	{ -1, 0, 0 },
 	{ 0, 1, 0 },

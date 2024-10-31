@@ -2,13 +2,17 @@
 
 #include "nixelib/nixelib.h"
 
+Voxel::Voxel() {
+	mesher = new VoxelMesher();
+}
+
 Voxel::~Voxel() {
 	for (std::pair<const vec3i, Chunk *> &pair : _chunks) {
 		delete pair.second;
 	}
 }
 
-cell_user &Voxel::get(const vec3i &id) {
+cell_user &Voxel::request(const vec3i &id) {
 	vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 

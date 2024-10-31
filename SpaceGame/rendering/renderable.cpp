@@ -15,8 +15,8 @@ void MRenderable::prepare() {
 	std::vector<vec3f> normals = get_normals();
 	std::vector<vec2f> uvs = get_uvs();
 	std::vector<u32> indices = get_indices();
-	proxy.vert_count = vertices.size();
-	proxy.index_count = indices.size();
+	proxy.vert_count = (u32)vertices.size();
+	proxy.index_count = (u32)indices.size();
 
 	GLuint vertex_buffer, color_buffer, normal_buffer, uv_buffer, index_buffer;
 

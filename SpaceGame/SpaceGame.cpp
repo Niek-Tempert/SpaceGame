@@ -22,6 +22,7 @@
 #include "rendering/renderable.h"
 #include "utils/file.h"
 #include "voxel/voxel.h"
+#include "voxel/cell/cell.h"
 
 struct state {
 	Player *player;
@@ -55,6 +56,15 @@ int main() {
 	state.player = new Player();
 	state.input = Input::init(window);
 	state.voxel = new Voxel();
+	for (int x = 0; x < 25; ++x) {
+		for (int y = 0; y < 25; ++y) {
+			for (int z = 0; z < 25; ++z) {
+				state.voxel->request({ rand() % 25, rand() % 25, rand() % 25 }).data = (void *)1;
+			}
+		}	
+	}
+	state.voxel->mesher->full_update(state.voxel);
+	state.renderables.push_back(state.voxel->mesher);
 
 	for (int i = -1; i < 2; ++i) {
 		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(i * 2, 0, -4));
@@ -62,11 +72,6 @@ int main() {
 		Monkey *monkey = new Monkey();
 		monkey->transform = translate * rotate;
 		state.renderables.push_back(monkey);
-		
-		translate = glm::translate(glm::mat4(1.0f), glm::vec3(i * 2, 0, 4));
-		Cube *cube = new Cube();
-		cube->transform = translate;
-		state.renderables.push_back(cube);
 	}
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -77,6 +82,8 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	
 
 	for (auto renderable : state.renderables) {
 		renderable->prepare();
