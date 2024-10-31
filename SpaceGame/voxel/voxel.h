@@ -13,7 +13,7 @@ public:
 	typedef vec3i chunk_id;
 	typedef vec3i sub_id;
 	
-	typedef Array3D<cell_user, 16, 16, 16> Chunk;
+	typedef Array3D<cell_user, 16, 16, 16> Chunk; // TODO: Mesh per chunk
 
 	VoxelMesh *mesh;
 	

@@ -53,20 +53,19 @@ int main() {
 	}
 
 	state.player = new Player();
-	state.player->position = { 0, 0, -2 };
 	state.input = Input::init(window);
 	state.voxel = new Voxel();
 
 	for (int i = -1; i < 2; ++i) {
-		glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1, 0, 0));
-		transform = glm::translate(transform, glm::vec3(i * 2, 0, 0));
+		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(i * 2, 0, -4));
+		glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1, 0, 0));
 		Monkey *monkey = new Monkey();
-		monkey->transform = transform;
+		monkey->transform = translate * rotate;
 		state.renderables.push_back(monkey);
 		
-		transform = glm::translate(transform, glm::vec3(0, -8, 0));
+		translate = glm::translate(glm::mat4(1.0f), glm::vec3(i * 2, 0, 4));
 		Cube *cube = new Cube();
-		cube->transform = transform;
+		cube->transform = translate;
 		state.renderables.push_back(cube);
 	}
 
@@ -96,12 +95,16 @@ int main() {
 
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		state.input->next();
 
 		/* Setup transforms */
-		glm::mat4 trans = glm::translate(glm::mat4(1.0f), state.player->position);
-		glm::mat4 rot = glm::rotate(glm::mat4(1.0f), -state.player->rotation.x, glm::vec3(1, 0, 0));
-		rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
+		glm::mat4 trans = glm::translate(glm::mat4(1.0f), -state.player->position);
+		
+		glm::mat4 rot = glm::mat4(1.0f);
+		rot = glm::rotate(rot, -state.player->rotation.x, glm::vec3(1, 0, 0));
+		rot = glm::rotate(rot, state.player->rotation.y, glm::vec3(0, 1, 0)); // Note: Inverted to make y+ right
+		rot = glm::rotate(rot, -state.player->rotation.z, glm::vec3(0, 0, 1));
 
 		glm::mat4 view = rot * trans;
 		glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 100.0f);
