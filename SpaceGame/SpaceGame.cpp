@@ -89,11 +89,18 @@ int main() {
 		renderable->prepare();
 	}
 
+	auto lastPosition = state.player->position;
+	auto lastRotation = state.player->rotation;
 	while (!glfwWindowShouldClose(window)) {
 		/* Handle input */
 		state.player->update(state.input);
 
-		std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << glm::degrees(state.player->rotation.x) << ", " << glm::degrees(state.player->rotation.y) << ", " << glm::degrees(state.player->rotation.z) << "}" << std::endl;
+
+		if (state.player->position != lastPosition || state.player->rotation != lastRotation) {
+			std::cout << "{" << state.player->position.x << ", " << state.player->position.y << ", " << state.player->position.z << "}, {" << glm::degrees(state.player->rotation.x) << ", " << glm::degrees(state.player->rotation.y) << ", " << glm::degrees(state.player->rotation.z) << "}" << std::endl;
+			lastPosition = state.player->position;
+			lastRotation = state.player->rotation;
+		}
 
 		/* Cleanup buffer */
 		int width, height;
