@@ -62,6 +62,22 @@ void MRenderable::prepare() {
 	glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
 	glCompileShader(fragment_shader);
 
+	// Check for compilation errors
+	GLint success;
+	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		char infoLog[512];
+		glGetShaderInfoLog(vertex_shader, sizeof(infoLog), NULL, infoLog);
+		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+	}
+
+	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		char infoLog[512];
+		glGetShaderInfoLog(fragment_shader, sizeof(infoLog), NULL, infoLog);
+		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+	}
+
 	proxy.program = glCreateProgram();
 	glAttachShader(proxy.program, vertex_shader);
 	glAttachShader(proxy.program, fragment_shader);
