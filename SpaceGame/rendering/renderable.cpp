@@ -52,13 +52,13 @@ void MRenderable::prepare() {
 
 	std::string vert_shader_str = load_text(this->get_vertex_shader());
 	const char *vert_str_data = vert_shader_str.data(); // TODO: Figure out why this breaks otherwise
-	const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
 	glCompileShader(vertex_shader);
 
 	std::string frag_shader_str = load_text(this->get_fragment_shader());
 	const char *frag_str_data = frag_shader_str.data();
-	const GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
 	glCompileShader(fragment_shader);
 
@@ -69,6 +69,16 @@ void MRenderable::prepare() {
 		char infoLog[512];
 		glGetShaderInfoLog(vertex_shader, sizeof(infoLog), NULL, infoLog);
 		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+
+		vert_shader_str = load_text("shaders/vertex/error.glsl");
+		vert_str_data = vert_shader_str.data();
+		glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
+		glCompileShader(vertex_shader);
+
+		frag_shader_str = load_text("shaders/fragment/error.glsl");
+		frag_str_data = frag_shader_str.data();
+		glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
+		glCompileShader(fragment_shader);
 	}
 
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
@@ -76,6 +86,16 @@ void MRenderable::prepare() {
 		char infoLog[512];
 		glGetShaderInfoLog(fragment_shader, sizeof(infoLog), NULL, infoLog);
 		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+
+		vert_shader_str = load_text("shaders/vertex/error.glsl");
+		vert_str_data = vert_shader_str.data();
+		glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
+		glCompileShader(vertex_shader);
+
+		frag_shader_str = load_text("shaders/fragment/error.glsl");
+		frag_str_data = frag_shader_str.data();
+		glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
+		glCompileShader(fragment_shader);
 	}
 
 	proxy.program = glCreateProgram();
