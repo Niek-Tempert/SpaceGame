@@ -59,7 +59,13 @@ int main() {
 	for (int x = 0; x < 25; ++x) {
 		for (int y = 0; y < 25; ++y) {
 			for (int z = 0; z < 25; ++z) {
-				state.voxel->request({ rand() % 25, rand() % 25, rand() % 25 }).data = (void *)1;
+				float offset = 25.f / 2.f;
+				glm::vec3 vec = {(float)x - offset, (float)y - offset, (float)z - offset};
+				if (glm::length(vec) > 12.5) {
+					continue;
+				}
+				
+				state.voxel->request({ x, y, z }).data = (void *)1;
 			}
 		}	
 	}
