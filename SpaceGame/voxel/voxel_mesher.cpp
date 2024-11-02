@@ -50,26 +50,26 @@ glm::mat4x4 VoxelMesher::get_transform() const {
 	return glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.0f));	
 }
 
-const std::string VoxelMesher::get_vertex_shader() const {
+std::string VoxelMesher::get_vertex_shader() const {
 	return "shaders/vertex/voxel.glsl";
 }
 
-const std::string VoxelMesher::get_fragment_shader() const {
+std::string VoxelMesher::get_fragment_shader() const {
 	return "shaders/fragment/voxel.glsl";
 }
 
-const std::vector<vec3f> VoxelMesher::get_vertices() const {
+std::vector<vec3f> VoxelMesher::get_vertices() const {
 	return vertices;
 }
 
-const std::vector<vec3f> VoxelMesher::get_colors() const {
+std::vector<vec3f> VoxelMesher::get_colors() const {
 	return colors;
 }
 
-const std::vector<vec3f> VoxelMesher::get_normals() const {
+std::vector<vec3f> VoxelMesher::get_normals() const {
 	return normals;
 }
 
-const std::vector<u32> VoxelMesher::get_indices() const {
+std::vector<u32> VoxelMesher::get_indices() const {
 	return indices;
 }

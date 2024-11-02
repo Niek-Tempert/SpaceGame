@@ -16,12 +16,12 @@ public:
 
 	glm::mat4x4 get_transform() const override;
 
-	const std::string get_vertex_shader() const override;
-	const std::string get_fragment_shader() const override;
-	const std::vector<vec3f> get_vertices() const override;
-	const std::vector<vec3f> get_colors() const override;
-	const std::vector<vec3f> get_normals() const override;
-	const std::vector<u32> get_indices() const override;
+	std::string get_vertex_shader() const override;
+	std::string get_fragment_shader() const override;
+	std::vector<vec3f> get_vertices() const override;
+	std::vector<vec3f> get_colors() const override;
+	std::vector<vec3f> get_normals() const override;
+	std::vector<u32> get_indices() const override;
 
 private:
 	std::vector<vec3f> vertices;

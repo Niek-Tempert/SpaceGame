@@ -2,6 +2,7 @@
 
 #define walk_speed 0.1f
 #define look_speed 0.01f
+#include <iostream>
 
 class Player {
 public:
@@ -14,6 +15,7 @@ public:
 
 	void update(const Input *input) {
 		glm::vec2 delta = { input->get_cursor_delta().x, input->get_cursor_delta().y };
+		bool stateChanged = delta.x != 0 || delta.y != 0;
 	
 		rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -1.f, 1.f);
 		rotation.y = nixemath::wrap(rotation.y + delta.x * look_speed, 0, glm::pi<f32>() * 2);
@@ -54,6 +56,11 @@ public:
 			};
         
 			position += rotated_dir * walk_speed;
+			stateChanged = true;
+		}
+
+		if (stateChanged) {
+			std::cout << "Position {X: " << position.x << ", Y: " << position.y << ", Z: " << position.z << "}, Rotation {X: " << glm::degrees(rotation.x) << ", Y: " << glm::degrees(rotation.y) << ", Z: " << glm::degrees(rotation.z) << "}" << std::endl;
 		}
 	}
 

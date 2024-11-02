@@ -4,10 +4,10 @@
 #include <fstream>
 #include <sstream>
 
-inline std::string load_text(std::string path) {
+std::string load_text(std::string path) {
 	std::ifstream file(path);
 	if (!file.is_open()) {
-		throw std::runtime_error("Could not open file: " + path);
+		fprintf(stderr, "Could not open file: %s\n", path.c_str());
 	}
     
 	std::stringstream buffer;

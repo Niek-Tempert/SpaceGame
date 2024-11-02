@@ -4,15 +4,15 @@
 
 class Monkey : public MRenderable {
 public:
-	const std::string get_vertex_shader() const override {
+	std::string get_vertex_shader() const override {
 		return "shaders/vertex/basic.glsl";
 	}
 
-	const std::string get_fragment_shader() const override {
+	std::string get_fragment_shader() const override {
 		return "shaders/fragment/basic.glsl";
 	}
 
-	const std::vector<vec3f> get_vertices() const override {
+	std::vector<vec3f> get_vertices() const override {
 		return { { 0.467091f, -0.768123f, 0.308394f },
 		         { 0.411605f, -0.794655f, 0.129821f },
 		         { 0.633369f, -0.566534f, 0.242106f },
@@ -826,7 +826,7 @@ public:
 		};
 	}
 
-	const std::vector<vec3f> get_colors() const override {
+	std::vector<vec3f> get_colors() const override {
 		return { { 0.411765f, 0.823529f, 0.949020f },
 		         { 0.811765f, 0.949020f, 0.227451f },
 		         { 0.701961f, 0.360784f, 0.984314f },

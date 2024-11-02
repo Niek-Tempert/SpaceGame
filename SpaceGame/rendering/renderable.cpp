@@ -8,166 +8,135 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void MRenderable::prepare() {
-	render_type type = get_render_type();
-	std::vector<vec3f> vertices = get_vertices();
-	std::vector<vec3f> colors = get_colors();
-	std::vector<vec3f> normals = get_normals();
-	std::vector<vec2f> uvs = get_uvs();
-	std::vector<u32> indices = get_indices();
-	proxy.vert_count = (u32)vertices.size();
-	proxy.index_count = (u32)indices.size();
-
-	GLuint vertex_buffer, color_buffer, normal_buffer, uv_buffer, index_buffer;
-
-	if (!vertices.empty()) {
-		glGenBuffers(1, &vertex_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(decltype(vertices)::value_type), vertices.data(), GL_STATIC_DRAW);
+template <typename T>
+GLint upload_vbuffer(std::vector<T> data) {
+	if (data.empty()) {
+		return -1;
 	}
-
-	if (!colors.empty()) {
-		glGenBuffers(1, &color_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
-		glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(decltype(colors)::value_type), colors.data(), GL_STATIC_DRAW);
-	}
-
-	if (!normals.empty()) {
-		glGenBuffers(1, &normal_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
-		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(decltype(normals)::value_type), normals.data(), GL_STATIC_DRAW);
-	}
-
-	if (!uvs.empty()) {
-		glGenBuffers(1, &uv_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, uv_buffer);
-		glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(decltype(uvs)::value_type), uvs.data(), GL_STATIC_DRAW);
-	}
-
-	if (!indices.empty()) {
-		glGenBuffers(1, &index_buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(decltype(indices)::value_type), indices.data(), GL_STATIC_DRAW);
-	}
-
-	std::string vert_shader_str = load_text(this->get_vertex_shader());
-	const char *vert_str_data = vert_shader_str.data(); // TODO: Figure out why this breaks otherwise
-	GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
-	glCompileShader(vertex_shader);
-
-	std::string frag_shader_str = load_text(this->get_fragment_shader());
-	const char *frag_str_data = frag_shader_str.data();
-	GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
-	glCompileShader(fragment_shader);
-
-	// Check for compilation errors
-	GLint success;
-	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetShaderInfoLog(vertex_shader, sizeof(infoLog), NULL, infoLog);
-		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
-
-		vert_shader_str = load_text("shaders/vertex/error.glsl");
-		vert_str_data = vert_shader_str.data();
-		glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
-		glCompileShader(vertex_shader);
-
-		frag_shader_str = load_text("shaders/fragment/error.glsl");
-		frag_str_data = frag_shader_str.data();
-		glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
-		glCompileShader(fragment_shader);
-	}
-
-	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetShaderInfoLog(fragment_shader, sizeof(infoLog), NULL, infoLog);
-		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
-
-		vert_shader_str = load_text("shaders/vertex/error.glsl");
-		vert_str_data = vert_shader_str.data();
-		glShaderSource(vertex_shader, 1, &vert_str_data, NULL);
-		glCompileShader(vertex_shader);
-
-		frag_shader_str = load_text("shaders/fragment/error.glsl");
-		frag_str_data = frag_shader_str.data();
-		glShaderSource(fragment_shader, 1, &frag_str_data, NULL);
-		glCompileShader(fragment_shader);
-	}
-
-	proxy.program = glCreateProgram();
-	glAttachShader(proxy.program, vertex_shader);
-	glAttachShader(proxy.program, fragment_shader);
-	glLinkProgram(proxy.program);
-
-	const GLint vpos_location = glGetAttribLocation(proxy.program, "vPos");
-	const GLint vcol_location = glGetAttribLocation(proxy.program, "vCol");
-	const GLint vnorm_location = glGetAttribLocation(proxy.program, "vNorm");
-	const GLint vuv_location = glGetAttribLocation(proxy.program, "vUV");
-
-	glGenVertexArrays(1, &proxy.vao);
-	glBindVertexArray(proxy.vao);
 	
-	if (!vertices.empty() && vpos_location != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-		glEnableVertexAttribArray(vpos_location);
-		glVertexAttribPointer(
-				vpos_location,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0);
-	}
-
-	if (!colors.empty() && vcol_location != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
-		glEnableVertexAttribArray(vcol_location);
-		glVertexAttribPointer(
-				vcol_location,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0);
-	}
-
-	if (!normals.empty() && vnorm_location != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
-		glEnableVertexAttribArray(vnorm_location);
-		glVertexAttribPointer(
-				vnorm_location,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0);
-	}
-
-	if (!uvs.empty() && vuv_location != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, vuv_location);
-		glEnableVertexAttribArray(vuv_location);
-		glVertexAttribPointer(
-				vuv_location,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0);
-	}
-
-	if (!indices.empty() && type == render_type::indexed) {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	}
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(*data.data()) * data.size(), data.data(), GL_STATIC_DRAW);
+	return (GLint)buffer;
 }
 
-void MRenderable::render(glm::mat4 view, glm::mat4 proj) const {
-	glm::mat4 model = get_transform();
-	glm::mat4 mvp = proj * view * model;
+template <typename T>
+GLint upload_ibuffer(std::vector<T> data) {
+	if (data.empty()) {
+		return -1;
+	}
+	
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*data.data()) * data.size(), data.data(), GL_STATIC_DRAW);
+	return (GLint)buffer;
+}
 
+bool has_succeeded(GLuint shader) {
+	GLint success;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		char infoLog[512];
+		glGetShaderInfoLog(shader, sizeof(infoLog), NULL, infoLog);
+		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+	}
+
+	return success;
+}
+
+GLuint compile_shader(const std::string &path, GLenum type) {
+	std::string shader = load_text(path);
+	const char *shader_data = shader.data(); // TODO: Figure out why this breaks otherwise
+	const GLuint shader_id = glCreateShader(type);
+	glShaderSource(shader_id, 1, &shader_data, NULL);
+	glCompileShader(shader_id);
+
+	bool success = has_succeeded(shader_id);
+	if (success) {
+		return shader_id;
+	}
+	
+	const char *fallback;
+	switch (type) {
+		default: // GL_VERTEX_SHADER
+			fallback = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
+			break;
+
+		case GL_FRAGMENT_SHADER:
+			fallback = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
+			break;
+	}
+	glShaderSource(shader_id, 1, &fallback, NULL);
+	glCompileShader(shader_id);
+	has_succeeded(shader_id);
+
+	return shader_id;
+}
+
+void link_vbuffer(GLint buffer, GLuint location, GLint size) {
+	if (buffer < 0 || location < 0) {
+		return;
+	}
+	
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glEnableVertexAttribArray(location);
+	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, 0, 0);
+}
+
+void link_ibuffer(GLint buffer) {
+	if (buffer < 0) {
+		return;
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+}
+
+void MRenderable::prepare() {
+	auto verts = get_vertices();
+	auto cols = get_colors();
+	auto norms = get_normals();
+	auto uvs = get_uvs();
+	auto indices = get_indices();
+
+	proxy.vert_count = (i32)verts.size();
+	proxy.index_count = (i32)indices.size();
+
+	GLint pos_buffer = upload_vbuffer(verts);
+	GLint col_buffer = upload_vbuffer(cols);
+	GLint norm_buffer = upload_vbuffer(norms);
+	GLint uv_buffer = upload_vbuffer(uvs);
+	GLint index_buffer = upload_ibuffer(indices);
+
+	const GLuint vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
+	const GLuint frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
+
+	u32 program = glCreateProgram();
+	glAttachShader(program, vert_shader);
+	glAttachShader(program, frag_shader);
+	glLinkProgram(program);
+	proxy.program = program;
+
+	const GLint pos_loc = glGetAttribLocation(program, "vPos");
+	const GLint col_loc = glGetAttribLocation(program, "vCol");
+	const GLint norm_loc = glGetAttribLocation(program, "vNorm");
+	const GLint uv_loc = glGetAttribLocation(program, "vUV");
+
+	u32 vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	proxy.vao = vao;
+
+	link_vbuffer(pos_buffer, pos_loc, 3);
+	link_vbuffer(col_buffer, col_loc, 3);
+	link_vbuffer(norm_buffer, norm_loc, 3);
+	link_vbuffer(uv_buffer, uv_loc, 2);
+	link_ibuffer(index_buffer);
+}
+
+void MRenderable::render(glm::mat4 vp) const {
+	glm::mat4 mvp = vp * get_transform();
 	glUseProgram(proxy.program);
 	glUniformMatrix4fv(proxy.mvp_location, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
 	glBindVertexArray(proxy.vao);

@@ -204,10 +204,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="shaders\fragment\basic.glsl" />
-    <Content Include="shaders\fragment\error.glsl" />
     <Content Include="shaders\fragment\voxel.glsl" />
     <Content Include="shaders\vertex\basic.glsl" />
-    <Content Include="shaders\vertex\error.glsl" />
     <Content Include="shaders\vertex\voxel.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
