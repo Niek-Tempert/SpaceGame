@@ -46,11 +46,11 @@ bool has_succeeded(GLuint shader) {
 	return success;
 }
 
-GLuint compile_shader(const std::string &path, GLenum type) {
-	std::string shader = load_text(path);
-	const char *shader_data = shader.data(); // TODO: Figure out why this breaks otherwise
+GLuint compile_shader(std::string path, GLenum type) {
+	std::string shader_str = load_text(path.c_str());
+	const char *shader_code = shader_str.c_str();
 	const GLuint shader_id = glCreateShader(type);
-	glShaderSource(shader_id, 1, &shader_data, NULL);
+	glShaderSource(shader_id, 1, &shader_code, NULL);
 	glCompileShader(shader_id);
 
 	bool success = has_succeeded(shader_id);
