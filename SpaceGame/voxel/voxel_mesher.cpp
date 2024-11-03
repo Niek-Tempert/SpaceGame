@@ -46,10 +46,6 @@ void VoxelMesher::full_update(Voxel *voxel) {
 	}
 }
 
-glm::mat4x4 VoxelMesher::get_transform() const {
-	return glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.0f));	
-}
-
 std::string VoxelMesher::get_vertex_shader() const {
 	return "shaders/vertex/voxel.glsl";
 }

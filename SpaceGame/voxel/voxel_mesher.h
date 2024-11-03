@@ -14,8 +14,6 @@ public:
 	void chunk_update(Voxel *voxel, const chunk_id &chunkid);
 	void cell_update(Voxel *voxel, const cell_id &id);
 
-	glm::mat4x4 get_transform() const override;
-
 	std::string get_vertex_shader() const override;
 	std::string get_fragment_shader() const override;
 	std::vector<vec3f> get_vertices() const override;

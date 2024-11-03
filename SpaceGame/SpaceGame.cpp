@@ -17,12 +17,10 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstdio>
-#include <iostream>
 
 #include "rendering/renderable.h"
 #include "utils/file.h"
 #include "voxel/voxel.h"
-#include "voxel/cell/cell.h"
 
 struct state {
 	Player *player;
@@ -39,19 +37,24 @@ void generate_objects(GLFWwindow *window) {
 	state.player = new Player();
 	state.input = Input::init(window);
 	state.voxel = new Voxel();
-	for (int x = 0; x < 25; ++x) {
-		for (int y = 0; y < 25; ++y) {
-			for (int z = 0; z < 25; ++z) {
-				float offset = 25.f / 2.f;
-				glm::vec3 vec = {(float)x - offset, (float)y - offset, (float)z - offset};
-				if (glm::length(vec) > 12.5) {
+	int length = 25;
+	for (int x = -length; x < length; ++x) {
+		for (int y = -length; y < length; ++y) {
+			for (int z = -length; z < length; ++z) {
+				glm::vec3 vec = {(float)x, (float)y, (float)z};
+				if (glm::length(vec) > (float)length) {
 					continue;
 				}
 				
 				state.voxel->request({ x, y, z }).data = (void *)1;
 			}
-		}	
+		}
 	}
+	
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0, -length - 1, 0));
+	state.voxel->mesher->transform = model;
+	
 	state.voxel->mesher->full_update(state.voxel);
 	state.renderables.push_back(state.voxel->mesher);
 
@@ -77,7 +80,7 @@ void render(GLFWwindow *window) {
 		
 	glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, -state.player->rotation.x, glm::vec3(1, 0, 0));
-	rot = glm::rotate(rot, state.player->rotation.y, glm::vec3(0, 1, 0)); // Note: Inverted to make y+ right
+	rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
 	rot = glm::rotate(rot, -state.player->rotation.z, glm::vec3(0, 0, 1));
 
 	glm::mat4 view = rot * trans;

@@ -14,11 +14,13 @@ public:
 	}
 
 	void update(const Input *input) {
+		bool stateChanged;
+		
 		glm::vec2 delta = { input->get_cursor_delta().x, input->get_cursor_delta().y };
-		bool stateChanged = delta.x != 0 || delta.y != 0;
-	
-		rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -1.f, 1.f);
-		rotation.y = nixemath::wrap(rotation.y + delta.x * look_speed, 0, glm::pi<f32>() * 2);
+		stateChanged = delta.x != 0 || delta.y != 0;
+		
+		rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -glm::half_pi<f32>(), glm::half_pi<f32>());
+		rotation.y = nixemath::wrap(rotation.y - delta.x * look_speed, 0, glm::two_pi<f32>());
 
 		glm::vec3 dir = { 0, 0, 0};
 		if (input->is_key_down(GLFW_KEY_W)) {
@@ -47,12 +49,12 @@ public:
 
 		if (glm::length(dir) > 0) {
 			dir = normalize(dir);
-			float s = glm::sin(rotation.y);
-			float c = glm::cos(rotation.y);
+			float sin = glm::sin(rotation.y);
+			float cos = glm::cos(rotation.y);
 			glm::vec3 rotated_dir = {
-				dir.x * c - dir.z * s,
+				dir.x * cos + dir.z * sin,
 				dir.y,
-				dir.z * c + dir.x * s
+				dir.z * cos - dir.x * sin
 			};
         
 			position += rotated_dir * walk_speed;
