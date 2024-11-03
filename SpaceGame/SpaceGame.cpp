@@ -153,7 +153,7 @@ int main() {
 		state.delta_time = glfwGetTime() - last_time;
 
 		glm::vec3 position = glm::vec3(state.moon->mesher->transform[3]);
-		double t = state.delta_time * 0.01;
+		double t = state.delta_time * 0.05;
 		double sin = glm::sin(t);
 		double cos = glm::cos(t);
 		glm::vec3 rotated_pos = {

@@ -4,11 +4,11 @@
 
 class Cube : public MRenderable {
 public:
-	std::string get_vertex_shader() const override {
+	const char *get_vertex_shader() const override {
 		return "shaders/vertex/basic.glsl";
 	}
 
-	std::string get_fragment_shader() const override {
+	const char *get_fragment_shader() const override {
 		return "shaders/fragment/basic.glsl";
 	}
 
@@ -35,7 +35,7 @@ public:
 	std::vector<u32> get_indices() const override {
 		std::vector<u32> indices;
 		for (int i = 0; i < 6; ++i) {
-			for (auto vertex : mesh_consts::cube_indices) {
+			for (auto vertex : mesh_consts::face_indices) {
 				indices.push_back(vertex + 4 * i);
 			}
 		}

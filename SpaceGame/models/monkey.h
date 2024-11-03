@@ -4,11 +4,11 @@
 
 class Monkey : public MRenderable {
 public:
-	std::string get_vertex_shader() const override {
+	const char *get_vertex_shader() const override {
 		return "shaders/vertex/basic.glsl";
 	}
 
-	std::string get_fragment_shader() const override {
+	const char *get_fragment_shader() const override {
 		return "shaders/fragment/basic.glsl";
 	}
 

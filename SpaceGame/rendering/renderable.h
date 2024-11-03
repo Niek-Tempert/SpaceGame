@@ -15,8 +15,8 @@ struct render_object {
 	u32 vao;
 	u32 program;
 	i32 mvp_loc;
-	i32 vert_shader;
-	i32 frag_shader;
+	u32 vert_shader;
+	u32 frag_shader;
 	i32 vertex_count;
 	i32 index_count;
 	i32 pos_buffer;
@@ -45,8 +45,11 @@ protected:
 	virtual render_type get_render_type() const { return render_type::indexed; }
 
 	virtual glm::mat4x4 get_transform() const { return transform; }
-	virtual std::string get_vertex_shader() const { return {}; }
-	virtual std::string get_fragment_shader() const { return {}; }
+	
+	virtual const char *get_vertex_shader() const { return {}; }
+	virtual const char *get_fragment_shader() const { return {}; }
+	virtual const char *get_texture() const { return {}; }
+	
 	virtual std::vector<vec3f> get_vertices() const { return {}; }
 	virtual std::vector<vec3f> get_colors() const { return {}; }
 	virtual std::vector<vec3f> get_normals() const { return {}; }

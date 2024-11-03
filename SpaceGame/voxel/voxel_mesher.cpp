@@ -9,6 +9,7 @@ void VoxelMesher::full_update(Voxel *voxel) {
 	vertices.clear();
 	colors.clear();
 	normals.clear();
+	uvs.clear();
 	indices.clear();
 
 	for (auto &pairs : voxel->_chunks) {
@@ -22,13 +23,13 @@ void VoxelMesher::full_update(Voxel *voxel) {
 					
 					vec3i ID = Voxel::compound_id(pairs.first, { x, y, z });
 					for (int i = 0; i < 6; ++i) {
-						auto& dir = mesh_consts::cube_directions[i];
+						auto& dir = mesh_consts::axis[i];
 						auto* neighbor = voxel->get(ID + dir);
 						if (neighbor && neighbor->data) {
 							continue;
 						}
-						
-						for (u32 index : mesh_consts::cube_indices) {
+
+						for (u32 index : mesh_consts::face_indices) {
 							indices.push_back(index + (u32)vertices.size());
 						}
 						
@@ -37,7 +38,8 @@ void VoxelMesher::full_update(Voxel *voxel) {
 							colors.emplace_back(vert.x, vert.y, vert.z);
 						}
 
-						for (int j = 0; j < std::size(mesh_consts::cube_vertices[i]); ++j) {
+						for (u32 j = 0; j < (u32)std::size(*mesh_consts::cube_vertices); ++j) {
+							uvs.emplace_back(mesh_consts::face_uvs[j]);
 							normals.emplace_back(mesh_consts::cube_normals[i]);
 						}
 					}
@@ -47,11 +49,11 @@ void VoxelMesher::full_update(Voxel *voxel) {
 	}
 }
 
-std::string VoxelMesher::get_vertex_shader() const {
+const char *VoxelMesher::get_vertex_shader() const {
 	return "shaders/vertex/voxel.glsl";
 }
 
-std::string VoxelMesher::get_fragment_shader() const {
+const char *VoxelMesher::get_fragment_shader() const {
 	return "shaders/fragment/voxel.glsl";
 }
 
@@ -65,6 +67,10 @@ std::vector<vec3f> VoxelMesher::get_colors() const {
 
 std::vector<vec3f> VoxelMesher::get_normals() const {
 	return normals;
+}
+
+std::vector<vec2f> VoxelMesher::get_uvs() const {
+	return uvs;
 }
 
 std::vector<u32> VoxelMesher::get_indices() const {

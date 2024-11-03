@@ -1,5 +1,8 @@
 ﻿#include "renderable.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 
@@ -46,8 +49,8 @@ bool has_succeeded(GLuint shader) {
 	return success;
 }
 
-GLuint compile_shader(std::string path, GLenum type) {
-	std::string shader_str = load_text(path.c_str());
+GLuint compile_shader(const char *path, GLenum type) {
+	std::string shader_str = load_text(path);
 	const char *shader_code = shader_str.c_str();
 	const GLuint shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &shader_code, NULL);
@@ -150,11 +153,14 @@ void MRenderable::prepare() {
 	object.uv_buffer = upload_vbuffer(uvs);
 	object.index_buffer = upload_ibuffer(indices);
 
-	object.index_buffer = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
+	object.vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
 	object.frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
 
+	// int t_width, t_height, t_channels;
+	// unsigned char *data = stbi_load(get_texture(), &t_width, &t_height, &t_channels, 0); 
+
 	object.program = glCreateProgram();
-	glAttachShader(object.program, object.index_buffer);
+	glAttachShader(object.program, object.vert_shader);
 	glAttachShader(object.program, object.frag_shader);
 	glLinkProgram(object.program);
 

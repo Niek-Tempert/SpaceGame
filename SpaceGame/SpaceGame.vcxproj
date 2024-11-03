@@ -203,6 +203,7 @@
     <ClInclude Include="voxel\voxel.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\images\rock.png" />
     <Content Include="shaders\fragment\basic.glsl" />
     <Content Include="shaders\fragment\voxel.glsl" />
     <Content Include="shaders\vertex\basic.glsl" />

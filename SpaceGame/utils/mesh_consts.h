@@ -22,16 +22,17 @@ const vec3f cube_split_vertices[6][6] {
 	{ { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 }, { 0, 0, 0 } }
 };
 
-// Table for all faces
-constexpr u32 cube_indices[6] {
+constexpr u32 face_indices[6] {
 	2, 1, 0, 3, 2, 0
 };
 
-constexpr u32 cube_split_indices[6] {
-	2, 1, 0, 5, 4, 3
+const vec2f face_uvs[4] {
+	{1, 0},
+	{1, 1},
+	{0, 1},
+	{0, 0}
 };
 
-// One normal per face
 const vec3f cube_normals[6] {
 	{ 1, 0, 0 },
 	{ -1, 0, 0 },
@@ -41,7 +42,7 @@ const vec3f cube_normals[6] {
 	{ 0, 0, -1 }
 };
 
-const vec3i cube_directions[6] {
+const vec3i axis[6] {
 	{ 1, 0, 0 },
 	{ -1, 0, 0 },
 	{ 0, 1, 0 },
