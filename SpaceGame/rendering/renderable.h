@@ -11,12 +11,19 @@ enum class render_type {
 	indexed,
 };
 
-struct render_proxy {
-	u32 program;
+struct render_object {
 	u32 vao;
-	i32 mvp_location;
-	i32 vert_count;
+	u32 program;
+	i32 mvp_loc;
+	i32 vert_shader;
+	i32 frag_shader;
+	i32 vertex_count;
 	i32 index_count;
+	i32 pos_buffer;
+	i32 col_buffer;
+	i32 norm_buffer;
+	i32 uv_buffer;
+	i32 index_buffer;
 };
 
 class IRenderable {
@@ -28,6 +35,7 @@ public:
 
 class MRenderable : public IRenderable {
 public:
+	~MRenderable() override;
 	glm::mat4 transform = glm::mat4(1.0f);
 
 	void prepare() override;
@@ -45,5 +53,5 @@ protected:
 	virtual std::vector<vec2f> get_uvs() const { return {}; }
 	virtual std::vector<u32> get_indices() const { return {}; }
 
-	render_proxy proxy;
+	render_object* object;
 };

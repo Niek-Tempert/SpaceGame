@@ -80,74 +80,115 @@ void link_vbuffer(GLint buffer, GLuint location, GLint size) {
 		return;
 	}
 	
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buffer);
 	glEnableVertexAttribArray(location);
 	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void link_ibuffer(GLint buffer) {
-	if (buffer < 0) {
-		return;
+void dispose(render_object *object) {
+	glDeleteProgram(object->program);
+	glDeleteShader(object->frag_shader);
+	glDeleteShader(object->vert_shader);
+
+	if (object->pos_buffer >= 0) {
+		u32 pos_buffer = object->pos_buffer;
+		glDeleteBuffers(1, &pos_buffer);
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+	if (object->col_buffer >= 0) {
+		u32 col_buffer = object->col_buffer;
+		glDeleteBuffers(1, &col_buffer);
+	}
+
+	if (object->norm_buffer >= 0) {
+		u32 norm_buffer = object->norm_buffer;
+		glDeleteBuffers(1, &norm_buffer);
+	}
+
+	if (object->uv_buffer >= 0) {
+		u32 uv_buffer = object->uv_buffer;
+		glDeleteBuffers(1, &uv_buffer);
+	}
+
+	if (object->index_buffer >= 0) {
+		u32 index_buffer = object->uv_buffer;
+		glDeleteBuffers(1, &index_buffer);
+	}
+	
+	glDeleteVertexArrays(1, &object->vao);
+
+	delete object;
+}
+
+MRenderable::~MRenderable() {
+	dispose(object);
 }
 
 void MRenderable::prepare() {
+	if (object) {
+		dispose(object);
+	}
+	
+	object = new render_object();
+	render_object& object = *this->object;
+	
+	glGenVertexArrays(1, &object.vao);
+	glBindVertexArray(object.vao);
+	
 	auto verts = get_vertices();
 	auto cols = get_colors();
 	auto norms = get_normals();
 	auto uvs = get_uvs();
 	auto indices = get_indices();
 
-	proxy.vert_count = (i32)verts.size();
-	proxy.index_count = (i32)indices.size();
+	object.vertex_count = (i32)verts.size();
+	object.index_count = (i32)indices.size();
 
-	GLint pos_buffer = upload_vbuffer(verts);
-	GLint col_buffer = upload_vbuffer(cols);
-	GLint norm_buffer = upload_vbuffer(norms);
-	GLint uv_buffer = upload_vbuffer(uvs);
-	GLint index_buffer = upload_ibuffer(indices);
+	object.pos_buffer = upload_vbuffer(verts);
+	object.col_buffer = upload_vbuffer(cols);
+	object.norm_buffer = upload_vbuffer(norms);
+	object.uv_buffer = upload_vbuffer(uvs);
+	object.index_buffer = upload_ibuffer(indices);
 
-	const GLuint vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
-	const GLuint frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
+	object.index_buffer = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
+	object.frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
 
-	u32 program = glCreateProgram();
-	glAttachShader(program, vert_shader);
-	glAttachShader(program, frag_shader);
-	glLinkProgram(program);
-	proxy.program = program;
+	object.program = glCreateProgram();
+	glAttachShader(object.program, object.index_buffer);
+	glAttachShader(object.program, object.frag_shader);
+	glLinkProgram(object.program);
 
-	const GLint pos_loc = glGetAttribLocation(program, "vPos");
-	const GLint col_loc = glGetAttribLocation(program, "vCol");
-	const GLint norm_loc = glGetAttribLocation(program, "vNorm");
-	const GLint uv_loc = glGetAttribLocation(program, "vUV");
+	const GLint pos_loc = glGetAttribLocation(object.program, "vPos");
+	const GLint col_loc = glGetAttribLocation(object.program, "vCol");
+	const GLint norm_loc = glGetAttribLocation(object.program, "vNorm");
+	const GLint uv_loc = glGetAttribLocation(object.program, "vUV");
+	object.mvp_loc = glGetUniformLocation(object.program, "MVP");
 
-	u32 vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	proxy.vao = vao;
-
-	link_vbuffer(pos_buffer, pos_loc, 3);
-	link_vbuffer(col_buffer, col_loc, 3);
-	link_vbuffer(norm_buffer, norm_loc, 3);
-	link_vbuffer(uv_buffer, uv_loc, 2);
-	link_ibuffer(index_buffer);
+	link_vbuffer(object.pos_buffer, pos_loc, 3);
+	link_vbuffer(object.col_buffer, col_loc, 3);
+	link_vbuffer(object.norm_buffer, norm_loc, 3);
+	link_vbuffer(object.uv_buffer, uv_loc, 2);
 }
 
 void MRenderable::render(glm::mat4 vp) const {
+	if (!object) {
+		return;
+	}
+
+	const render_object &object = *this->object;
+	
 	glm::mat4 mvp = vp * get_transform();
-	glUseProgram(proxy.program);
-	glUniformMatrix4fv(proxy.mvp_location, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
-	glBindVertexArray(proxy.vao);
+	glUseProgram(object.program);
+	glUniformMatrix4fv(object.mvp_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
+	glBindVertexArray(object.vao);
 
 	switch (get_render_type()) {
 		case render_type::triangle:
-			glDrawArrays(GL_TRIANGLES, 0, proxy.vert_count);
+			glDrawArrays(GL_TRIANGLES, 0, object.vertex_count);
 			break;
 
 		case render_type::indexed:
-			glDrawElements(GL_TRIANGLES, proxy.index_count, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, object.index_count, GL_UNSIGNED_INT, (void *)0);
 			break;
 	}
 }

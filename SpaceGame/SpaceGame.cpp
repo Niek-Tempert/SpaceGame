@@ -23,9 +23,11 @@
 #include "voxel/voxel.h"
 
 struct state {
+	double delta_time;
 	Player *player;
 	Input *input;
 	Voxel *voxel;
+	Voxel *moon;
 	std::vector<IRenderable *> renderables;
 } state;
 
@@ -50,13 +52,36 @@ void generate_objects(GLFWwindow *window) {
 			}
 		}
 	}
+
 	
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0, -length - 1, 0));
 	state.voxel->mesher->transform = model;
-	
+
 	state.voxel->mesher->full_update(state.voxel);
 	state.renderables.push_back(state.voxel->mesher);
+	
+	state.moon = new Voxel();
+	int moon_length = 8;
+	for (int x = -moon_length; x < moon_length; ++x) {
+		for (int y = -moon_length; y < moon_length; ++y) {
+			for (int z = -moon_length; z < moon_length; ++z) {
+				glm::vec3 vec = {(float)x, (float)y, (float)z};
+				if (glm::length(vec) > (float)moon_length) {
+					continue;
+				}
+				
+				state.moon->request({ x, y, z }).data = (void *)1;
+			}
+		}
+	}
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0, 0, length + moon_length * 2));
+	state.moon->mesher->transform = model;
+	
+	state.moon->mesher->full_update(state.moon);
+	state.renderables.push_back(state.moon->mesher);
 
 	for (int i = -1; i < 2; ++i) {
 		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(i * 2, 0, -4));
@@ -120,16 +145,31 @@ int main() {
 	glEnable(GL_CULL_FACE);
 	
 	generate_objects(window);
+
+	double last_time = glfwGetTime();
 	
 	while (!glfwWindowShouldClose(window)) {
 		state.player->update(state.input);
+		state.delta_time = glfwGetTime() - last_time;
 
+		glm::vec3 position = glm::vec3(state.moon->mesher->transform[3]);
+		double t = state.delta_time * 0.01;
+		double sin = glm::sin(t);
+		double cos = glm::cos(t);
+		glm::vec3 rotated_pos = {
+			position.x * cos + position.z * sin,
+			position.y,
+			position.z * cos - position.x * sin
+		};
+		state.moon->mesher->transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+		
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		last_time = glfwGetTime();
 		state.input->next();
 
 		render(window);

@@ -4,10 +4,11 @@
 #include "utils/mesh_consts.h"
 
 #include <string>
-#include <glm/ext/matrix_transform.hpp>
 
 void VoxelMesher::full_update(Voxel *voxel) {
 	vertices.clear();
+	colors.clear();
+	normals.clear();
 	indices.clear();
 
 	for (auto &pairs : voxel->_chunks) {
