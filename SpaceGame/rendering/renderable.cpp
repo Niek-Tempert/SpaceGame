@@ -169,6 +169,8 @@ void MRenderable::prepare() {
 	const GLint norm_loc = glGetAttribLocation(object.program, "vNorm");
 	const GLint uv_loc = glGetAttribLocation(object.program, "vUV");
 	object.mvp_loc = glGetUniformLocation(object.program, "MVP");
+	object.m_loc = glGetUniformLocation(object.program, "M");
+	object.v_loc = glGetUniformLocation(object.program, "V");
 
 	link_vbuffer(object.pos_buffer, pos_loc, 3);
 	link_vbuffer(object.col_buffer, col_loc, 3);
@@ -176,16 +178,19 @@ void MRenderable::prepare() {
 	link_vbuffer(object.uv_buffer, uv_loc, 2);
 }
 
-void MRenderable::render(glm::mat4 vp) const {
+void MRenderable::render(glm::mat4 v, glm::mat4 p) const {
 	if (!object) {
 		return;
 	}
 
 	const render_object &object = *this->object;
-	
-	glm::mat4 mvp = vp * get_transform();
+
+	glm::mat4 m = get_transform();
+	glm::mat4 mvp = p * v * m;
 	glUseProgram(object.program);
 	glUniformMatrix4fv(object.mvp_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
+	glUniformMatrix4fv(object.m_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(m));
+	glUniformMatrix4fv(object.v_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(v));
 	glBindVertexArray(object.vao);
 
 	switch (get_render_type()) {

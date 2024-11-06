@@ -15,6 +15,8 @@ struct render_object {
 	u32 vao;
 	u32 program;
 	i32 mvp_loc;
+	i32 m_loc;
+	i32 v_loc;
 	u32 vert_shader;
 	u32 frag_shader;
 	i32 vertex_count;
@@ -30,7 +32,7 @@ class IRenderable {
 public:
 	virtual ~IRenderable() = default;
 	virtual void prepare() = 0;
-	virtual void render(glm::mat4 vp) const = 0;
+	virtual void render(glm::mat4 v, glm::mat4 p) const = 0;
 };
 
 class MRenderable : public IRenderable {
@@ -39,7 +41,7 @@ public:
 	glm::mat4 transform = glm::mat4(1.0f);
 
 	void prepare() override;
-	void render(glm::mat4 vp) const override;
+	void render(glm::mat4 v, glm::mat4 p) const override;
 
 protected:
 	virtual render_type get_render_type() const { return render_type::indexed; }
