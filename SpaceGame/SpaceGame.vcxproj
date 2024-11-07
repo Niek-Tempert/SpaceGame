@@ -204,9 +204,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\images\rock.png" />
-    <Content Include="shaders\fragment\basic.glsl" />
+    <Content Include="shaders\fragment\blinn-phong.glsl" />
+    <Content Include="shaders\fragment\unlit.glsl" />
+    <Content Include="shaders\fragment\lambert.glsl" />
     <Content Include="shaders\fragment\voxel.glsl" />
-    <Content Include="shaders\vertex\basic.glsl" />
+    <Content Include="shaders\vertex\blinn-phong.glsl" />
+    <Content Include="shaders\vertex\unlit.glsl" />
+    <Content Include="shaders\vertex\lambert.glsl" />
     <Content Include="shaders\vertex\voxel.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

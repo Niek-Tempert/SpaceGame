@@ -50,11 +50,11 @@ void VoxelMesher::full_update(Voxel *voxel) {
 }
 
 const char *VoxelMesher::get_vertex_shader() const {
-	return "shaders/vertex/voxel.glsl";
+	return "shaders/vertex/blinn-phong.glsl";
 }
 
 const char *VoxelMesher::get_fragment_shader() const {
-	return "shaders/fragment/voxel.glsl";
+	return "shaders/fragment/blinn-phong.glsl";
 }
 
 std::vector<vec3f> VoxelMesher::get_vertices() const {
