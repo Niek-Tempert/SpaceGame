@@ -2,6 +2,7 @@
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include "models/cube.h"
+#include "models/cursor.h"
 
 #include <GLFW/glfw3.h>
 
@@ -28,6 +29,7 @@ struct state {
 	Input *input;
 	Voxel *voxel;
 	Voxel *moon;
+	Cursor *cursor;
 	std::vector<IRenderable *> renderables;
 } state;
 
@@ -94,13 +96,17 @@ void generate_objects(GLFWwindow *window) {
 	for (auto renderable : state.renderables) {
 		renderable->prepare();
 	}
+
+	state.cursor = new Cursor();
+	state.cursor->prepare();
+	state.renderables.push_back(state.cursor);
 }
 
 void render(GLFWwindow *window) {
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	const float ratio = (float)width / (float)height;
-	
+
 	glm::mat4 trans = glm::translate(glm::mat4(1.0f), -state.player->position);
 		
 	glm::mat4 rot = glm::mat4(1.0f);

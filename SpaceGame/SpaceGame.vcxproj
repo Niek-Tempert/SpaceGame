@@ -174,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="models\cube.h" />
+    <ClInclude Include="models\cursor.h" />
     <ClInclude Include="models\monkey.h" />
     <ClInclude Include="models\traingle.h" />
     <ClInclude Include="models\vertex.h" />

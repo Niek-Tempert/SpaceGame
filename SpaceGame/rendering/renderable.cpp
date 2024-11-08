@@ -90,8 +90,6 @@ void link_vbuffer(GLint buffer, GLuint location, GLint size) {
 
 void dispose(render_object *object) {
 	glDeleteProgram(object->program);
-	glDeleteShader(object->frag_shader);
-	glDeleteShader(object->vert_shader);
 
 	if (object->pos_buffer >= 0) {
 		u32 pos_buffer = object->pos_buffer;
@@ -153,16 +151,19 @@ void MRenderable::prepare() {
 	object.uv_buffer = upload_vbuffer(uvs);
 	object.index_buffer = upload_ibuffer(indices);
 
-	object.vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
-	object.frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
+	GLuint vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
+	GLuint frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
 
 	// int t_width, t_height, t_channels;
 	// unsigned char *data = stbi_load(get_texture(), &t_width, &t_height, &t_channels, 0); 
 
 	object.program = glCreateProgram();
-	glAttachShader(object.program, object.vert_shader);
-	glAttachShader(object.program, object.frag_shader);
+	glAttachShader(object.program, vert_shader);
+	glAttachShader(object.program, frag_shader);
 	glLinkProgram(object.program);
+
+	glDeleteShader(vert_shader);
+	glDeleteShader(frag_shader);
 
 	const GLint pos_loc = glGetAttribLocation(object.program, "vPos");
 	const GLint col_loc = glGetAttribLocation(object.program, "vCol");

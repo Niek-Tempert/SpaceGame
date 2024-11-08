@@ -17,8 +17,6 @@ struct render_object {
 	i32 mvp_loc;
 	i32 m_loc;
 	i32 v_loc;
-	u32 vert_shader;
-	u32 frag_shader;
 	i32 vertex_count;
 	i32 index_count;
 	i32 pos_buffer;
