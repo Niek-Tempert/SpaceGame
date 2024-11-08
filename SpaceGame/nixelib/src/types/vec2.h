@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "nixelib/src/macros.h"
 
 template <typename TType>
 struct vec2_t {

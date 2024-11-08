@@ -5,11 +5,11 @@
 class Cube : public MRenderable {
 public:
 	const char *get_vertex_shader() const override {
-		return "shaders/vertex/unlit.glsl";
+		return "shaders/unlit.vert";
 	}
 
 	const char *get_fragment_shader() const override {
-		return "shaders/fragment/unlit.glsl";
+		return "shaders/unlit.frag";
 	}
 
 	std::vector<vec3f> get_vertices() const override {

@@ -178,6 +178,7 @@
     <ClInclude Include="models\traingle.h" />
     <ClInclude Include="models\vertex.h" />
     <ClInclude Include="nixelib\nixelib.h" />
+    <ClInclude Include="nixelib\src\hash.h" />
     <ClInclude Include="nixelib\src\macros.h" />
     <ClInclude Include="nixelib\src\nixemath.h" />
     <ClInclude Include="nixelib\src\typedefs.h" />
@@ -204,14 +205,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\images\rock.png" />
-    <Content Include="shaders\fragment\blinn-phong.glsl" />
-    <Content Include="shaders\fragment\unlit.glsl" />
-    <Content Include="shaders\fragment\lambert.glsl" />
-    <Content Include="shaders\fragment\voxel.glsl" />
-    <Content Include="shaders\vertex\blinn-phong.glsl" />
-    <Content Include="shaders\vertex\unlit.glsl" />
-    <Content Include="shaders\vertex\lambert.glsl" />
-    <Content Include="shaders\vertex\voxel.glsl" />
+    <Content Include="shaders\blinn-phong.frag" />
+    <Content Include="shaders\blinn-phong.vert" />
+    <Content Include="shaders\lambert.frag" />
+    <Content Include="shaders\lambert.vert" />
+    <Content Include="shaders\unlit.frag" />
+    <Content Include="shaders\unlit.vert" />
+    <Content Include="shaders\voxel.frag" />
+    <Content Include="shaders\voxel.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

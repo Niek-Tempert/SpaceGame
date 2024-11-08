@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "src/hash.h"
 #include "src/macros.h"
 #include "src/typedefs.h"
 #include "src/nixemath.h"

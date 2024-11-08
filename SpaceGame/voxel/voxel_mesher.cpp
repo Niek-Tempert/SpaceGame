@@ -3,7 +3,7 @@
 #include "voxel.h"
 #include "utils/mesh_consts.h"
 
-#include <string>
+#include "nixelib/nixelib.h"
 
 void VoxelMesher::full_update(Voxel *voxel) {
 	vertices.clear();
@@ -20,11 +20,12 @@ void VoxelMesher::full_update(Voxel *voxel) {
 					if (!cell.data) {
 						continue;
 					}
-					
-					vec3i ID = Voxel::compound_id(pairs.first, { x, y, z });
+
+					vec3i id = Voxel::compound_id(pairs.first, { x, y, z });
+					vec3f col = hash_vec3f_to_vec3f(vec3f((float)id.x, (float)id.y, (float)id.z));
 					for (int i = 0; i < 6; ++i) {
-						auto& dir = mesh_consts::axis[i];
-						auto* neighbor = voxel->get(ID + dir);
+						auto &dir = mesh_consts::axis[i];
+						auto *neighbor = voxel->get(id + dir);
 						if (neighbor && neighbor->data) {
 							continue;
 						}
@@ -32,10 +33,10 @@ void VoxelMesher::full_update(Voxel *voxel) {
 						for (u32 index : mesh_consts::face_indices) {
 							indices.push_back(index + (u32)vertices.size());
 						}
-						
-						for (const auto& vert : mesh_consts::cube_vertices[i]) {
-							vertices.emplace_back((float)ID.x + vert.x, (float)ID.y + vert.y, (float)ID.z + vert.z);
-							colors.emplace_back(vert.x, vert.y, vert.z);
+
+						for (const auto &vert : mesh_consts::cube_vertices[i]) {
+							vertices.emplace_back((float)id.x + vert.x, (float)id.y + vert.y, (float)id.z + vert.z);
+							colors.emplace_back(col);
 						}
 
 						for (u32 j = 0; j < (u32)std::size(*mesh_consts::cube_vertices); ++j) {
@@ -50,11 +51,11 @@ void VoxelMesher::full_update(Voxel *voxel) {
 }
 
 const char *VoxelMesher::get_vertex_shader() const {
-	return "shaders/vertex/blinn-phong.glsl";
+	return "shaders/voxel.vert";
 }
 
 const char *VoxelMesher::get_fragment_shader() const {
-	return "shaders/fragment/blinn-phong.glsl";
+	return "shaders/voxel.frag";
 }
 
 std::vector<vec3f> VoxelMesher::get_vertices() const {
