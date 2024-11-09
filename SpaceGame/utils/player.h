@@ -14,10 +14,7 @@ public:
 	}
 
 	void update(const Input *input) {
-		bool stateChanged;
-		
 		glm::vec2 delta = { input->get_cursor_delta().x, input->get_cursor_delta().y };
-		stateChanged = delta.x != 0 || delta.y != 0;
 		
 		rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -glm::half_pi<f32>(), glm::half_pi<f32>());
 		rotation.y = nixemath::wrap(rotation.y - delta.x * look_speed, 0, glm::two_pi<f32>());
@@ -58,11 +55,6 @@ public:
 			};
         
 			position += rotated_dir * walk_speed;
-			stateChanged = true;
-		}
-
-		if (stateChanged) {
-			std::cout << "Position {X: " << position.x << ", Y: " << position.y << ", Z: " << position.z << "}, Rotation {X: " << glm::degrees(rotation.x) << ", Y: " << glm::degrees(rotation.y) << ", Z: " << glm::degrees(rotation.z) << "}" << std::endl;
 		}
 	}
 

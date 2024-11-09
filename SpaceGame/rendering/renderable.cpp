@@ -170,8 +170,9 @@ void MRenderable::prepare() {
 	const GLint norm_loc = glGetAttribLocation(object.program, "vNorm");
 	const GLint uv_loc = glGetAttribLocation(object.program, "vUV");
 	object.mvp_loc = glGetUniformLocation(object.program, "MVP");
-	object.m_loc = glGetUniformLocation(object.program, "M");
-	object.v_loc = glGetUniformLocation(object.program, "V");
+	object.model_loc = glGetUniformLocation(object.program, "M");
+	object.view_loc = glGetUniformLocation(object.program, "V");
+	object.proj_loc = glGetUniformLocation(object.program, "P");
 
 	link_vbuffer(object.pos_buffer, pos_loc, 3);
 	link_vbuffer(object.col_buffer, col_loc, 3);
@@ -179,28 +180,43 @@ void MRenderable::prepare() {
 	link_vbuffer(object.uv_buffer, uv_loc, 2);
 }
 
-void MRenderable::render(glm::mat4 v, glm::mat4 p) const {
+void MRenderable::render(draw_call_data* data) const {
 	if (!object) {
 		return;
 	}
 
-	const render_object &object = *this->object;
+	glm::mat4 model = get_transform();
+	glm::mat4 view = data->view;
+	glm::mat4 proj = data->proj;
+	
+	glUseProgram(object->program);
 
-	glm::mat4 m = get_transform();
-	glm::mat4 mvp = p * v * m;
-	glUseProgram(object.program);
-	glUniformMatrix4fv(object.mvp_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
-	glUniformMatrix4fv(object.m_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(m));
-	glUniformMatrix4fv(object.v_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(v));
-	glBindVertexArray(object.vao);
+	if (object->model_loc >= 0) {
+		glUniformMatrix4fv(object->model_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(model));
+	}
+
+	if (object->view_loc >= 0) {
+		glUniformMatrix4fv(object->view_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(view));
+	}
+
+	if (object->proj_loc >= 0) {
+		glUniformMatrix4fv(object->proj_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(proj));
+	}
+
+	if (object->mvp_loc >= 0) {
+		glm::mat4 mvp = proj * view * model;
+		glUniformMatrix4fv(object->mvp_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
+	}
+	
+	glBindVertexArray(object->vao);
 
 	switch (get_render_type()) {
-		case render_type::triangle:
-			glDrawArrays(GL_TRIANGLES, 0, object.vertex_count);
+		case render_type::triangles:
+			glDrawArrays(GL_TRIANGLES, 0, object->vertex_count);
 			break;
 
 		case render_type::indexed:
-			glDrawElements(GL_TRIANGLES, object.index_count, GL_UNSIGNED_INT, (void *)0);
+			glDrawElements(GL_TRIANGLES, object->index_count, GL_UNSIGNED_INT, (void *)0);
 			break;
 	}
 }

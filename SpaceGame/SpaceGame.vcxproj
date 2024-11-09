@@ -201,13 +201,15 @@
     <ClInclude Include="voxel\cell\user.h" />
     <ClInclude Include="voxel\cell\cell.h" />
     <ClInclude Include="voxel\cell\shape.h" />
-    <ClInclude Include="voxel\voxel_explorer.h" />
+    <ClInclude Include="voxel\voxel_register.h" />
     <ClInclude Include="voxel\voxel.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\images\rock.png" />
     <Content Include="shaders\blinn-phong.frag" />
     <Content Include="shaders\blinn-phong.vert" />
+    <Content Include="shaders\cursor.frag" />
+    <Content Include="shaders\cursor.vert" />
     <Content Include="shaders\lambert.frag" />
     <Content Include="shaders\lambert.vert" />
     <Content Include="shaders\unlit.frag" />

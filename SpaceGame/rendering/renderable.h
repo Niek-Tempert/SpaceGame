@@ -2,21 +2,31 @@
 
 #include "nixelib/nixelib.h"
 
-#include <string>
 #include <vector>
 #include <glm/mat4x4.hpp>
 
 enum class render_type {
-	triangle,
+	triangles,
 	indexed,
+	lines,
+};
+
+struct draw_call_data {
+	glm::mat4 view;
+	glm::mat4 proj;
+
+	vec2u resolution;
 };
 
 struct render_object {
 	u32 vao;
 	u32 program;
+	
+	i32 model_loc;
+	i32 view_loc;
+	i32 proj_loc;
 	i32 mvp_loc;
-	i32 m_loc;
-	i32 v_loc;
+	
 	i32 vertex_count;
 	i32 index_count;
 	i32 pos_buffer;
@@ -30,7 +40,7 @@ class IRenderable {
 public:
 	virtual ~IRenderable() = default;
 	virtual void prepare() = 0;
-	virtual void render(glm::mat4 v, glm::mat4 p) const = 0;
+	virtual void render(draw_call_data* data) const = 0;
 };
 
 class MRenderable : public IRenderable {
@@ -39,7 +49,7 @@ public:
 	glm::mat4 transform = glm::mat4(1.0f);
 
 	void prepare() override;
-	void render(glm::mat4 v, glm::mat4 p) const override;
+	void render(draw_call_data* data) const override;
 
 protected:
 	virtual render_type get_render_type() const { return render_type::indexed; }

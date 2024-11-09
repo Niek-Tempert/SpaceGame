@@ -114,11 +114,17 @@ void render(GLFWwindow *window) {
 	rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
 	rot = glm::rotate(rot, -state.player->rotation.z, glm::vec3(0, 0, 1));
 
-	glm::mat4 v = rot * trans;
-	glm::mat4 p = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 100.0f);
+	glm::mat4 view = rot * trans;
+	glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 100.0f);
 
+	draw_call_data data = {
+		view,
+		proj,
+		{ (u32)width, (u32)height }
+	};
+	
 	for (auto renderable : state.renderables) {
-		renderable->render(v, p);
+		renderable->render(&data);
 	}
 }
 

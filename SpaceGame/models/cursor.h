@@ -11,16 +11,17 @@ public:
 	void prepare() override {
 		const char *vertexShaderSource = "#version 330 core\n"
 			"layout (location = 0) in vec3 aPos;\n"
-			"uniform mat4 P;\n"
+			"uniform mat4 trans;\n"
 			"void main()\n"
 			"{\n"
-			"   gl_Position = P * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+			"   gl_Position = trans * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 			"}\0";
+		
 		const char *fragmentShaderSource = "#version 330 core\n"
 			"out vec4 FragColor;\n"
 			"void main()\n"
 			"{\n"
-			"   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+			"   FragColor = vec4(1.0f);\n"
 			"}\n\0";
 
 		// vertex shader
@@ -36,29 +37,29 @@ public:
 		// check for shader compile errors
 
 		// link shaders
-		shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glLinkProgram(shaderProgram);
+		program = glCreateProgram();
+		glAttachShader(program, vertexShader);
+		glAttachShader(program, fragmentShader);
+		glLinkProgram(program);
 		// check for linking errors
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 
 		vertices = {
-			-0.025, 0, -1,
-			0.025, 0, -1,
-			0, -0.025, -1,
-			0, 0.025, -1
+			-16, 0, 0,
+			16, 0, 0,
+			0, -16, 0,
+			0, 16, 0
 	   };
         
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
 
 		GLuint VBO;
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vertices.size() * sizeof(*vertices.data())), vertices.data(), GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		glEnableVertexAttribArray(0);
@@ -67,19 +68,23 @@ public:
 		glBindVertexArray(0);
 	}
 	
-	void render(glm::mat4 v, glm::mat4 p) const override {
-		glUseProgram(shaderProgram);
-		auto p_loc = glGetUniformLocation(shaderProgram, "P");
-		glUniformMatrix4fv(p_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(p));
+	void render(draw_call_data* data) const override {
+		glUseProgram(program);
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3((float)data->resolution.x / 2.0f, (float)data->resolution.y / 2.0f, 0.0f));
+		trans = glm::ortho(0.0f, (f32)data->resolution.x, 0.0f, (f32)data->resolution.y, 1.0f, -1.0f) * trans;
+
+		GLint trans_loc = glGetUniformLocation(program, "trans");
+		glUniformMatrix4fv(trans_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(trans));
 
 		glLineWidth(4.0f);
-		glBindVertexArray(VAO);
+		glBindVertexArray(vao);
 		
 		glDrawArrays(GL_LINES, 0, (u32)vertices.size());
 	}
 
 private:
-	i32 shaderProgram;
-	u32 VAO;
+	i32 program = -1;
+	u32 vao = 0;
 	std::vector<f32> vertices;
 };

@@ -1641,6 +1641,6 @@ public:
 	}
 
 	render_type get_render_type() const override {
-		return render_type::triangle;
+		return render_type::triangles;
 	}
 };

@@ -222,5 +222,5 @@ inline float wang_hash_noise(u32 s) {
 	s *= 0x27d4eb2du;
 	s = s ^ (s >> 15u);
 
-	return glm::fract(float(s) / 4294967296.0);
+	return glm::fract(float(s) / 4294967296.0f);
 }
