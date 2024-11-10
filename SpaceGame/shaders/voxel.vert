@@ -1,8 +1,8 @@
 #version 330
 
 uniform mat4 MVP;
-uniform mat4 M;
-uniform mat4 V;
+uniform mat4 Model;
+uniform mat4 View;
 
 in vec3 vPos;
 in vec3 vNorm;
@@ -17,9 +17,9 @@ out vec3 col;
 void main()
 {
     gl_Position = MVP * vec4(vPos, 1.0);
-    cam_pos = vec3(inverse(V)[3]);
-    w_pos = vec3(M * vec4(vPos, 1.0));
-    w_norm = vec3(M * vec4(vNorm, 0.0));
+    cam_pos = vec3(inverse(View)[3]);
+    w_pos = vec3(Model * vec4(vPos, 1.0));
+    w_norm = vec3(Model * vec4(vNorm, 0.0));
     
     col = vCol;
 };

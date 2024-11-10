@@ -3,7 +3,7 @@
 #include "utils/mesh_consts.h"
 
 class Cube : public MRenderable {
-public:
+protected:
 	const char *get_vertex_shader() const override {
 		return "shaders/unlit.vert";
 	}

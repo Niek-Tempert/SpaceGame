@@ -26,6 +26,10 @@ constexpr u32 face_indices[6] {
 	2, 1, 0, 3, 2, 0
 };
 
+constexpr u32 face_indices_inv[6] {
+	0, 1, 2, 0, 2, 3
+};
+
 const vec2f face_uvs[4] {
 	{1, 0},
 	{1, 1},

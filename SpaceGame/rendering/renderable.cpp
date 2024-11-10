@@ -112,7 +112,7 @@ void dispose(render_object *object) {
 	}
 
 	if (object->index_buffer >= 0) {
-		u32 index_buffer = object->uv_buffer;
+		u32 index_buffer = object->index_buffer;
 		glDeleteBuffers(1, &index_buffer);
 	}
 	
@@ -170,9 +170,9 @@ void MRenderable::prepare() {
 	const GLint norm_loc = glGetAttribLocation(object.program, "vNorm");
 	const GLint uv_loc = glGetAttribLocation(object.program, "vUV");
 	object.mvp_loc = glGetUniformLocation(object.program, "MVP");
-	object.model_loc = glGetUniformLocation(object.program, "M");
-	object.view_loc = glGetUniformLocation(object.program, "V");
-	object.proj_loc = glGetUniformLocation(object.program, "P");
+	object.model_loc = glGetUniformLocation(object.program, "Model");
+	object.view_loc = glGetUniformLocation(object.program, "View");
+	object.proj_loc = glGetUniformLocation(object.program, "Proj");
 
 	link_vbuffer(object.pos_buffer, pos_loc, 3);
 	link_vbuffer(object.col_buffer, col_loc, 3);
@@ -183,6 +183,14 @@ void MRenderable::prepare() {
 void MRenderable::render(draw_call_data* data) const {
 	if (!object) {
 		return;
+	}
+
+	if (get_depth_test()) {
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
 	}
 
 	glm::mat4 model = get_transform();

@@ -7,8 +7,7 @@
 
 enum class render_type {
 	triangles,
-	indexed,
-	lines,
+	indexed
 };
 
 struct draw_call_data {
@@ -29,6 +28,7 @@ struct render_object {
 	
 	i32 vertex_count;
 	i32 index_count;
+	
 	i32 pos_buffer;
 	i32 col_buffer;
 	i32 norm_buffer;
@@ -53,6 +53,7 @@ public:
 
 protected:
 	virtual render_type get_render_type() const { return render_type::indexed; }
+	virtual bool get_depth_test() const { return true; }
 
 	virtual glm::mat4x4 get_transform() const { return transform; }
 	

@@ -176,7 +176,8 @@
     <ClInclude Include="models\cube.h" />
     <ClInclude Include="models\cursor.h" />
     <ClInclude Include="models\monkey.h" />
-    <ClInclude Include="models\traingle.h" />
+    <ClInclude Include="models\skybox.h" />
+    <ClInclude Include="models\triangle.h" />
     <ClInclude Include="models\vertex.h" />
     <ClInclude Include="nixelib\nixelib.h" />
     <ClInclude Include="nixelib\src\hash.h" />
@@ -212,6 +213,8 @@
     <Content Include="shaders\cursor.vert" />
     <Content Include="shaders\lambert.frag" />
     <Content Include="shaders\lambert.vert" />
+    <Content Include="shaders\skybox.frag" />
+    <Content Include="shaders\skybox.vert" />
     <Content Include="shaders\unlit.frag" />
     <Content Include="shaders\unlit.vert" />
     <Content Include="shaders\voxel.frag" />
