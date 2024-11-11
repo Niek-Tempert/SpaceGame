@@ -7,6 +7,13 @@
 
 #include <map>
 
+struct raycast_result {
+	bool hit;
+	vec3i id;
+	vec3i normal;
+	f32 distance;
+}; 
+
 class Voxel {
 public:
 	typedef vec3i cell_id;
@@ -23,6 +30,8 @@ public:
 
 	cell_user &request(const vec3i &id);
 	cell_user *get(const vec3i &id) const;
+
+	raycast_result raycast(const vec3f &start, const vec3f &dir, f32 max_distance);
 
 	static vec3i id_to_chunkid(const cell_id &id);
 	static vec3i id_to_subid(const cell_id &cell_id);
