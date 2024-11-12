@@ -19,8 +19,12 @@ protected:
 		return model;
 	}
 
-	bool get_depth_test() const override {
-		return false;
+	void set_gl_state() const override {
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+		glEnable(GL_CULL_FACE);
+		glDepthFunc(GL_LEQUAL);
+		glLineWidth(1.0f);
 	}
 
 	std::vector<vec3f> get_vertices() const override {
@@ -44,6 +48,10 @@ protected:
 	}
 
 	void render(draw_call_data *data) const override {
+		if (!visible) {
+			return;
+		}
+		
 		draw_call_data skybox_data = *data;
 		skybox_data.view = glm::mat4(glm::mat3(data->view));
 		MRenderable::render(&skybox_data);

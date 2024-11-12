@@ -7,7 +7,8 @@
 
 enum class render_type {
 	triangles,
-	indexed
+	indexed,
+	lines
 };
 
 struct draw_call_data {
@@ -47,13 +48,14 @@ class MRenderable : public IRenderable {
 public:
 	~MRenderable() override;
 	glm::mat4 transform = glm::mat4(1.0f);
+	bool visible = true;
 
 	void prepare() override;
 	void render(draw_call_data* data) const override;
 
 protected:
 	virtual render_type get_render_type() const { return render_type::indexed; }
-	virtual bool get_depth_test() const { return true; }
+	virtual void set_gl_state() const;
 
 	virtual glm::mat4x4 get_transform() const { return transform; }
 	

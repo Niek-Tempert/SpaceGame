@@ -8,6 +8,9 @@
 #include <map>
 
 struct raycast_result {
+	raycast_result() : hit(false), id({ 0, 0, 0 }), normal({ 0, 0, 0 }), distance(0) {}
+	raycast_result(bool hit, const vec3i &id, const vec3i &normal, f32 distance) : hit(hit), id(id), normal(normal), distance(distance) {}
+	
 	bool hit;
 	vec3i id;
 	vec3i normal;

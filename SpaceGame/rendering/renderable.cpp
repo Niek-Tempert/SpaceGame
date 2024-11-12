@@ -181,17 +181,11 @@ void MRenderable::prepare() {
 }
 
 void MRenderable::render(draw_call_data* data) const {
-	if (!object) {
+	if (!object || !visible) {
 		return;
 	}
 
-	if (get_depth_test()) {
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
-	} else {
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
-	}
+	set_gl_state();
 
 	glm::mat4 model = get_transform();
 	glm::mat4 view = data->view;
@@ -226,5 +220,15 @@ void MRenderable::render(draw_call_data* data) const {
 		case render_type::indexed:
 			glDrawElements(GL_TRIANGLES, object->index_count, GL_UNSIGNED_INT, (void *)0);
 			break;
+
+		case render_type::lines:
+			glDrawArrays(GL_LINES, 0, object->vertex_count);
+			break;
 	}
+}
+
+void MRenderable::set_gl_state() const {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glLineWidth(1.0f);
 }

@@ -52,7 +52,6 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
 	glm::vec3 direction = inv_transform * glm::vec4(dir.x, dir.y, dir.z, 0);
     direction = glm::normalize(direction);
 
-
     glm::vec3 scaled_dir = direction * max_distance;
     max_distance = glm::length(glm::vec3 {
         nixemath::save_divide(scaled_dir.x, scale.x),
@@ -66,14 +65,13 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
         glm::abs(1.0f / direction.z)
     };
 
-    vec3i step = vec3i
-    {
+    vec3i step = vec3i {
         direction.x < 0 ? -1 : 1,
         direction.y < 0 ? -1 : 1,
         direction.z < 0 ? -1 : 1
     };
 
-    glm::vec3 voxel_space = transform * glm::vec4(start.x, start.y, start.z, 1);
+    glm::vec3 voxel_space = inv_transform * glm::vec4(start.x, start.y, start.z, 1);
 
     vec3i map_pos = {
     	nixemath::floor_to_i32(voxel_space.x),
@@ -142,12 +140,12 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
 
             ray_dist = glm::length(direction * ray_dist * scale); //scale distance from voxel scale to world scale
 
-            return {
+            return raycast_result (
             	true,
             	map_pos,
             	face_dir,
             	ray_dist
-            };
+            );
         }
 
         if (side_dist.x < side_dist.y && side_dist.x < side_dist.z)
@@ -173,12 +171,7 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
         }
     }
 
-    return raycast_result {
-    	false,
-    	vec3i{0, 0, 0},
-    	vec3i{0, 0, 0},
-    	0
-    };
+    return {};
 }
 
 vec3i Voxel::id_to_chunkid(const vec3i &id) {

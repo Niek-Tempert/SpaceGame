@@ -2,11 +2,11 @@
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include "models/cube.h"
+#include "models/cube_lines.h"
 #include "models/cursor.h"
 
 #include <GLFW/glfw3.h>
 
-#include "models/monkey.h"
 #include "models/skybox.h"
 
 #include <glm/glm.hpp>
@@ -25,67 +25,79 @@
 #include "voxel/voxel.h"
 
 struct state {
+	GLFWwindow *window;
 	Player *player;
 	Input *input;
-	Voxel *voxel;
+
+	double time;
+	double delta_time;
+
 	Voxel *moon;
+	std::vector<Voxel *> voxels;
+	
+	CubeLines *cursor3d;
 	std::vector<IRenderable *> render_queue;
-} state;
+};
 
 static void error_callback(int error, const char *description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-void build_voxel(Voxel* voxel, int length, glm::vec3 position) {
+void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
 		for (int y = -length; y < length; ++y) {
 			for (int z = -length; z < length; ++z) {
-				glm::vec3 vec = {(float)x, (float)y, (float)z};
+				glm::vec3 vec = { (float)x, (float)y, (float)z };
 				if (glm::length(vec) > (float)length) {
 					continue;
 				}
-				
+
 				voxel->request({ x, y, z }).data = (void *)1;
 			}
 		}
 	}
-	
+
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
 	voxel->mesher->transform = model;
 	voxel->mesher->full_update(voxel);
 }
 
-void build_render_queue() {
-	state.render_queue.push_back(new Skybox());
+void build_render_queue(state *program) {
+	program->render_queue.push_back(new Skybox());
 
-	state.voxel = new Voxel();
-	state.moon = new Voxel();
+	Voxel *voxel = new Voxel();
+	program->moon = new Voxel();
 	
-	build_voxel(state.voxel, 16, { 0, -17, 0 });
-	build_voxel(state.moon, 8, { 0, 0, 32 });
+	build_voxel(voxel, 16, { 0, -17, 0 });
+	build_voxel(program->moon, 8, { 0, 0, 32 });
 
-	state.render_queue.push_back(state.voxel->mesher);
-	state.render_queue.push_back(state.moon->mesher);
+	program->voxels.push_back(voxel);
+	program->voxels.push_back(program->moon);
 
-	state.render_queue.push_back(new Cursor());
-	
-	for (auto renderable : state.render_queue) {
+	program->render_queue.push_back(voxel->mesher);
+	program->render_queue.push_back(program->moon->mesher);
+
+	program->render_queue.push_back(program->cursor3d = new CubeLines());
+
+	program->render_queue.push_back(new Cursor());
+
+	for (auto renderable : program->render_queue) {
 		renderable->prepare();
 	}
 }
 
-void render(GLFWwindow *window) {
+void render(const state *program) {
 	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
+	glfwGetFramebufferSize(program->window, &width, &height);
 	const float ratio = (float)width / (float)height;
 
-	glm::mat4 trans = glm::translate(glm::mat4(1.0f), -state.player->position);
-		
+	glm::mat4 trans = glm::translate(glm::mat4(1.0f), -program->player->position);
+
 	glm::mat4 rot = glm::mat4(1.0f);
-	rot = glm::rotate(rot, -state.player->rotation.x, glm::vec3(1, 0, 0));
-	rot = glm::rotate(rot, -state.player->rotation.y, glm::vec3(0, 1, 0));
-	rot = glm::rotate(rot, -state.player->rotation.z, glm::vec3(0, 0, 1));
+	rot = glm::rotate(rot, -program->player->rotation.x, glm::vec3(1, 0, 0));
+	rot = glm::rotate(rot, -program->player->rotation.y, glm::vec3(0, 1, 0));
+	rot = glm::rotate(rot, -program->player->rotation.z, glm::vec3(0, 0, 1));
 
 	glm::mat4 view = rot * trans;
 	glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
@@ -95,26 +107,59 @@ void render(GLFWwindow *window) {
 		proj,
 		{ (u32)width, (u32)height }
 	};
-	
-	for (auto renderable : state.render_queue) {
+
+	for (auto renderable : program->render_queue) {
 		renderable->render(&data);
 	}
 }
 
-void on_update(double delta_time) {
-	glm::vec3 position = glm::vec3(state.moon->mesher->transform[3]);
-	double t = delta_time * 0.05;
-	double sin = glm::sin(t);
-	double cos = glm::cos(t);
+void on_update(const state *program) {
+	glm::vec3 position = glm::vec3(program->moon->mesher->transform[3]);
+	const double t = program->delta_time * 0.05;
+	const double sin = glm::sin(t);
+	const double cos = glm::cos(t);
 	glm::vec3 rotated_pos = {
 		position.x * cos + position.z * sin,
 		position.y,
 		position.z * cos - position.x * sin
 	};
-	state.moon->mesher->transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+
+	program->moon->mesher->transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+
+	glm::mat4 rot = glm::mat4(1.0f);
+	rot = glm::rotate(rot, program->player->rotation.z, glm::vec3(0, 0, 1));
+	rot = glm::rotate(rot, program->player->rotation.y, glm::vec3(0, 1, 0));
+	rot = glm::rotate(rot, program->player->rotation.x, glm::vec3(1, 0, 0));
+
+	glm::vec3 direction = rot * glm::vec4(0, 0, -1, 1);
+
+	f32 dist = 4.0f;
+	raycast_result result;
+	Voxel *hit_voxel = nullptr;
+	for (auto voxel : program->voxels) {
+		raycast_result voxel_result = voxel->raycast(
+			{ program->player->position.x, program->player->position.y, program->player->position.z },
+			{ direction.x, direction.y, direction.z },
+			dist
+			);
+
+		if (voxel_result.hit) {
+			hit_voxel = voxel;
+			dist = result.distance;
+			result = voxel_result;
+		}
+	}
+
+	program->cursor3d->visible = result.hit;
+	if (result.hit) {
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
+		model = hit_voxel->mesher->transform * model;
+		program->cursor3d->transform = model;
+	}
 }
 
-int main() {
+void start(state *&program) {
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {
@@ -138,38 +183,49 @@ int main() {
 	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(1);
 
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LESS);
+	program = new state();
+	build_render_queue(program);
 
-	build_render_queue();
+	program->window = window;
+	program->player = new Player();
+	program->input = Input::init(window);
+}
 
-	state.player = new Player();
-	state.input = Input::init(window);
+void update(state *program) {
+	while (!glfwWindowShouldClose(program->window)) {
+		program->player->update(program->input);
 
-	double last_time = glfwGetTime();
-	
-	while (!glfwWindowShouldClose(window)) {
-		state.player->update(state.input);
+		double time = glfwGetTime();
+		program->delta_time = program->time - time;
+		program->time = time;
 
-		double delta_time = glfwGetTime() - last_time;
-		on_update(delta_time);
+		on_update(program);
 
 		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
+		glfwGetFramebufferSize(program->window, &width, &height);
 
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		last_time = glfwGetTime();
-		state.input->next();
+		program->input->next();
 
-		render(window);
+		render(program);
 
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(program->window);
 		glfwPollEvents();
 	}
+}
 
-	glfwDestroyWindow(window);
-
+void cleanup(const state *program) {
+	glfwDestroyWindow(program->window);
 	glfwTerminate();
+
 	exit(EXIT_SUCCESS);
+}
+
+int main() {
+	state *program;
+
+	start(program);
+	update(program);
+	cleanup(program);
 }

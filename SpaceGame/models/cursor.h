@@ -16,8 +16,9 @@ public:
 		return "shaders/cursor.vert";
 	}
 
-	bool get_depth_test() const override {
-		return false;
+	void set_gl_state() const override {
+		MRenderable::set_gl_state();
+		glLineWidth(4.0f);
 	}
 
 	std::vector<vec3f> get_vertices() const override {
@@ -26,12 +27,18 @@ public:
 			{ 16.0f, 0.0f, 0.0f },
 			{ 0.0f, -16.0f, 0.0f },
 			{ 0.0f, 16.0f, 0.0f }
-	   };
+		};
 	}
 
-	void render(draw_call_data* data) const override {
-		glUseProgram(object->program);
+	void render(draw_call_data *data) const override {
+		if (!visible) {
+			return;
+		}
 		
+		glUseProgram(object->program);
+
+		set_gl_state();
+
 		glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3((float)data->resolution.x / 2.0f, (float)data->resolution.y / 2.0f, 0.0f));
 		glm::mat4 ortho = glm::ortho(0.0f, (f32)data->resolution.x, 0.0f, (f32)data->resolution.y, 1.0f, -1.0f);
 		glm::mat4 view = ortho * trans;
@@ -39,9 +46,8 @@ public:
 		GLint view_loc = glGetUniformLocation(object->program, "view");
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(view));
 
-		glLineWidth(4.0f);
 		glBindVertexArray(object->vao);
-		
+
 		glDrawArrays(GL_LINES, 0, object->vertex_count);
 	}
 };
