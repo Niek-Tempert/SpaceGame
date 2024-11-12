@@ -48,6 +48,8 @@ void VoxelMesher::full_update(Voxel *voxel) {
 			}
 		}
 	}
+
+	prepare();
 }
 
 const char *VoxelMesher::get_vertex_shader() const {

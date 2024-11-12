@@ -34,7 +34,7 @@ struct state {
 
 	Voxel *moon;
 	std::vector<Voxel *> voxels;
-	
+
 	CubeLines *cursor3d;
 	std::vector<IRenderable *> render_queue;
 };
@@ -68,7 +68,7 @@ void build_render_queue(state *program) {
 
 	Voxel *voxel = new Voxel();
 	program->moon = new Voxel();
-	
+
 	build_voxel(voxel, 16, { 0, -17, 0 });
 	build_voxel(program->moon, 8, { 0, 0, 32 });
 
@@ -138,10 +138,10 @@ void on_update(const state *program) {
 	Voxel *hit_voxel = nullptr;
 	for (auto voxel : program->voxels) {
 		raycast_result voxel_result = voxel->raycast(
-			{ program->player->position.x, program->player->position.y, program->player->position.z },
-			{ direction.x, direction.y, direction.z },
-			dist
-			);
+				{ program->player->position.x, program->player->position.y, program->player->position.z },
+				{ direction.x, direction.y, direction.z },
+				dist
+				);
 
 		if (voxel_result.hit) {
 			hit_voxel = voxel;
@@ -156,7 +156,18 @@ void on_update(const state *program) {
 		model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
 		model = hit_voxel->mesher->transform * model;
 		program->cursor3d->transform = model;
+
+		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
+			hit_voxel->request(result.id).data = nullptr;
+			hit_voxel->mesher->full_update(hit_voxel);
+		}
+
+		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_2)) {
+			hit_voxel->request(result.id + result.normal).data = (void *)1;
+			hit_voxel->mesher->full_update(hit_voxel);
+		}
 	}
+
 }
 
 void start(state *&program) {

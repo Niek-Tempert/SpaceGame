@@ -79,8 +79,7 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
     	nixemath::floor_to_i32(voxel_space.z)
     };
 
-    glm::vec3 side_dist = glm::vec3
-    (
+    glm::vec3 side_dist = glm::vec3 (
         (direction.x < 0 ? voxel_space.x - map_pos.x : map_pos.x + 1 - voxel_space.x) * delta_dist.x,
         (direction.y < 0 ? voxel_space.y - map_pos.y : map_pos.y + 1 - voxel_space.y) * delta_dist.y,
         (direction.z < 0 ? voxel_space.z - map_pos.z : map_pos.z + 1 - voxel_space.z) * delta_dist.z
