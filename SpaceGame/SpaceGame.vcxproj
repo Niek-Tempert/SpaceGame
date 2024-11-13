@@ -170,7 +170,6 @@
     <ClCompile Include="SpaceGame.cpp" />
     <ClCompile Include="third_party\gl.c" />
     <ClCompile Include="voxel\voxel.cpp" />
-    <ClCompile Include="voxel\voxel_mesher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="models\cube.h" />
@@ -199,7 +198,6 @@
     <ClInclude Include="utils\player.h" />
     <ClInclude Include="voxel\cell\cell_mesher.h" />
     <ClInclude Include="voxel\cell\physic_rule.h" />
-    <ClInclude Include="voxel\voxel_mesher.h" />
     <ClInclude Include="voxel\cell\user.h" />
     <ClInclude Include="voxel\cell\cell.h" />
     <ClInclude Include="voxel\cell\shape.h" />

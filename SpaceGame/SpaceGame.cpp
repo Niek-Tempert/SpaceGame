@@ -59,8 +59,7 @@ void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
-	voxel->mesher->transform = model;
-	voxel->mesher->full_update(voxel);
+	voxel->transform = model;
 }
 
 void build_render_queue(state *program) {
@@ -75,8 +74,8 @@ void build_render_queue(state *program) {
 	program->voxels.push_back(voxel);
 	program->voxels.push_back(program->moon);
 
-	program->render_queue.push_back(voxel->mesher);
-	program->render_queue.push_back(program->moon->mesher);
+	program->render_queue.push_back(voxel);
+	program->render_queue.push_back(program->moon);
 
 	program->render_queue.push_back(program->cursor3d = new CubeLines());
 
@@ -114,7 +113,7 @@ void render(const state *program) {
 }
 
 void on_update(const state *program) {
-	glm::vec3 position = glm::vec3(program->moon->mesher->transform[3]);
+	glm::vec3 position = glm::vec3(program->moon->transform[3]);
 	const double t = program->delta_time * 0.05;
 	const double sin = glm::sin(t);
 	const double cos = glm::cos(t);
@@ -124,7 +123,7 @@ void on_update(const state *program) {
 		position.z * cos - position.x * sin
 	};
 
-	program->moon->mesher->transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+	program->moon->transform = glm::translate(glm::mat4(1.0f), rotated_pos);
 
 	glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, program->player->rotation.z, glm::vec3(0, 0, 1));
@@ -154,17 +153,17 @@ void on_update(const state *program) {
 	if (result.hit) {
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
-		model = hit_voxel->mesher->transform * model;
+		model = hit_voxel->transform * model;
 		program->cursor3d->transform = model;
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
 			hit_voxel->set(result.id, { NULL, NULL });
-			hit_voxel->mesher->full_update(hit_voxel);
+			hit_voxel->update(result.id);
 		}
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_2)) {
 			hit_voxel->set(result.id + result.normal, { (ICell *)1, NULL });
-			hit_voxel->mesher->full_update(hit_voxel);
+			hit_voxel->update(result.id + result.normal);
 		}
 	}
 }

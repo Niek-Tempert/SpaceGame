@@ -1,6 +1,91 @@
 #include "voxel.h"
 
 #include "nixelib/nixelib.h"
+#include "utils/mesh_consts.h"
+
+#include <glm/ext/matrix_transform.hpp>
+
+void ChunkMesher::update(const Voxel *voxel, const chunk_id &chunk_id) {
+	transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * Chunk::size.x, chunk_id.y * Chunk::size.y, chunk_id.z * Chunk::size.z));
+	this->voxel = voxel;
+
+	vertices.clear();
+	colors.clear();
+	normals.clear();
+	uvs.clear();
+	indices.clear();
+
+	const Chunk *chunk = voxel->chunks.at(chunk_id);
+	
+	for (int x = 0; x < Chunk::size.x; ++x) {
+		for (int y = 0; y < Chunk::size.y; ++y) {
+			for (int z = 0; z < Chunk::size.z; ++z) {
+				const cell_user &cell = chunk->get({ x, y, z });
+				if (!cell.type) {
+					continue;
+				}
+
+				vec3i id = Voxel::compound_id(chunk_id, { x, y, z });
+				vec3f col = hash_vec3f_to_vec3f(vec3f((float)chunk_id.x, (float)chunk_id.y, (float)chunk_id.z));
+				for (int i = 0; i < 6; ++i) {
+					auto &dir = mesh_consts::axis[i];
+					auto *neighbor = voxel->get(id + dir);
+					if (neighbor && neighbor->type) {
+						continue;
+					}
+
+					for (u32 index : mesh_consts::face_indices) {
+						indices.push_back(index + (u32)vertices.size());
+					}
+
+					for (const auto &vert : mesh_consts::cube_vertices[i]) {
+						vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
+						colors.emplace_back(col);
+					}
+
+					for (u32 j = 0; j < (u32)std::size(*mesh_consts::cube_vertices); ++j) {
+						uvs.emplace_back(mesh_consts::face_uvs[j]);
+						normals.emplace_back(mesh_consts::cube_normals[i]);
+					}
+				}
+			}
+		}
+	}
+
+	prepare();
+}
+
+glm::mat4x4 ChunkMesher::get_transform() const {
+	return voxel->transform * transform;
+}
+
+const char * ChunkMesher::get_vertex_shader() const {
+	return "shaders/voxel.vert";
+}
+
+const char * ChunkMesher::get_fragment_shader() const {
+	return "shaders/voxel.frag";
+}
+
+std::vector<vec3f> ChunkMesher::get_vertices() const {
+	return vertices;
+}
+
+std::vector<vec3f> ChunkMesher::get_colors() const {
+	return colors;
+}
+
+std::vector<vec3f> ChunkMesher::get_normals() const {
+	return normals;
+}
+
+std::vector<vec2f> ChunkMesher::get_uvs() const {
+	return uvs;
+}
+
+std::vector<u32> ChunkMesher::get_indices() const {
+	return indices;
+}
 
 void Chunk::set(const vec3i &id, const cell_user &cell) {
 	if ((cell.type || cell.data)
@@ -19,11 +104,11 @@ const cell_user & Chunk::get(const vec3i &id) const {
 }
 
 Voxel::Voxel() {
-	mesher = new VoxelMesher();
+	transform = glm::mat4(1.0f);
 }
 
 Voxel::~Voxel() {
-	for (std::pair<const vec3i, Chunk *> &pair : _chunks) {
+	for (std::pair<const vec3i, Chunk *> &pair : chunks) {
 		delete pair.second;
 	}
 }
@@ -34,18 +119,18 @@ void Voxel::set(const vec3i &id, const cell_user &cell) {
 
 	Chunk *chunk;
 
-	const auto it = _chunks.find(chunkid);
-	if (it != _chunks.end()) {
+	const auto it = chunks.find(chunkid);
+	if (it != chunks.end()) {
 		chunk = it->second;
 	} else {
 		chunk = new Chunk();
-		_chunks.insert({ chunkid, chunk });
+		chunks.insert({ chunkid, chunk });
 	}
 
 	chunk->set(subid, cell);
 	if (chunk->count == 0) {
 		delete chunk;
-		_chunks.erase(chunkid);
+		chunks.erase(chunkid);
 	}
 }
 
@@ -53,15 +138,15 @@ const cell_user *Voxel::get(const vec3i &id) const {
 	const vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
-	const auto it = _chunks.find(chunkid);
-	if (it == _chunks.end()) {
+	const auto it = chunks.find(chunkid);
+	if (it == chunks.end()) {
 		return NULL;
 	}
 	return &it->second->get(subid);
 }
 
 raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_distance) {
-	glm::mat4 transform = this->mesher->transform;
+	glm::mat4 transform = this->transform;
 	glm::mat4 inv_transform = glm::inverse(transform);
 
 	glm::vec3 scale;
@@ -193,6 +278,77 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
     return {};
 }
 
+void Voxel::update(const vec3i &id) {
+	const vec3i chunk_id = id_to_chunkid(id);
+	const vec3i sub_id = id_to_subid(id);
+	
+	const auto it = chunks.find(chunk_id);
+	if (it != chunks.end()) {
+		it->second->mesher->update(this, chunk_id);
+	}
+
+	vec3i neighbor_id;
+	if (sub_id.x <= 0) {
+		neighbor_id = chunk_id;
+		--neighbor_id.x;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+	
+	if (sub_id.y <= 0) {
+		neighbor_id = chunk_id;
+		--neighbor_id.y;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+	
+	if (sub_id.z <= 0) {
+		neighbor_id = chunk_id;
+		--neighbor_id.z;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+
+	if (sub_id.x >= Chunk::size.x - 1) {
+		neighbor_id = chunk_id;
+		++neighbor_id.x;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+	
+	if (sub_id.y >= Chunk::size.y - 1) {
+		neighbor_id = chunk_id;
+		++neighbor_id.y;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+	
+	if (sub_id.z >= Chunk::size.z - 1) {
+		neighbor_id = chunk_id;
+		++neighbor_id.z;
+		
+		const auto it = chunks.find(neighbor_id);
+		if (it != chunks.end()) {
+			it->second->mesher->update(this, neighbor_id);
+		}
+	}
+}
+
 vec3i Voxel::id_to_chunkid(const vec3i &id) {
 	return {
 		nixemath::floor_to_i32((f64)id.x / Chunk::size.x),
@@ -215,4 +371,16 @@ vec3i Voxel::compound_id(const vec3i &chunk_id, const vec3i &sub_id) {
 		chunk_id.y * Chunk::size.y + sub_id.y,
 		chunk_id.z * Chunk::size.z + sub_id.z
 	};
+}
+
+void Voxel::prepare() {
+	for (auto chunk : chunks) {
+		chunk.second->mesher->update(this, chunk.first);
+	}
+}
+
+void Voxel::render(draw_call_data *data) const {
+	for (auto chunk : chunks) {
+		chunk.second->mesher->render(data);
+	}
 }
