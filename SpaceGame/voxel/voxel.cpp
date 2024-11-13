@@ -2,6 +2,22 @@
 
 #include "nixelib/nixelib.h"
 
+void Chunk::set(const vec3i &id, const cell_user &cell) {
+	if ((cell.type || cell.data)
+		&& (!cells[id].type && !cells[id].data)) {
+		count++;
+	} else if ((!cell.type && !cell.data)
+		&& (cells[id].type || cells[id].data)) {
+		count--;
+	}
+		
+	cells[id] = cell;
+}
+
+const cell_user & Chunk::get(const vec3i &id) const {
+	return cells[id];
+}
+
 Voxel::Voxel() {
 	mesher = new VoxelMesher();
 }
@@ -12,7 +28,7 @@ Voxel::~Voxel() {
 	}
 }
 
-cell_user &Voxel::request(const vec3i &id) {
+void Voxel::set(const vec3i &id, const cell_user &cell) {
 	vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
@@ -26,10 +42,14 @@ cell_user &Voxel::request(const vec3i &id) {
 		_chunks.insert({ chunkid, chunk });
 	}
 
-	return chunk->get(subid);
+	chunk->set(subid, cell);
+	if (chunk->count == 0) {
+		delete chunk;
+		_chunks.erase(chunkid);
+	}
 }
 
-cell_user *Voxel::get(const vec3i &id) const {
+const cell_user *Voxel::get(const vec3i &id) const {
 	const vec3i chunkid = id_to_chunkid(id);
 	const vec3i subid = id_to_subid(id);
 
@@ -89,8 +109,8 @@ raycast_result Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dist
     int side = -1;
 
     while (ray_dist < max_distance) {
-		cell_user *cell = get(map_pos);
-		if (cell && cell->data) {
+		const cell_user *cell = get(map_pos);
+		if (cell && cell->type) {
             vec3i face_dir;
             switch (side)
             {

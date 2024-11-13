@@ -10,7 +10,7 @@ public:
 	typedef vec3i chunk_id;
 	typedef vec3i cell_id;
 	
-	void full_update(Voxel *voxel);
+	void full_update(const Voxel *voxel);
 	void chunk_update(Voxel *voxel, const chunk_id &chunkid);
 	void cell_update(Voxel *voxel, const cell_id &id);
 

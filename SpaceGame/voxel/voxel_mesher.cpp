@@ -5,7 +5,7 @@
 
 #include "nixelib/nixelib.h"
 
-void VoxelMesher::full_update(Voxel *voxel) {
+void VoxelMesher::full_update(const Voxel *voxel) {
 	vertices.clear();
 	colors.clear();
 	normals.clear();
@@ -13,11 +13,11 @@ void VoxelMesher::full_update(Voxel *voxel) {
 	indices.clear();
 
 	for (auto &pairs : voxel->_chunks) {
-		for (int x = 0; x < Voxel::Chunk::size.x; ++x) {
-			for (int y = 0; y < Voxel::Chunk::size.y; ++y) {
-				for (int z = 0; z < Voxel::Chunk::size.z; ++z) {
-					cell_user &cell = pairs.second->get({ x, y, z });
-					if (!cell.data) {
+		for (int x = 0; x < Chunk::size.x; ++x) {
+			for (int y = 0; y < Chunk::size.y; ++y) {
+				for (int z = 0; z < Chunk::size.z; ++z) {
+					const cell_user &cell = pairs.second->get({ x, y, z });
+					if (!cell.type) {
 						continue;
 					}
 
@@ -26,7 +26,7 @@ void VoxelMesher::full_update(Voxel *voxel) {
 					for (int i = 0; i < 6; ++i) {
 						auto &dir = mesh_consts::axis[i];
 						auto *neighbor = voxel->get(id + dir);
-						if (neighbor && neighbor->data) {
+						if (neighbor && neighbor->type) {
 							continue;
 						}
 

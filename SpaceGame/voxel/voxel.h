@@ -15,7 +15,18 @@ struct raycast_result {
 	vec3i id;
 	vec3i normal;
 	f32 distance;
-}; 
+};
+
+class Chunk {
+public:
+	void set(const vec3i &id, const cell_user &cell);
+	const cell_user &get(const vec3i &id) const;
+
+	Array3D<cell_user, 16, 16, 16> cells;
+	u32 count;
+
+	inline static const vec3i size = vec3i(16, 16, 16);
+};
 
 class Voxel {
 public:
@@ -23,16 +34,14 @@ public:
 	typedef vec3i chunk_id;
 	typedef vec3i sub_id;
 	
-	typedef Array3D<cell_user, 16, 16, 16> Chunk; // TODO: Mesh per chunk
-
 	VoxelMesher *mesher;
 	std::map<vec3i, Chunk *> _chunks;
 
 	Voxel();
 	virtual ~Voxel();
 
-	cell_user &request(const vec3i &id);
-	cell_user *get(const vec3i &id) const;
+	void set(const vec3i &id, const cell_user &cell);
+	const cell_user *get(const vec3i &id) const;
 
 	raycast_result raycast(const vec3f &start, const vec3f &dir, f32 max_distance);
 

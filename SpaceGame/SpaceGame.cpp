@@ -52,7 +52,7 @@ void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
 					continue;
 				}
 
-				voxel->request({ x, y, z }).data = (void *)1;
+				voxel->set({ x, y, z }, { (ICell *)1, NULL });
 			}
 		}
 	}
@@ -158,16 +158,15 @@ void on_update(const state *program) {
 		program->cursor3d->transform = model;
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
-			hit_voxel->request(result.id).data = nullptr;
+			hit_voxel->set(result.id, { NULL, NULL });
 			hit_voxel->mesher->full_update(hit_voxel);
 		}
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_2)) {
-			hit_voxel->request(result.id + result.normal).data = (void *)1;
+			hit_voxel->set(result.id + result.normal, { (ICell *)1, NULL });
 			hit_voxel->mesher->full_update(hit_voxel);
 		}
 	}
-
 }
 
 void start(state *&program) {
