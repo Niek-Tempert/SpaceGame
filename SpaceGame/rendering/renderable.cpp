@@ -88,7 +88,7 @@ void link_vbuffer(GLint buffer, GLuint location, GLint size) {
 	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void dispose(render_object *object) {
+void dispose(RenderObject *object) {
 	glDeleteProgram(object->program);
 
 	if (object->pos_buffer >= 0) {
@@ -130,8 +130,8 @@ void MRenderable::prepare() {
 		dispose(object);
 	}
 	
-	object = new render_object();
-	render_object& object = *this->object;
+	object = new RenderObject();
+	RenderObject& object = *this->object;
 	
 	glGenVertexArrays(1, &object.vao);
 	glBindVertexArray(object.vao);
@@ -180,7 +180,7 @@ void MRenderable::prepare() {
 	link_vbuffer(object.uv_buffer, uv_loc, 2);
 }
 
-void MRenderable::render(draw_call_data* data) const {
+void MRenderable::render(DrawCallData* data) const {
 	if (!object || !visible) {
 		return;
 	}
@@ -213,15 +213,15 @@ void MRenderable::render(draw_call_data* data) const {
 	glBindVertexArray(object->vao);
 
 	switch (get_render_type()) {
-		case render_type::triangles:
+		case RenderType::triangles:
 			glDrawArrays(GL_TRIANGLES, 0, object->vertex_count);
 			break;
 
-		case render_type::indexed:
+		case RenderType::indexed:
 			glDrawElements(GL_TRIANGLES, object->index_count, GL_UNSIGNED_INT, (void *)0);
 			break;
 
-		case render_type::lines:
+		case RenderType::lines:
 			glDrawArrays(GL_LINES, 0, object->vertex_count);
 			break;
 	}

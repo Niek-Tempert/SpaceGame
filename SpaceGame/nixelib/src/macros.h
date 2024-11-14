@@ -1,4 +1,4 @@
 ﻿#pragma once
 
 #define FORCEINLINE __forceinline
-#define NODISCARD [[nodiscard]]
+#define PURE [[nodiscard]]

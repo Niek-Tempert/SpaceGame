@@ -5,20 +5,20 @@
 #include <vector>
 #include <glm/mat4x4.hpp>
 
-enum class render_type {
+enum class RenderType {
 	triangles,
 	indexed,
 	lines
 };
 
-struct draw_call_data {
+struct DrawCallData {
 	glm::mat4 view;
 	glm::mat4 proj;
 
 	vec2u resolution;
 };
 
-struct render_object {
+struct RenderObject {
 	u32 vao;
 	u32 program;
 	
@@ -41,7 +41,7 @@ class IRenderable {
 public:
 	virtual ~IRenderable() = default;
 	virtual void prepare() = 0;
-	virtual void render(draw_call_data* data) const = 0;
+	virtual void render(DrawCallData* data) const = 0;
 };
 
 class MRenderable : public IRenderable {
@@ -51,10 +51,10 @@ public:
 	bool visible = true;
 
 	void prepare() override;
-	void render(draw_call_data* data) const override;
+	void render(DrawCallData* data) const override;
 
 protected:
-	virtual render_type get_render_type() const { return render_type::indexed; }
+	virtual RenderType get_render_type() const { return RenderType::indexed; }
 	virtual void set_gl_state() const;
 
 	virtual glm::mat4x4 get_transform() const { return transform; }
@@ -69,5 +69,5 @@ protected:
 	virtual std::vector<vec2f> get_uvs() const { return {}; }
 	virtual std::vector<u32> get_indices() const { return {}; }
 
-	render_object* object;
+	RenderObject* object;
 };

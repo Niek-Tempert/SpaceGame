@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-struct user;
+#include "cell_user.h"
 
 class IPhysicRule {
 public:
 	virtual ~IPhysicRule() = default;
 
-	virtual void update(user &user) = 0;
+	virtual void update(CellUser &user) = 0;
 };

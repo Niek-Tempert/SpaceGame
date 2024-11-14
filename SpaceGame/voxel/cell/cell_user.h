@@ -2,7 +2,7 @@
 
 class ICell;
 
-struct cell_user {
+struct CellUser {
 	ICell *type;
 	void *data;
 };

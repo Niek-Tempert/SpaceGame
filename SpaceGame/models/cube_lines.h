@@ -6,8 +6,8 @@
 
 class CubeLines : public MRenderable {
 protected:
-	render_type get_render_type() const override {
-		return render_type::lines;
+	RenderType get_render_type() const override {
+		return RenderType::lines;
 	}
 
 	void set_gl_state() const override {

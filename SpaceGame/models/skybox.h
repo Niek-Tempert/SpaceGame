@@ -47,12 +47,12 @@ protected:
 		return indices;
 	}
 
-	void render(draw_call_data *data) const override {
+	void render(DrawCallData *data) const override {
 		if (!visible) {
 			return;
 		}
 		
-		draw_call_data skybox_data = *data;
+		DrawCallData skybox_data = *data;
 		skybox_data.view = glm::mat4(glm::mat3(data->view));
 		MRenderable::render(&skybox_data);
 	}

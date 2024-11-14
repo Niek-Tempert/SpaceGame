@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shape.h"
+#include "cell_shape.h"
 
 class IPhysicRule;
 class ICellMesher;
@@ -9,7 +9,7 @@ class ICell {
 public:
 	virtual ~ICell() = default;
 	
-	virtual IPhysicRule *get_physic_rule() = 0;
-	virtual ICellMesher *get_mesher() = 0;
-	virtual cell_shape get_shape() = 0; 
+	virtual IPhysicRule *get_physic_rule() const = 0;
+	virtual ICellMesher *get_mesher() const = 0;
+	virtual CellShape get_shape() const = 0; 
 };

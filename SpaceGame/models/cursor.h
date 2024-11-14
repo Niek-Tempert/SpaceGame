@@ -30,7 +30,7 @@ public:
 		};
 	}
 
-	void render(draw_call_data *data) const override {
+	void render(DrawCallData *data) const override {
 		if (!visible) {
 			return;
 		}

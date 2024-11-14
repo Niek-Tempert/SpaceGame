@@ -1640,7 +1640,7 @@ public:
 		};
 	}
 
-	render_type get_render_type() const override {
-		return render_type::triangles;
+	RenderType get_render_type() const override {
+		return RenderType::triangles;
 	}
 };
