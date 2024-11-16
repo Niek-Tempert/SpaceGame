@@ -201,6 +201,8 @@ inline void update(Program *program) {
 		program->delta_time = time - program->time;
 		program->time = time;
 
+		on_update(program);
+
 		if (program->input->is_key_press(GLFW_KEY_F11)) {
 			if (program->fullscreen) {
 				GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -230,8 +232,6 @@ inline void update(Program *program) {
 				program->focussed = true;
 			}
 		}
-
-		on_update(program);
 
 		int width, height;
 		glfwGetFramebufferSize(program->window, &width, &height);
