@@ -4,7 +4,7 @@
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include "models/cube.h"
-#include "models/cube_lines.h"
+#include "models/block_cursor.h"
 #include "models/cursor.h"
 
 #include <GLFW/glfw3.h>
@@ -37,7 +37,7 @@ struct Program {
 	Voxel *moon;
 	std::vector<Voxel *> voxels;
 
-	CubeLines *cursor3d;
+	BlockCursor *block_cursor;
 	std::vector<IRenderable *> render_queue;
 };
 
@@ -79,12 +79,12 @@ void build_render_queue(Program *program) {
 	program->render_queue.push_back(voxel);
 	program->render_queue.push_back(program->moon);
 
-	program->render_queue.push_back(program->cursor3d = new CubeLines());
+	program->render_queue.push_back(program->block_cursor = new BlockCursor());
 
 	program->render_queue.push_back(new Cursor());
 
 	for (auto renderable : program->render_queue) {
-		renderable->prepare();
+		renderable->setup();
 	}
 }
 
@@ -103,7 +103,7 @@ void render(const Program *program) {
 	glm::mat4 view = rot * trans;
 	glm::mat4 proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
 
-	DrawCallData data = {
+	RenderData data = {
 		view,
 		proj,
 		{ (u32)width, (u32)height }
@@ -151,12 +151,12 @@ void on_update(const Program *program) {
 		}
 	}
 
-	program->cursor3d->visible = result.hit;
+	program->block_cursor->visible = result.hit;
 	if (result.hit) {
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
 		model = hit_voxel->transform * model;
-		program->cursor3d->transform = model;
+		program->block_cursor->transform = model;
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
 			hit_voxel->set(result.id, { NULL, NULL });
@@ -170,7 +170,7 @@ void on_update(const Program *program) {
 	}
 }
 
-void start(Program **program) {
+void start(Program *&program) {
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {
@@ -194,12 +194,12 @@ void start(Program **program) {
 	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(1);
 
-	*program = new Program();
-	build_render_queue(*program);
+	program = new Program();
+	build_render_queue(program);
 
-	(*program)->window = window;
-	(*program)->player = new Player();
-	(*program)->input = Input::init(window);
+	program->window = window;
+	program->player = new Player();
+	program->input = Input::init(window);
 }
 
 void update(Program *program) {

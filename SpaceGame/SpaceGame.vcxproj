@@ -166,7 +166,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="rendering\line_renderable.cpp" />
     <ClCompile Include="rendering\renderable.cpp" />
+    <ClCompile Include="rendering\shader.cpp" />
     <ClCompile Include="SpaceGame.cpp" />
     <ClCompile Include="third_party\gl.c" />
     <ClCompile Include="voxel\chunk.cpp">
@@ -323,7 +325,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="models\cube.h" />
-    <ClInclude Include="models\cube_lines.h" />
+    <ClInclude Include="models\block_cursor.h" />
     <ClInclude Include="models\cursor.h" />
     <ClInclude Include="models\monkey.h" />
     <ClInclude Include="models\skybox.h" />
@@ -339,7 +341,9 @@
     <ClInclude Include="nixelib\src\types\vec4.h" />
     <ClInclude Include="nixelib\src\types\vec4i.h" />
     <ClInclude Include="program.h" />
+    <ClInclude Include="rendering\line_renderable.h" />
     <ClInclude Include="rendering\renderable.h" />
+    <ClInclude Include="rendering\shader.h" />
     <ClInclude Include="utils\array_3d.h" />
     <ClInclude Include="utils\file.h" />
     <ClInclude Include="utils\input.hpp" />

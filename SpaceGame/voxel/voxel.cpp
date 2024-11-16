@@ -48,38 +48,37 @@ const CellUser *Voxel::get(const vec3i &id) const {
 	return &it->second->get(subid);
 }
 
-RaycastResult Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_distance) {
-	glm::mat4 transform = this->transform;
-	glm::mat4 inv_transform = glm::inverse(transform);
+RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max_distance) {
+	glm::mat4 voxel_transform = this->transform;
+	glm::mat4 voxel_transform_inv = glm::inverse(voxel_transform);
 
 	glm::vec3 scale;
-	scale.x = glm::length(glm::vec3(transform[0])); // Basis vector X
-	scale.y = glm::length(glm::vec3(transform[1])); // Basis vector Y
-	scale.z = glm::length(glm::vec3(transform[2])); // Basis vector Z
+	scale.x = glm::length(glm::vec3(voxel_transform[0]));
+	scale.y = glm::length(glm::vec3(voxel_transform[1]));
+	scale.z = glm::length(glm::vec3(voxel_transform[2]));
 
-	glm::vec3 direction = inv_transform * glm::vec4(dir.x, dir.y, dir.z, 0);
-	direction = glm::normalize(direction);
+	glm::vec3 local_direction = voxel_transform_inv * glm::vec4(direction.x, direction.y, direction.z, 0);
+	local_direction = glm::normalize(local_direction);
 
-	glm::vec3 scaled_dir = direction * max_distance;
 	max_distance = glm::length(glm::vec3{
-		nixemath::save_divide(scaled_dir.x, scale.x),
-		nixemath::save_divide(scaled_dir.y, scale.y),
-		nixemath::save_divide(scaled_dir.z, scale.z)
+		nixemath::save_divide(local_direction.x * max_distance, scale.x),
+		nixemath::save_divide(local_direction.y * max_distance, scale.y),
+		nixemath::save_divide(local_direction.z * max_distance, scale.z)
 	}); //scale distance from world scale to voxel scale
 
 	glm::vec3 delta_dist = {
-		glm::abs(1.0f / direction.x),
-		glm::abs(1.0f / direction.y),
-		glm::abs(1.0f / direction.z)
+		glm::abs(1.0f / local_direction.x),
+		glm::abs(1.0f / local_direction.y),
+		glm::abs(1.0f / local_direction.z)
 	};
 
 	vec3i step = vec3i{
-		direction.x < 0 ? -1 : 1,
-		direction.y < 0 ? -1 : 1,
-		direction.z < 0 ? -1 : 1
+		local_direction.x < 0 ? -1 : 1,
+		local_direction.y < 0 ? -1 : 1,
+		local_direction.z < 0 ? -1 : 1
 	};
 
-	glm::vec3 voxel_space = inv_transform * glm::vec4(start.x, start.y, start.z, 1);
+	glm::vec3 voxel_space = voxel_transform_inv * glm::vec4(start.x, start.y, start.z, 1.0f);
 
 	vec3i map_pos = {
 		nixemath::floor_to_i32(voxel_space.x),
@@ -88,9 +87,9 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dista
 	};
 
 	glm::vec3 side_dist = glm::vec3(
-			(direction.x < 0 ? voxel_space.x - map_pos.x : map_pos.x + 1 - voxel_space.x) * delta_dist.x,
-			(direction.y < 0 ? voxel_space.y - map_pos.y : map_pos.y + 1 - voxel_space.y) * delta_dist.y,
-			(direction.z < 0 ? voxel_space.z - map_pos.z : map_pos.z + 1 - voxel_space.z) * delta_dist.z
+			(local_direction.x < 0.0f ? voxel_space.x - (f32)map_pos.x : (f32)map_pos.x + 1.0f - voxel_space.x) * delta_dist.x,
+			(local_direction.y < 0.0f ? voxel_space.y - (f32)map_pos.y : (f32)map_pos.y + 1.0f - voxel_space.y) * delta_dist.y,
+			(local_direction.z < 0.0f ? voxel_space.z - (f32)map_pos.z : (f32)map_pos.z + 1.0f - voxel_space.z) * delta_dist.z
 			);
 
 	float ray_dist = 0;
@@ -98,78 +97,67 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &dir, f32 max_dista
 
 	while (ray_dist < max_distance) {
 		const CellUser *cell = get(map_pos);
-		if (cell && cell->type) {
-			vec3i face_dir;
-			switch (side) {
-				case 0:
-					if (step.x > 0) {
-						face_dir = {
-							-1, 0, 0
-						};
-					} else {
-						face_dir = {
-							1, 0, 0
-						};
-					}
-					break;
-
-				case 1:
-					if (step.y > 0) {
-						face_dir = {
-							0, -1, 0
-						};
-					} else {
-						face_dir = {
-							0, 1, 0
-						};
-					}
-					break;
-
-				case 2:
-					if (step.z > 0) {
-						face_dir = {
-							0, 0, -1
-						};
-					} else {
-						face_dir = {
-							0, 0, 1
-						};
-					}
-					break;
-
-				default:
-					face_dir = {
-						0, 0, 0
-					};
-					break;
+		if (!cell || !cell->type) {
+			if (side_dist.x < side_dist.y && side_dist.x < side_dist.z) {
+				ray_dist = side_dist.x;
+				side_dist.x += delta_dist.x;
+				map_pos.x += step.x;
+				side = 0;
+			} else if (side_dist.y < side_dist.x && side_dist.y < side_dist.z) {
+				ray_dist = side_dist.y;
+				side_dist.y += delta_dist.y;
+				map_pos.y += step.y;
+				side = 1;
+			} else {
+				ray_dist = side_dist.z;
+				side_dist.z += delta_dist.z;
+				map_pos.z += step.z;
+				side = 2;
 			}
-
-			ray_dist = glm::length(direction * ray_dist * scale); //scale distance from voxel scale to world scale
-
-			return RaycastResult(
-					true,
-					map_pos,
-					face_dir,
-					ray_dist
-					);
+			continue;
 		}
 
-		if (side_dist.x < side_dist.y && side_dist.x < side_dist.z) {
-			ray_dist = side_dist.x;
-			side_dist.x += delta_dist.x;
-			map_pos.x += step.x;
-			side = 0;
-		} else if (side_dist.y < side_dist.x && side_dist.y < side_dist.z) {
-			ray_dist = side_dist.y;
-			side_dist.y += delta_dist.y;
-			map_pos.y += step.y;
-			side = 1;
-		} else {
-			ray_dist = side_dist.z;
-			side_dist.z += delta_dist.z;
-			map_pos.z += step.z;
-			side = 2;
+		vec3i face_dir;
+		switch (side) {
+			case 0:
+				if (step.x > 0) {
+					face_dir = { -1, 0, 0 };
+				} else {
+					face_dir = { 1, 0, 0 };
+				}
+				break;
+
+			case 1:
+				if (step.y > 0) {
+					face_dir = { 0, -1, 0 };
+				} else {
+					face_dir = { 0, 1, 0 };
+				}
+				break;
+
+			case 2:
+				if (step.z > 0) {
+					face_dir = { 0, 0, -1 };
+				} else {
+					face_dir = { 0, 0, 1 };
+				}
+				break;
+
+			default:
+				face_dir = {
+					0, 0, 0
+				};
+				break;
 		}
+
+		ray_dist = glm::length(local_direction * ray_dist * scale); // Scale distance from voxel scale to world scale
+
+		return {
+			true,
+			map_pos,
+			face_dir,
+			ray_dist
+		};
 	}
 
 	return {};
@@ -274,13 +262,13 @@ const std::map<vec3i, Chunk *> &Voxel::get_chunks() const {
 	return chunks;
 }
 
-void Voxel::prepare() {
+void Voxel::setup() {
 	for (auto chunk : chunks) {
 		chunk.second->get_mesher()->update(this, chunk.first);
 	}
 }
 
-void Voxel::render(DrawCallData *data) const {
+void Voxel::render(RenderData *data) const {
 	for (auto chunk : chunks) {
 		chunk.second->get_mesher()->render(data);
 	}

@@ -16,7 +16,7 @@ GLint upload_vbuffer(std::vector<T> data) {
 	if (data.empty()) {
 		return -1;
 	}
-	
+
 	GLuint buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -29,7 +29,7 @@ GLint upload_ibuffer(std::vector<T> data) {
 	if (data.empty()) {
 		return -1;
 	}
-	
+
 	GLuint buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
@@ -60,7 +60,7 @@ GLuint compile_shader(const char *path, GLenum type) {
 	if (success) {
 		return shader_id;
 	}
-	
+
 	const char *fallback;
 	switch (type) {
 		default: // GL_VERTEX_SHADER
@@ -82,14 +82,14 @@ void link_vbuffer(GLint buffer, GLuint location, GLint size) {
 	if (buffer < 0 || location < 0) {
 		return;
 	}
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buffer);
 	glEnableVertexAttribArray(location);
 	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void dispose(RenderObject *object) {
-	glDeleteProgram(object->program);
+	object->shader.dispose();
 
 	if (object->pos_buffer >= 0) {
 		u32 pos_buffer = object->pos_buffer;
@@ -115,32 +115,32 @@ void dispose(RenderObject *object) {
 		u32 index_buffer = object->index_buffer;
 		glDeleteBuffers(1, &index_buffer);
 	}
-	
+
 	glDeleteVertexArrays(1, &object->vao);
 
 	delete object;
 }
 
 MRenderable::~MRenderable() {
-	dispose(object);
+	dispose(_render_object);
 }
 
-void MRenderable::prepare() {
-	if (object) {
-		dispose(object);
+void MRenderable::setup() {
+	if (_render_object) {
+		dispose(_render_object);
 	}
-	
-	object = new RenderObject();
-	RenderObject& object = *this->object;
-	
+
+	_render_object = new RenderObject();
+	RenderObject &object = *this->_render_object;
+
 	glGenVertexArrays(1, &object.vao);
 	glBindVertexArray(object.vao);
-	
-	auto verts = get_vertices();
-	auto cols = get_colors();
-	auto norms = get_normals();
-	auto uvs = get_uvs();
-	auto indices = get_indices();
+
+	auto verts = _get_vertices();
+	auto cols = _get_colors();
+	auto norms = _get_normals();
+	auto uvs = _get_uvs();
+	auto indices = _get_indices();
 
 	object.vertex_count = (i32)verts.size();
 	object.index_count = (i32)indices.size();
@@ -151,84 +151,55 @@ void MRenderable::prepare() {
 	object.uv_buffer = upload_vbuffer(uvs);
 	object.index_buffer = upload_ibuffer(indices);
 
-	GLuint vert_shader = compile_shader(get_vertex_shader(), GL_VERTEX_SHADER);
-	GLuint frag_shader = compile_shader(get_fragment_shader(), GL_FRAGMENT_SHADER);
+	_render_object->shader = _get_shader();
+	const GLint pos_loc = glGetAttribLocation(_render_object->shader.id, "vPos");
+	const GLint col_loc = glGetAttribLocation(_render_object->shader.id, "vCol");
+	const GLint norm_loc = glGetAttribLocation(_render_object->shader.id, "vNorm");
+	const GLint uv_loc = glGetAttribLocation(_render_object->shader.id, "vUV");
 
-	// int t_width, t_height, t_channels;
-	// unsigned char *data = stbi_load(get_texture(), &t_width, &t_height, &t_channels, 0); 
-
-	object.program = glCreateProgram();
-	glAttachShader(object.program, vert_shader);
-	glAttachShader(object.program, frag_shader);
-	glLinkProgram(object.program);
-
-	glDeleteShader(vert_shader);
-	glDeleteShader(frag_shader);
-
-	const GLint pos_loc = glGetAttribLocation(object.program, "vPos");
-	const GLint col_loc = glGetAttribLocation(object.program, "vCol");
-	const GLint norm_loc = glGetAttribLocation(object.program, "vNorm");
-	const GLint uv_loc = glGetAttribLocation(object.program, "vUV");
-	object.mvp_loc = glGetUniformLocation(object.program, "MVP");
-	object.model_loc = glGetUniformLocation(object.program, "Model");
-	object.view_loc = glGetUniformLocation(object.program, "View");
-	object.proj_loc = glGetUniformLocation(object.program, "Proj");
-
-	link_vbuffer(object.pos_buffer, pos_loc, 3);
-	link_vbuffer(object.col_buffer, col_loc, 3);
-	link_vbuffer(object.norm_buffer, norm_loc, 3);
-	link_vbuffer(object.uv_buffer, uv_loc, 2);
+	link_vbuffer(object.pos_buffer, pos_loc, sizeof(*verts.data()) / sizeof(f32));
+	link_vbuffer(object.col_buffer, col_loc, sizeof(*cols.data()) / sizeof(f32));
+	link_vbuffer(object.norm_buffer, norm_loc, sizeof(*norms.data()) / sizeof(f32));
+	link_vbuffer(object.uv_buffer, uv_loc, sizeof(*uvs.data()) / sizeof(f32));
 }
 
-void MRenderable::render(DrawCallData* data) const {
-	if (!object || !visible) {
+void MRenderable::render(RenderData *data) const {
+	if (!_render_object) {
 		return;
 	}
 
-	set_gl_state();
-
-	glm::mat4 model = get_transform();
-	glm::mat4 view = data->view;
-	glm::mat4 proj = data->proj;
-	
-	glUseProgram(object->program);
-
-	if (object->model_loc >= 0) {
-		glUniformMatrix4fv(object->model_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(model));
-	}
-
-	if (object->view_loc >= 0) {
-		glUniformMatrix4fv(object->view_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(view));
-	}
-
-	if (object->proj_loc >= 0) {
-		glUniformMatrix4fv(object->proj_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(proj));
-	}
-
-	if (object->mvp_loc >= 0) {
-		glm::mat4 mvp = proj * view * model;
-		glUniformMatrix4fv(object->mvp_loc, 1, GL_FALSE, (const GLfloat *)glm::value_ptr(mvp));
-	}
-	
-	glBindVertexArray(object->vao);
-
-	switch (get_render_type()) {
-		case RenderType::triangles:
-			glDrawArrays(GL_TRIANGLES, 0, object->vertex_count);
-			break;
-
-		case RenderType::indexed:
-			glDrawElements(GL_TRIANGLES, object->index_count, GL_UNSIGNED_INT, (void *)0);
-			break;
-
-		case RenderType::lines:
-			glDrawArrays(GL_LINES, 0, object->vertex_count);
-			break;
-	}
+	_set_gl_state();
+	_before_render(data);
+	_render();
 }
 
-void MRenderable::set_gl_state() const {
+void MRenderable::_set_gl_state() const {
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
 	glLineWidth(1.0f);
+}
+
+void MRenderable::_before_render(RenderData *data) const {
+	glm::mat4 model = _get_transform();
+	glm::mat4 view = data->view;
+	glm::mat4 proj = data->proj;
+	glm::mat4 mvp = proj * view * model;
+
+	_render_object->shader.use();
+	_render_object->shader.set_mat4("Model", model);
+	_render_object->shader.set_mat4("View", view);
+	_render_object->shader.set_mat4("Proj", proj);
+	_render_object->shader.set_mat4("MVP", mvp);
+
+	glBindVertexArray(_render_object->vao);
+}
+
+void MRenderable::_render() const {
+	if (_render_object->index_count > 0) {
+		glDrawElements(GL_TRIANGLES, _render_object->index_count, GL_UNSIGNED_INT, (void *)0);
+	} else {
+		glDrawArrays(GL_TRIANGLES, 0, _render_object->vertex_count);
+	}
 }

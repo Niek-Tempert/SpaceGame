@@ -6,8 +6,8 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
-void ChunkMesher::update(const Voxel *voxel, const chunk_id &chunk_id) {
-	transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
+void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
+	_transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
 	this->_voxel = voxel;
 
 	_vertices.clear();
@@ -53,37 +53,33 @@ void ChunkMesher::update(const Voxel *voxel, const chunk_id &chunk_id) {
 		}
 	}
 
-	prepare();
+	setup();
 }
 
-glm::mat4x4 ChunkMesher::get_transform() const {
-	return _voxel->transform * transform;
+glm::mat4x4 ChunkMesher::_get_transform() const {
+	return _voxel->transform * _transform;
 }
 
-const char *ChunkMesher::get_vertex_shader() const {
-	return "shaders/voxel.vert";
-}
-
-const char *ChunkMesher::get_fragment_shader() const {
-	return "shaders/voxel.frag";
-}
-
-std::vector<vec3f> ChunkMesher::get_vertices() const {
+std::vector<vec3f> ChunkMesher::_get_vertices() const {
 	return _vertices;
 }
 
-std::vector<vec3f> ChunkMesher::get_colors() const {
+std::vector<vec3f> ChunkMesher::_get_colors() const {
 	return _colors;
 }
 
-std::vector<vec3f> ChunkMesher::get_normals() const {
+std::vector<vec3f> ChunkMesher::_get_normals() const {
 	return _normals;
 }
 
-std::vector<vec2f> ChunkMesher::get_uvs() const {
+std::vector<vec2f> ChunkMesher::_get_uvs() const {
 	return _uvs;
 }
 
-std::vector<u32> ChunkMesher::get_indices() const {
+std::vector<u32> ChunkMesher::_get_indices() const {
 	return _indices;
+}
+
+Shader ChunkMesher::_get_shader() const {
+	return Shader::from_file("shaders/voxel.vert", "shaders/voxel.frag");
 }

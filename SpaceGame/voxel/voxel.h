@@ -35,10 +35,10 @@ public:
 	const std::map<vec3i, Chunk *> &get_chunks() const;
 
 	void update(const CellID &id);
-	void prepare() override;
-	void render(DrawCallData *data) const override;
+	void setup() override;
+	void render(RenderData *data) const override;
 
-	RaycastResult raycast(const vec3f &start, const vec3f &dir, f32 max_distance);
+	RaycastResult raycast(const vec3f &start, const vec3f &direction, f32 max_distance);
 	
 	static ChunkID id_to_chunkid(const CellID &id);
 	static SubID id_to_subid(const CellID &cell_id);

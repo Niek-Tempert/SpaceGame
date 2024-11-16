@@ -3,7 +3,7 @@
 int main() {
 	Program *program;
 
-	start(&program);
+	start(program);
 	update(program);
 	cleanup(program);
 }

@@ -9,28 +9,28 @@ class Voxel;
 
 class ChunkMesher : public MRenderable {
 public:
-	typedef vec3i chunk_id;
-	typedef vec3i cell_id;
+	typedef vec3i ChunkID;
+	typedef vec3i CellID;
 
-	ChunkMesher() : _vertices(), _colors(), _normals(), _uvs(), _indices(), _voxel(nullptr) {}
+	ChunkMesher() : _transform(glm::mat4(1.0f)), _voxel(NULL) {}
 
-	void update(const Voxel *voxel, const chunk_id &chunk_id);
+	void update(const Voxel *voxel, const ChunkID &chunk_id);
 
-	glm::mat4x4 get_transform() const override;
-	const char *get_vertex_shader() const override;
-	const char *get_fragment_shader() const override;
-	std::vector<vec3f> get_vertices() const override;
-	std::vector<vec3f> get_colors() const override;
-	std::vector<vec3f> get_normals() const override;
-	std::vector<vec2f> get_uvs() const override;
-	std::vector<u32> get_indices() const override;
+protected:
+	glm::mat4x4 _get_transform() const override;
+	std::vector<vec3f> _get_vertices() const override;
+	std::vector<vec3f> _get_colors() const override;
+	std::vector<vec3f> _get_normals() const override;
+	std::vector<vec2f> _get_uvs() const override;
+	std::vector<u32> _get_indices() const override;
+	Shader _get_shader() const override;
 
-private:
 	std::vector<vec3f> _vertices;
 	std::vector<vec3f> _colors;
 	std::vector<vec3f> _normals;
 	std::vector<vec2f> _uvs;
 	std::vector<u32> _indices;
 
+	glm::mat4 _transform;
 	const Voxel *_voxel;
 };
