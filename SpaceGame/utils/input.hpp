@@ -9,18 +9,15 @@
 
 class Input {
 public:
-	static Input *init(GLFWwindow* window) {
-		Input *_input = new Input();
-		glfwSetWindowUserPointer(window, _input);
+	Input(GLFWwindow* window) {
+		glfwSetWindowUserPointer(window, this);
 		glfwSetCursorPosCallback(window, _cursor_callback);
 		glfwSetMouseButtonCallback(window, _mouse_callback);
 		glfwSetKeyCallback(window, _keyboard_callback);
 
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		_input->cursor = _input->last_cursor = { xpos, ypos };
-		
-		return _input;
+		cursor = last_cursor = { xpos, ypos };
 	}
 
 	void next() {
