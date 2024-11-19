@@ -7,12 +7,16 @@ uniform mat4 View;
 in vec3 vPos;
 in vec3 vNorm;
 in vec3 vCol;
+in vec2 vUV;
 
 out vec3 cam_pos;
 out vec3 w_pos;
 out vec3 w_norm;
+out vec2 uv0;
 
 out vec3 col;
+
+#include "hash.glsl"
 
 void main()
 {
@@ -21,5 +25,6 @@ void main()
     w_pos = vec3(Model * vec4(vPos, 1.0));
     w_norm = vec3(Model * vec4(vNorm, 0.0));
     
-    col = vCol;
+    col = hash_vec3_to_vec3(vCol);
+    uv0 = vUV;
 };

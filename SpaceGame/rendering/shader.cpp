@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <sstream>
 #include <glm/fwd.hpp>
 #include <glm/mat4x4.hpp>
@@ -13,6 +14,36 @@
 
 static const char *errorVertexCode = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
 static const char *errorFragmentCode = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
+
+FORCEINLINE std::string load_text(const char *path) {
+	std::string content;
+	std::ifstream file;
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try {
+		file.open(path);
+		std::stringstream file_stream;
+		file_stream << file.rdbuf();
+		file.close();
+		content = file_stream.str();
+	} catch (std::ifstream::failure &e) {
+		std::cerr << "ERROR::FILE::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+	}
+	
+	return content;
+}
+
+std::string preprocess_shader(std::string source) {
+	std::string result = source;
+	size_t pos = 0;
+	while ((pos = result.find("#include", pos)) != std::string::npos) {
+		size_t start = result.find("\"", pos);
+		size_t end = result.find("\"", start + 1);
+		std::string includePath = "shaders/" + result.substr(start + 1, end - start - 1);
+		std::string includeSource = load_text(includePath.c_str());
+		result.replace(pos, end - pos + 1, includeSource);
+	}
+	return result;
+}
 
 Shader::Shader() : Shader(errorVertexCode, errorFragmentCode) {}
 
@@ -39,30 +70,11 @@ Shader::Shader(const char *vertex_code, const char *fragment_code) {
 
 Shader Shader::from_file(const char *vertexPath, const char *fragmentPath) {
 	// 1. retrieve the vertex/fragment source code from filePath
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	} catch (std::ifstream::failure &e) {
-		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
-	}
+	std::string vertexCode = load_text(vertexPath);
+	std::string fragmentCode = load_text(fragmentPath);
+
+	vertexCode = preprocess_shader(vertexCode);
+	fragmentCode = preprocess_shader(fragmentCode);
 
 	return { vertexCode.c_str(), fragmentCode.c_str() };
 }

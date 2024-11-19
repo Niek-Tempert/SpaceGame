@@ -3,6 +3,7 @@
 in vec3 cam_pos;
 in vec3 w_pos;
 in vec3 w_norm;
+in vec2 uv0;
 
 in vec3 col;
 

@@ -27,8 +27,8 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 				}
 
 				vec3i id = Voxel::compound_id(chunk_id, { x, y, z });
-				vec3f col = hash_vec3f_to_vec3f(vec3f((float)chunk_id.x, (float)chunk_id.y, (float)chunk_id.z));
-				for (int i = 0; i < 6; ++i) {
+				vec3f col = vec3f((float)id.x, (float)id.y, (float)id.z);
+				for (u32 i = 0; i < 6; ++i) {
 					auto &dir = mesh_consts::axis[i];
 					auto *neighbor = voxel->get(id + dir);
 					if (neighbor && neighbor->type) {
