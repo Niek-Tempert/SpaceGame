@@ -3,7 +3,6 @@
 #include "chunk_mesher.h"
 #include "cell/cell_user.h"
 #include "nixelib/nixelib.h"
-#include "rendering/renderable.h"
 #include "utils/array_3d.h"
 
 #define CHUNK_SIZE 16u

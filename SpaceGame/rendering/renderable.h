@@ -25,6 +25,8 @@ struct RenderObject {
 	i32 norm_buffer;
 	i32 uv_buffer;
 	i32 index_buffer;
+
+	u32 texture_buffer;
 };
 
 class IRenderable {

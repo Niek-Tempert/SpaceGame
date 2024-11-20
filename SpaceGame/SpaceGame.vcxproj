@@ -361,6 +361,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\images\rock.png" />
+    <Content Include="assets\images\white_wool.png" />
     <Content Include="shaders\blinn-phong.frag" />
     <Content Include="shaders\blinn-phong.vert" />
     <Content Include="shaders\black.frag" />

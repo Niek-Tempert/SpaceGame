@@ -8,6 +8,7 @@
 
 #include "utils/file.h"
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -161,6 +162,26 @@ void MRenderable::setup() {
 	link_vbuffer(object.col_buffer, col_loc, sizeof(*cols.data()) / sizeof(f32));
 	link_vbuffer(object.norm_buffer, norm_loc, sizeof(*norms.data()) / sizeof(f32));
 	link_vbuffer(object.uv_buffer, uv_loc, sizeof(*uvs.data()) / sizeof(f32));
+
+	glGenTextures(1, &_render_object->texture_buffer);
+	glBindTexture(GL_TEXTURE_2D, _render_object->texture_buffer);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// load and generate the texture
+	int width, height, nrChannels;
+	u8 *data = stbi_load("assets/images/white_wool.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
 }
 
 void MRenderable::render(RenderData *data) const {
@@ -193,6 +214,7 @@ void MRenderable::_before_render(RenderData *data) const {
 	_render_object->shader.set_mat4("Proj", proj);
 	_render_object->shader.set_mat4("MVP", mvp);
 
+	glBindTexture(GL_TEXTURE_2D, _render_object->texture_buffer);
 	glBindVertexArray(_render_object->vao);
 }
 
