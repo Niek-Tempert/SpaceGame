@@ -226,3 +226,4 @@ stage1/
 **/launchSettings.json
 
 **/x64/
+!extern/**
