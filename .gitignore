@@ -226,4 +226,6 @@ stage1/
 **/launchSettings.json
 
 **/x64/
+[Rr]elease/
+[Dd]ebug/
 !extern/**
