@@ -200,6 +200,9 @@ inline void start(Program *&program) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -219,11 +222,10 @@ inline void update(Program *program) {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		ImGuiIO& io = ImGui::GetIO();
 		if (program->focussed) {
-			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		} else {
-			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 		}
 
@@ -274,6 +276,14 @@ inline void update(Program *program) {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 
 		glfwSwapBuffers(program->window);
 		glfwPollEvents();
