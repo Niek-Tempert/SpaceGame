@@ -229,3 +229,5 @@ stage1/
 [Rr]elease/
 [Dd]ebug/
 !extern/**
+
+imgui.ini

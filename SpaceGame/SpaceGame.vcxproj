@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extern\include;$(ProjectDir);$(SolutionDir)extern\imgui;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -174,14 +174,14 @@
     <ClCompile Include="rendering\renderable.cpp" />
     <ClCompile Include="rendering\shader.cpp" />
     <ClCompile Include="SpaceGame.cpp" />
-    <ClCompile Include="third_party\gl.c" />
-    <ClCompile Include="third_party\imgui\imgui.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_demo.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\gl.c" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_demo.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_draw.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_tables.cpp" />
+    <ClCompile Include="$(SolutionDir)extern\imgui\imgui_widgets.cpp" />
     <ClCompile Include="voxel\chunk.cpp" />
     <ClCompile Include="voxel\chunk_mesher.cpp" />
     <ClCompile Include="voxel\voxel.cpp" />
@@ -208,14 +208,14 @@
     <ClInclude Include="rendering\line_renderable.h" />
     <ClInclude Include="rendering\renderable.h" />
     <ClInclude Include="rendering\shader.h" />
-    <ClInclude Include="third_party\imgui\imconfig.h" />
-    <ClInclude Include="third_party\imgui\imgui.h" />
-    <ClInclude Include="third_party\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="third_party\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="third_party\imgui\imgui_internal.h" />
-    <ClInclude Include="third_party\imgui\imstb_rectpack.h" />
-    <ClInclude Include="third_party\imgui\imstb_textedit.h" />
-    <ClInclude Include="third_party\imgui\imstb_truetype.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imconfig.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imgui.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imgui_internal.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imstb_rectpack.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imstb_textedit.h" />
+    <ClInclude Include="$(SolutionDir)extern\imgui\imstb_truetype.h" />
     <ClInclude Include="utils\array_3d.h" />
     <ClInclude Include="utils\file.h" />
     <ClInclude Include="utils\input.hpp" />
