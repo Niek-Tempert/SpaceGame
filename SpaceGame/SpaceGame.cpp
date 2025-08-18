@@ -1,11 +1,15 @@
+#include "third_party/imgui/imgui.h"
+#include "third_party/imgui/imgui_impl_glfw.h"
+#include "third_party/imgui/imgui_impl_opengl3.h"
+
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include "models/cube.h"
 #include "models/block_cursor.h"
 #include "models/cursor.h"
-
-#include <GLFW/glfw3.h>
 
 #include "models/skybox.h"
 
@@ -191,16 +195,28 @@ inline void start(Program *&program) {
 	program->window = window;
 	program->player = new Player();
 	program->input = new Input(window);
+	program->time_speed = 1.f;
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 inline void update(Program *program) {
 	while (!glfwWindowShouldClose(program->window)) {
 		program->player->update(program);
 
-		double time = glfwGetTime();
+		double time = glfwGetTime() * program->time_speed;
 		program->delta_time = time - program->time;
 		program->time = time;
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		
 		on_update(program);
 
 		if (program->input->is_key_press(GLFW_KEY_F11)) {
@@ -227,7 +243,7 @@ inline void update(Program *program) {
 		}
 
 		if (program->input->is_mouse_press(GLFW_MOUSE_BUTTON_1)) {
-			if (!program->focussed) {
+			if (!program->focussed && !ImGui::GetIO().WantCaptureMouse) {
 				glfwSetInputMode(program->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 				program->focussed = true;
 			}
@@ -242,12 +258,23 @@ inline void update(Program *program) {
 
 		render(program);
 
+		ImGui::Begin("Settings");
+		ImGui::SliderFloat("Speed", &program->time_speed, 0.f, 5.f);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(program->window);
 		glfwPollEvents();
 	}
 }
 
 inline void cleanup(const Program *program) {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+	
 	glfwDestroyWindow(program->window);
 	glfwTerminate();
 

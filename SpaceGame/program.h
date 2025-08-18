@@ -13,6 +13,7 @@ struct Program {
 
 	double time;
 	double delta_time;
+	float time_speed;
 
 	Voxel *moon;
 	std::vector<Voxel *> voxels;

@@ -3,7 +3,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
 
 #include "utils/file.h"
