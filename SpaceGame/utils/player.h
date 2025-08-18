@@ -18,12 +18,10 @@ public:
 	}
 
 	void update(const Program *program) {
-		if (program->focussed) {
-			glm::vec2 delta = { program->input->get_cursor_delta().x, program->input->get_cursor_delta().y };
-			
-			rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -glm::half_pi<f32>(), glm::half_pi<f32>());
-			rotation.y = nixemath::wrap(rotation.y - delta.x * look_speed, 0, glm::two_pi<f32>());
-		}
+		glm::vec2 delta = { program->input->get_cursor_delta().x, program->input->get_cursor_delta().y };
+		
+		rotation.x = glm::clamp(rotation.x - delta.y * look_speed, -glm::half_pi<f32>(), glm::half_pi<f32>());
+		rotation.y = nixemath::wrap(rotation.y - delta.x * look_speed, 0, glm::two_pi<f32>());
 
 		glm::vec3 dir = { 0, 0, 0};
 		if (program->input->is_key_down(GLFW_KEY_W)) {

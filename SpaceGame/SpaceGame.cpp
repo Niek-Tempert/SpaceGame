@@ -108,7 +108,7 @@ inline void render(const Program *program) {
 
 inline void on_update(const Program *program) {
 	glm::vec3 position = glm::vec3(program->moon->transform[3]);
-	const double t = program->delta_time * 0.05;
+	const double t = program->delta_time * 0.05 * program->time_speed;
 	const double sin = glm::sin(t);
 	const double cos = glm::cos(t);
 	glm::vec3 rotated_pos = {
@@ -207,16 +207,26 @@ inline void start(Program *&program) {
 
 inline void update(Program *program) {
 	while (!glfwWindowShouldClose(program->window)) {
-		program->player->update(program);
+		if (program->focussed) {
+			program->player->update(program);
+		}
 
-		double time = glfwGetTime() * program->time_speed;
+		double time = glfwGetTime();
 		program->delta_time = time - program->time;
 		program->time = time;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
+
+		if (program->focussed) {
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		} else {
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		}
+
 		on_update(program);
 
 		if (program->input->is_key_press(GLFW_KEY_F11)) {
@@ -259,7 +269,7 @@ inline void update(Program *program) {
 		render(program);
 
 		ImGui::Begin("Settings");
-		ImGui::SliderFloat("Speed", &program->time_speed, 0.f, 5.f);
+		ImGui::DragFloat("Speed", &program->time_speed, 0.01f);
 		ImGui::End();
 
 		ImGui::Render();
