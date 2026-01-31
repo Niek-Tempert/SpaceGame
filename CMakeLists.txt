@@ -152,15 +152,15 @@ target_compile_definitions(SpaceGame PRIVATE
 )
 
 # Copy shaders and assets to build directory
-# file(GLOB_RECURSE SHADER_FILES "SpaceGame/shaders/*")
-# file(GLOB_RECURSE ASSET_FILES "SpaceGame/assets/*")
+file(GLOB_RECURSE SHADER_FILES "SpaceGame/shaders/*")
+file(GLOB_RECURSE ASSET_FILES "SpaceGame/assets/*")
 
-# # Copy files to build directory
-# add_custom_command(TARGET SpaceGame POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         ${CMAKE_CURRENT_SOURCE_DIR}/shaders
-#         $<TARGET_FILE_DIR:SpaceGame>/shaders
-#     COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         ${CMAKE_CURRENT_SOURCE_DIR}/assets
-#         $<TARGET_FILE_DIR:SpaceGame>/assets
-# )
+# Copy files to build directory
+add_custom_command(TARGET SpaceGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/SpaceGame/shaders
+        $<TARGET_FILE_DIR:SpaceGame>/shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/SpaceGame/assets
+        $<TARGET_FILE_DIR:SpaceGame>/assets
+)

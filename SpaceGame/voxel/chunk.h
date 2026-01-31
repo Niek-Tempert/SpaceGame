@@ -3,7 +3,6 @@
 #include "chunk_mesher.h"
 #include "cell/cell_user.h"
 #include "nixelib/nixelib.h"
-#include "utils/array_3d.h"
 
 #define CHUNK_SIZE 16u
 
@@ -11,7 +10,7 @@ class Chunk {
 public:
 	inline static const vec3u size = vec3u(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-	Chunk() : _mesher(new ChunkMesher()), _count(0) {}
+	Chunk();
 	
 	void set(const vec3u &id, const CellUser &cell);
 	const CellUser &get(const vec3u &id) const;
@@ -22,7 +21,7 @@ public:
 
 private:
 	ChunkMesher *_mesher;
-	Array3D<CellUser, CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE> _cells;
+	CellUser _cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	u32 _count;
 };
 
