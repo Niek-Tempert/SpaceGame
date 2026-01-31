@@ -2,7 +2,7 @@
 
 #include "nixelib/nixelib.h"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 
 #include <fstream>
 #include <iostream>

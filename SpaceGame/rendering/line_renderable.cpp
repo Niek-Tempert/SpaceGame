@@ -1,6 +1,6 @@
 #include "line_renderable.h"
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 
 void MLineRenderable::_render() const {
 	if (_render_object->index_count > 0) {
