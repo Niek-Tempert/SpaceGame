@@ -17,7 +17,9 @@ endif()
 
 # Configuration types
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 add_subdirectory(extern/glfw)
 
@@ -83,7 +85,6 @@ set(SOURCES
     SpaceGame/nixelib/src/types/vec4.h
     SpaceGame/nixelib/src/types/vec4i.h
     SpaceGame/program.h
-    SpaceGame/utils/array_3d.h
     SpaceGame/utils/file.h
     SpaceGame/utils/input.hpp
     SpaceGame/utils/mesh_consts.h
@@ -115,6 +116,8 @@ add_library(glad STATIC ${GLAD_SOURCES})
 
 # Add the executable
 add_executable(SpaceGame ${SOURCES} ${SOURCE_FILES} ${IMGUI_SOURCES})
+
+find_package(OpenGL REQUIRED)
 
 target_link_libraries(SpaceGame 
     glfw 
