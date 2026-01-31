@@ -15,7 +15,7 @@
 static const char *errorVertexCode = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
 static const char *errorFragmentCode = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
 
-FORCEINLINE std::string load_text(const char *path) {
+static std::string load_text(const char *path) {
 	std::string content;
 	std::ifstream file;
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
