@@ -2,7 +2,6 @@
 
 #include "nixelib/nixelib.h"
 
-#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #define KEY_COUNT (GLFW_KEY_LAST + 1)
