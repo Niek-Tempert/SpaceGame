@@ -1,0 +1,1 @@
+cd build && cmake ..\ && cmake --build . && start .\bin\Debug\SpaceGame.exe

@@ -5,165 +5,107 @@ project(
     LANGUAGES C CXX
 )
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Platform-specific settings
-if(WIN32)
-    add_definitions(-DWIN32)
-endif()
-
-# Configuration types
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
-if(MSVC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-
-add_subdirectory(extern/glfw)
-
-include_directories(
-    extern/glad/include/
-    extern/glfw/include/
-    extern/glm/
-    extern/stb/
-    extern/imgui/
-    extern/imgui/backends/
-)
-
-include_directories(
-    ${CMAKE_SOURCE_DIR}/SpaceGame
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-set(GLAD_SOURCES extern/glad/src/glad.c)
-
-set(GLFW_SOURCES
-    extern/glfw/src/context.c
-    extern/glfw/src/init.c
-    extern/glfw/src/input.c
-    extern/glfw/src/monitor.c
-    extern/glfw/src/vulkan.c
-    extern/glfw/src/window.c
-    extern/glfw/src/platform.c
-    extern/glfw/src/null_*.c
-)
-
-set(IMGUI_SOURCES
-    extern/imgui/imgui.cpp
-    extern/imgui/imgui_draw.cpp
-    extern/imgui/imgui_tables.cpp
-    extern/imgui/imgui_widgets.cpp
-    extern/imgui/backends/imgui_impl_opengl3.cpp
-    extern/imgui/backends/imgui_impl_glfw.cpp
-)
-
-set(STB_SOURCES
-    extern/stb/stb_image.c
-)
-
-# Source files
-set(SOURCES
-    SpaceGame/SpaceGame.cpp
-    SpaceGame/debug_panel.h
-    SpaceGame/models/cube.h
-    SpaceGame/models/block_cursor.h
-    SpaceGame/models/cursor.h
-    SpaceGame/models/monkey.h
-    SpaceGame/models/skybox.h
-    SpaceGame/nixelib/nixelib.h
-    SpaceGame/nixelib/src/hash.h
-    SpaceGame/nixelib/src/macros.h
-    SpaceGame/nixelib/src/nixemath.h
-    SpaceGame/nixelib/src/typedefs.h
-    SpaceGame/nixelib/src/types/vec2.h
-    SpaceGame/nixelib/src/types/vec2i.h
-    SpaceGame/nixelib/src/types/vec3.h
-    SpaceGame/nixelib/src/types/vec3i.h
-    SpaceGame/nixelib/src/types/vec4.h
-    SpaceGame/nixelib/src/types/vec4i.h
-    SpaceGame/program.h
-    SpaceGame/utils/file.h
-    SpaceGame/utils/input.hpp
-    SpaceGame/utils/mesh_consts.h
-    SpaceGame/utils/player.h
-    SpaceGame/voxel/cell/cell_mesher.h
-    SpaceGame/voxel/cell/physic_rule.h
-    SpaceGame/voxel/cell/cell_user.h
-    SpaceGame/voxel/cell/cell.h
-    SpaceGame/voxel/cell/cell_shape.h
-    SpaceGame/voxel/chunk.h
-    SpaceGame/voxel/chunk_mesher.h
-    SpaceGame/voxel/voxel_register.h
-    SpaceGame/voxel/voxel.h
-)
-
-set(SOURCE_FILES
-    SpaceGame/SpaceGame.cpp
-    SpaceGame/rendering/line_renderable.cpp
-    SpaceGame/rendering/renderable.cpp
-    SpaceGame/rendering/shader.cpp
-    SpaceGame/voxel/chunk.cpp
-    SpaceGame/voxel/chunk_mesher.cpp
-    SpaceGame/voxel/voxel.cpp
-)
-
-add_library(glad STATIC ${GLAD_SOURCES})
-# add_library(glfw STATIC ${GLFW_SOURCES})
-# add_library(stb STATIC ${STB_SOURCES})
-
-# Add the executable
-add_executable(SpaceGame ${SOURCES} ${SOURCE_FILES} ${IMGUI_SOURCES})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 find_package(OpenGL REQUIRED)
 
-target_link_libraries(SpaceGame 
-    glfw 
-    glad 
-    opengl32
+set(EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern)
+set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SpaceGame)
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(${EXTERN_DIR}/glfw)
+
+set(GLAD_INCLUDE_DIR ${EXTERN_DIR}/glad/include)
+set(GLAD_SRC ${EXTERN_DIR}/glad/src/glad.c)
+
+set(IMGUI_DIR ${EXTERN_DIR}/imgui)
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
-# Windows libraries
-if(WIN32)
-    target_link_libraries(SpaceGame
-        kernel32
-        user32
-        gdi32
-        winspool
-        shell32
-        ole32
-        oleaut32
-        uuid
-        comdlg32
-        advapi32
-    )
-endif()
+set(STB_DIR ${EXTERN_DIR}/stb)
+set(GLM_DIR ${EXTERN_DIR}/glm)
 
-# Compiler options for different configurations
-target_compile_options(SpaceGame PRIVATE
-    $<$<CONFIG:Debug>:-O0 -g>
-    $<$<CONFIG:Release>:-O3>
+set(PROJ_SRC
+    ${PROJ_DIR}/SpaceGame.cpp
+    ${PROJ_DIR}/debug_panel.h
+    ${PROJ_DIR}/models/cube.h
+    ${PROJ_DIR}/models/block_cursor.h
+    ${PROJ_DIR}/models/cursor.h
+    ${PROJ_DIR}/models/monkey.h
+    ${PROJ_DIR}/models/skybox.h
+    ${PROJ_DIR}/nixelib/nixelib.h
+    ${PROJ_DIR}/nixelib/src/hash.h
+    ${PROJ_DIR}/nixelib/src/macros.h
+    ${PROJ_DIR}/nixelib/src/nixemath.h
+    ${PROJ_DIR}/nixelib/src/typedefs.h
+    ${PROJ_DIR}/nixelib/src/types/vec2.h
+    ${PROJ_DIR}/nixelib/src/types/vec2i.h
+    ${PROJ_DIR}/nixelib/src/types/vec3.h
+    ${PROJ_DIR}/nixelib/src/types/vec3i.h
+    ${PROJ_DIR}/nixelib/src/types/vec4.h
+    ${PROJ_DIR}/nixelib/src/types/vec4i.h
+    ${PROJ_DIR}/program.h
+    ${PROJ_DIR}/utils/file.h
+    ${PROJ_DIR}/utils/input.hpp
+    ${PROJ_DIR}/utils/mesh_consts.h
+    ${PROJ_DIR}/utils/player.h
+    ${PROJ_DIR}/voxel/cell/cell_mesher.h
+    ${PROJ_DIR}/voxel/cell/physic_rule.h
+    ${PROJ_DIR}/voxel/cell/cell_user.h
+    ${PROJ_DIR}/voxel/cell/cell.h
+    ${PROJ_DIR}/voxel/cell/cell_shape.h
+    ${PROJ_DIR}/voxel/chunk.h
+    ${PROJ_DIR}/voxel/chunk_mesher.h
+    ${PROJ_DIR}/voxel/voxel_register.h
+    ${PROJ_DIR}/voxel/voxel.h
+    ${PROJ_DIR}/SpaceGame.cpp
+    ${PROJ_DIR}/rendering/line_renderable.cpp
+    ${PROJ_DIR}/rendering/renderable.cpp
+    ${PROJ_DIR}/rendering/shader.cpp
+    ${PROJ_DIR}/voxel/chunk.cpp
+    ${PROJ_DIR}/voxel/chunk_mesher.cpp
+    ${PROJ_DIR}/voxel/voxel.cpp
 )
 
-# Preprocessor definitions
-target_compile_definitions(SpaceGame PRIVATE
-    $<$<CONFIG:Debug>:_DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-    _CONSOLE
+add_executable(${PROJECT_NAME}
+    ${PROJ_SRC}
+    ${GLAD_SRC}
+    ${IMGUI_SOURCES}
 )
 
-# Copy shaders and assets to build directory
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${PROJ_DIR}
+    ${GLAD_INCLUDE_DIR}
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${EXTERN_DIR}/glfw/include
+    ${STB_DIR}
+    ${GLM_DIR}
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    glfw
+    ${OPENGL_LIBRARIES}
+)
+
 file(GLOB_RECURSE SHADER_FILES "SpaceGame/shaders/*")
 file(GLOB_RECURSE ASSET_FILES "SpaceGame/assets/*")
 
-# Copy files to build directory
-add_custom_command(TARGET SpaceGame POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/SpaceGame/shaders
-        $<TARGET_FILE_DIR:SpaceGame>/shaders
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/SpaceGame/assets
-        $<TARGET_FILE_DIR:SpaceGame>/assets
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+    GLAD_GL_IMPLEMENTATION
+    GLFW_INCLUDE_NONE
 )
