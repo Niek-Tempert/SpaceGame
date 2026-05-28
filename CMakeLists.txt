@@ -101,8 +101,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${OPENGL_LIBRARIES}
 )
 
-file(GLOB_RECURSE SHADER_FILES "SpaceGame/shaders/*")
-file(GLOB_RECURSE ASSET_FILES "SpaceGame/assets/*")
+file(COPY ${PROJ_DIR}/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJ_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     IMGUI_IMPL_OPENGL_LOADER_GLAD
