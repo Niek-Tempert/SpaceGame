@@ -1,9 +1,15 @@
 #pragma once
 
+#include <vector>
+
+class BlockCursor;
+class IRenderable;
+struct GLFWwindow;
+class Input;
 class Voxel;
 class Player;
 
-struct Program {
+struct Engine {
 	GLFWwindow *window;
 	Player *player;
 	Input *input;
@@ -21,3 +27,7 @@ struct Program {
 	BlockCursor *block_cursor;
 	std::vector<IRenderable *> render_queue;
 };
+
+void start(Engine* engine);
+void update(Engine* engine);
+void cleanup(Engine* engine);

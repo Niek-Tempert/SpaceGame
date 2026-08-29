@@ -1,12 +1,13 @@
 ﻿#pragma once
 
 #include "rendering/renderable.h"
+#include <common/helpers.h>
 
 class Monkey : public MRenderable {
 public:
 
 	Shader _get_shader() const override {
-		return Shader::from_file("shaders/unlit.vert", "shaders/unlit.frag");
+		return Shader::from_file(SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag");
 	}
 
 	std::vector<vec3f> _get_vertices() const override {

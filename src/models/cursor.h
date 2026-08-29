@@ -23,7 +23,7 @@ public:
 	}
 
 	Shader _get_shader() const override {
-		return Shader::from_file("shaders/cursor.vert", "shaders/cursor.frag");
+		return Shader::from_file(SHADER_PATH "cursor.vert", SHADER_PATH "cursor.frag");
 	}
 
 	void _before_render(RenderData *data) const override {

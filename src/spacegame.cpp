@@ -1,3 +1,5 @@
+#include "spacegame.h"
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -30,7 +32,7 @@ static void error_callback(int error, const char *description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-inline void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
+static void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
 		for (int y = -length; y < length; ++y) {
 			for (int z = -length; z < length; ++z) {
@@ -49,31 +51,31 @@ inline void build_voxel(Voxel *voxel, int length, glm::vec3 position) {
 	voxel->transform = model;
 }
 
-inline void build_render_queue(Program *program) {
-	program->render_queue.push_back(new Skybox());
+static void build_render_queue(Engine* game) {
+	game->render_queue.push_back(new Skybox());
 
 	Voxel *voxel = new Voxel();
-	program->moon = new Voxel();
+	game->moon = new Voxel();
 
 	build_voxel(voxel, 16, { 0, -17, 0 });
-	build_voxel(program->moon, 8, { 0, 0, 32 });
+	build_voxel(game->moon, 8, { 0, 0, 32 });
 
-	program->voxels.push_back(voxel);
-	program->voxels.push_back(program->moon);
+	game->voxels.push_back(voxel);
+	game->voxels.push_back(game->moon);
 
-	program->render_queue.push_back(voxel);
-	program->render_queue.push_back(program->moon);
+	game->render_queue.push_back(voxel);
+	game->render_queue.push_back(game->moon);
 
-	program->render_queue.push_back(program->block_cursor = new BlockCursor());
+	game->render_queue.push_back(game->block_cursor = new BlockCursor());
 
-	program->render_queue.push_back(new Cursor());
+	game->render_queue.push_back(new Cursor());
 
-	for (auto renderable : program->render_queue) {
+	for (auto renderable : game->render_queue) {
 		renderable->setup();
 	}
 }
 
-inline void render(const Program *program) {
+static void render(const Engine *program) {
 	int width, height;
 	glfwGetFramebufferSize(program->window, &width, &height);
 	const float ratio = (float)width / (float)height;
@@ -104,7 +106,7 @@ inline void render(const Program *program) {
 	}
 }
 
-inline void on_update(const Program *program) {
+void on_update(const Engine *program) {
 	glm::vec3 position = glm::vec3(program->moon->transform[3]);
 	const double t = program->delta_time * 0.05 * program->time_speed;
 	const double sin = glm::sin(t);
@@ -160,7 +162,7 @@ inline void on_update(const Program *program) {
 	}
 }
 
-inline void start(Program *&program) {
+void start(Engine* engine) {
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {
@@ -188,13 +190,12 @@ inline void start(Program *&program) {
 	gladLoadGL();
 	glfwSwapInterval(1);
 
-	program = new Program();
-	build_render_queue(program);
+	build_render_queue(engine);
 
-	program->window = window;
-	program->player = new Player();
-	program->input = new Input(window);
-	program->time_speed = 1.f;
+	engine->window = window;
+	engine->player = new Player();
+	engine->input = new Input(window);
+	engine->time_speed = 1.f;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -207,7 +208,7 @@ inline void start(Program *&program) {
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-inline void update(Program *program) {
+void update(Engine *program) {
 	while (!glfwWindowShouldClose(program->window)) {
 		if (program->focussed) {
 			program->player->update(program);
@@ -289,7 +290,7 @@ inline void update(Program *program) {
 	}
 }
 
-inline void cleanup(const Program *program) {
+void cleanup(Engine* program) {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -298,12 +299,4 @@ inline void cleanup(const Program *program) {
 	glfwTerminate();
 
 	exit(EXIT_SUCCESS);
-}
-
-int main() {
-	Program *program;
-
-	start(program);
-	update(program);
-	cleanup(program);
 }

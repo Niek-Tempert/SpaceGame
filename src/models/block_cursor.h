@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rendering/line_renderable.h"
+#include <common/helpers.h>
 
 class BlockCursor : public MLineRenderable {
 public:
@@ -35,7 +36,7 @@ protected:
 	}
 
 	Shader _get_shader() const override {
-		return Shader::from_file("shaders/black.vert", "shaders/black.frag");
+		return Shader::from_file(SHADER_PATH "black.vert", SHADER_PATH "black.frag");
 	}
 
 	void _render() const override {

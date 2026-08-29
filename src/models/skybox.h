@@ -37,7 +37,7 @@ protected:
 	}
 
 	Shader _get_shader() const override {
-		return Shader::from_file("shaders/skybox.vert", "shaders/skybox.frag");
+		return Shader::from_file(SHADER_PATH "skybox.vert", SHADER_PATH "skybox.frag");
 	}
 
 	void _before_render(RenderData *data) const override {

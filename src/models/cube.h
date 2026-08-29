@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "rendering/renderable.h"
 #include "utils/mesh_consts.h"
+#include <common/helpers.h>
 
 class Cube : public MRenderable {
 protected:
@@ -35,6 +36,6 @@ protected:
 	}
 
 	Shader _get_shader() const override {
-		return Shader::from_file("shaders/unlit.vert", "shaders/unlit.frag");
+		return Shader::from_file(SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag");
 	}
 };

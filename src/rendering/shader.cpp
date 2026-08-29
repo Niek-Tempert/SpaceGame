@@ -11,6 +11,7 @@
 #include <glm/fwd.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <common/helpers.h>
 
 static const char *errorVertexCode = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
 static const char *errorFragmentCode = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
@@ -38,7 +39,7 @@ std::string preprocess_shader(std::string source) {
 	while ((pos = result.find("#include", pos)) != std::string::npos) {
 		size_t start = result.find("\"", pos);
 		size_t end = result.find("\"", start + 1);
-		std::string includePath = "shaders/" + result.substr(start + 1, end - start - 1);
+		std::string includePath = SHADER_PATH + result.substr(start + 1, end - start - 1);
 		std::string includeSource = load_text(includePath.c_str());
 		result.replace(pos, end - pos + 1, includeSource);
 	}
