@@ -40,10 +40,14 @@ set(GLM_DIR ${EXTERN_DIR}/glm)
 
 set(PROJ_SRC
     ${PROJ_DIR}/main.cpp
-    ${PROJ_DIR}/spacegame.cpp
+    ${PROJ_DIR}/engine.cpp
+    ${PROJ_DIR}/scene.cpp
+    ${PROJ_DIR}/state_provider.cpp
+    ${PROJ_DIR}/time_provider.cpp
     ${PROJ_DIR}/rendering/line_renderable.cpp
     ${PROJ_DIR}/rendering/renderable.cpp
     ${PROJ_DIR}/rendering/shader.cpp
+    ${PROJ_DIR}/utils/player.cpp
     ${PROJ_DIR}/voxel/chunk.cpp
     ${PROJ_DIR}/voxel/chunk_mesher.cpp
     ${PROJ_DIR}/voxel/voxel.cpp

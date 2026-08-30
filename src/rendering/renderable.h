@@ -33,7 +33,7 @@ class IRenderable {
 public:
 	virtual ~IRenderable() = default;
 	
-	virtual void setup() = 0;
+	virtual void init() = 0;
 	virtual void render(RenderData *data) const = 0;
 };
 
@@ -42,7 +42,7 @@ public:
 	MRenderable() : _render_object(NULL) {}
 	~MRenderable() override;
 	
-	void setup() override;
+	void init() override;
 	void render(RenderData *data) const final;
 
 protected:

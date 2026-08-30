@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rendering/renderable.h"
+#include "rendering/line_renderable.h"
 
 #include <glad/glad.h>
 

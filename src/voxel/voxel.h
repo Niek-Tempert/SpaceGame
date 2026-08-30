@@ -34,7 +34,7 @@ public:
 	const std::map<vec3i, Chunk *> &get_chunks() const;
 
 	void update(const CellID &id);
-	void setup() override;
+	void init() override;
 	void render(RenderData *data) const override;
 
 	RaycastResult raycast(const vec3f &start, const vec3f &direction, f32 max_distance);

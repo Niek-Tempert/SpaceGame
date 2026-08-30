@@ -262,7 +262,7 @@ const std::map<vec3i, Chunk *> &Voxel::get_chunks() const {
 	return chunks;
 }
 
-void Voxel::setup() {
+void Voxel::init() {
 	for (auto chunk : chunks) {
 		chunk.second->get_mesher()->update(this, chunk.first);
 	}

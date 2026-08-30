@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "macros.h"
-#include "typedefs.h"
+#include "common/types.h"
 
 namespace nixemath {
 

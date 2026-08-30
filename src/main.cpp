@@ -1,9 +1,6 @@
-#include "spacegame.h"
+#include "engine.hpp"
 
 int main() {
-	Engine engine;
-
-	start(&engine);
-	update(&engine);
-	cleanup(&engine);
+	Engine engine{};
+	engine.exec();
 }

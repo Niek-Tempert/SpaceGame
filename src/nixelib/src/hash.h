@@ -1,6 +1,6 @@
 #pragma once
 
-#include "typedefs.h"
+#include <common/types.h>
 #include "types/vec2.h"
 #include "types/vec3.h"
 #include "types/vec4.h"

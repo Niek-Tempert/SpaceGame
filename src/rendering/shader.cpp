@@ -1,7 +1,5 @@
 #include "shader.h"
 
-#include "nixelib/nixelib.h"
-
 #include <glad/glad.h>
 
 #include <fstream>
@@ -12,6 +10,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <common/helpers.h>
+#include <common/types.h>
 
 static const char *errorVertexCode = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
 static const char *errorFragmentCode = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
@@ -33,7 +32,7 @@ static std::string load_text(const char *path) {
 	return content;
 }
 
-std::string preprocess_shader(std::string source) {
+static std::string preprocess_shader(std::string source) {
 	std::string result = source;
 	size_t pos = 0;
 	while ((pos = result.find("#include", pos)) != std::string::npos) {

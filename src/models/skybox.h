@@ -1,6 +1,14 @@
 #pragma once
 
 #include "rendering/renderable.h"
+#include "utils/mesh_consts.h"
+
+#include <common/helpers.h>
+
+#include <glad/glad.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 // TODO: Convert to Quad / Triangle
 

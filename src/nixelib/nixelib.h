@@ -2,7 +2,7 @@
 
 #include "src/hash.h"
 #include "src/macros.h"
-#include "src/typedefs.h"
+#include "common/types.h"
 #include "src/nixemath.h"
 
 #include "src/types/vec2.h"

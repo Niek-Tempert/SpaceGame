@@ -54,7 +54,7 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 		}
 	}
 
-	setup();
+	init();
 }
 
 glm::mat4x4 ChunkMesher::_get_transform() const {

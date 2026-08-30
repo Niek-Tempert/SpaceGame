@@ -125,7 +125,7 @@ MRenderable::~MRenderable() {
 	dispose(_render_object);
 }
 
-void MRenderable::setup() {
+void MRenderable::init() {
 	if (_render_object) {
 		dispose(_render_object);
 	}

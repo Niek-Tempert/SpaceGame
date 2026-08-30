@@ -9,7 +9,7 @@
 
 class Input {
 public:
-	Input(GLFWwindow* window) {
+	void init(GLFWwindow* window) {
 		glfwSetWindowUserPointer(window, this);
 		glfwSetCursorPosCallback(window, _cursor_callback);
 		glfwSetMouseButtonCallback(window, _mouse_callback);
