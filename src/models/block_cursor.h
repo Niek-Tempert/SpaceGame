@@ -23,7 +23,7 @@ protected:
 	}
 
 
-	std::vector<vec3f> _get_vertices() const override {
+	std::vector<glm::vec3> _get_vertices() const override {
 		return {
 			{ 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 },
 			{ 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 },

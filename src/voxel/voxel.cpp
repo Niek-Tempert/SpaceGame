@@ -1,24 +1,24 @@
 #include "voxel.h"
 
 #include "chunk.h"
-#include "nixelib/nixelib.h"
 #include "utils/mesh_consts.h"
 
 #include <glm/ext/matrix_transform.hpp>
+#include <common/math.h>
 
 Voxel::Voxel() {
 	transform = glm::mat4(1.0f);
 }
 
 Voxel::~Voxel() {
-	for (std::pair<const vec3i, Chunk *> &pair : chunks) {
+	for (std::pair<const glm::ivec3, Chunk *> &pair : chunks) {
 		delete pair.second;
 	}
 }
 
-void Voxel::set(const vec3i &id, const CellUser &cell) {
-	vec3i chunkid = id_to_chunkid(id);
-	const vec3u subid = id_to_subid(id);
+void Voxel::set(const glm::ivec3 &id, const CellUser &cell) {
+	glm::ivec3 chunkid = id_to_chunkid(id);
+	const glm::uvec3 subid = id_to_subid(id);
 
 	Chunk *chunk;
 
@@ -37,9 +37,9 @@ void Voxel::set(const vec3i &id, const CellUser &cell) {
 	}
 }
 
-const CellUser *Voxel::get(const vec3i &id) const {
-	const vec3i chunkid = id_to_chunkid(id);
-	const vec3u subid = id_to_subid(id);
+const CellUser *Voxel::get(const glm::ivec3 &id) const {
+	const glm::ivec3 chunkid = id_to_chunkid(id);
+	const glm::uvec3 subid = id_to_subid(id);
 
 	const auto it = chunks.find(chunkid);
 	if (it == chunks.end()) {
@@ -48,7 +48,7 @@ const CellUser *Voxel::get(const vec3i &id) const {
 	return &it->second->get(subid);
 }
 
-RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max_distance) {
+RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction, f32 max_distance) {
 	glm::mat4 voxel_transform = this->transform;
 	glm::mat4 voxel_transform_inv = glm::inverse(voxel_transform);
 
@@ -61,9 +61,9 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max
 	local_direction = glm::normalize(local_direction);
 
 	max_distance = glm::length(glm::vec3{
-		nixemath::save_divide(local_direction.x * max_distance, scale.x),
-		nixemath::save_divide(local_direction.y * max_distance, scale.y),
-		nixemath::save_divide(local_direction.z * max_distance, scale.z)
+		save_divide(local_direction.x * max_distance, scale.x),
+		save_divide(local_direction.y * max_distance, scale.y),
+		save_divide(local_direction.z * max_distance, scale.z)
 	}); //scale distance from world scale to voxel scale
 
 	glm::vec3 delta_dist = {
@@ -72,7 +72,7 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max
 		glm::abs(1.0f / local_direction.z)
 	};
 
-	vec3i step = vec3i{
+	glm::ivec3 step = glm::ivec3{
 		local_direction.x < 0 ? -1 : 1,
 		local_direction.y < 0 ? -1 : 1,
 		local_direction.z < 0 ? -1 : 1
@@ -80,10 +80,10 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max
 
 	glm::vec3 voxel_space = voxel_transform_inv * glm::vec4(start.x, start.y, start.z, 1.0f);
 
-	vec3i map_pos = {
-		nixemath::floor_to_i32(voxel_space.x),
-		nixemath::floor_to_i32(voxel_space.y),
-		nixemath::floor_to_i32(voxel_space.z)
+	glm::ivec3 map_pos = {
+		floor_to_i32(voxel_space.x),
+		floor_to_i32(voxel_space.y),
+		floor_to_i32(voxel_space.z)
 	};
 
 	glm::vec3 side_dist = glm::vec3(
@@ -117,7 +117,7 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max
 			continue;
 		}
 
-		vec3i face_dir;
+		glm::ivec3 face_dir;
 		switch (side) {
 			case 0:
 				if (step.x > 0) {
@@ -163,16 +163,16 @@ RaycastResult Voxel::raycast(const vec3f &start, const vec3f &direction, f32 max
 	return {};
 }
 
-void Voxel::update(const vec3i &id) {
-	const vec3i chunk_id = id_to_chunkid(id);
-	const vec3u sub_id = id_to_subid(id);
+void Voxel::update(const glm::ivec3 &id) {
+	const glm::ivec3 chunk_id = id_to_chunkid(id);
+	const glm::uvec3 sub_id = id_to_subid(id);
 
 	const auto it = chunks.find(chunk_id);
 	if (it != chunks.end()) {
 		it->second->get_mesher()->update(this, chunk_id);
 	}
 
-	vec3i neighbor_id;
+	glm::ivec3 neighbor_id;
 	if (sub_id.x <= 0) {
 		neighbor_id = chunk_id;
 		--neighbor_id.x;
@@ -234,23 +234,23 @@ void Voxel::update(const vec3i &id) {
 	}
 }
 
-vec3i Voxel::id_to_chunkid(const vec3i &id) {
+glm::ivec3 Voxel::id_to_chunkid(const glm::ivec3 &id) {
 	return {
-		nixemath::floor_to_i32((f64)id.x / Chunk::size.x),
-		nixemath::floor_to_i32((f64)id.y / Chunk::size.y),
-		nixemath::floor_to_i32((f64)id.z / Chunk::size.z)
+		floor_to_i32((f64)id.x / Chunk::size.x),
+		floor_to_i32((f64)id.y / Chunk::size.y),
+		floor_to_i32((f64)id.z / Chunk::size.z)
 	};
 }
 
-vec3u Voxel::id_to_subid(const vec3i &cell_id) {
+glm::uvec3 Voxel::id_to_subid(const glm::ivec3 &cell_id) {
 	return {
-		(u32)nixemath::floor_mod(cell_id.x, (i32)Chunk::size.x),
-		(u32)nixemath::floor_mod(cell_id.y, (i32)Chunk::size.y),
-		(u32)nixemath::floor_mod(cell_id.z, (i32)Chunk::size.z)
+		(u32)floor_mod(cell_id.x, (i32)Chunk::size.x),
+		(u32)floor_mod(cell_id.y, (i32)Chunk::size.y),
+		(u32)floor_mod(cell_id.z, (i32)Chunk::size.z)
 	};
 }
 
-vec3i Voxel::compound_id(const vec3i &chunk_id, const vec3u &sub_id) {
+glm::ivec3 Voxel::compound_id(const glm::ivec3 &chunk_id, const glm::uvec3 &sub_id) {
 	return {
 		chunk_id.x * (i32)Chunk::size.x + (i32)sub_id.x,
 		chunk_id.y * (i32)Chunk::size.y + (i32)sub_id.y,
@@ -258,7 +258,7 @@ vec3i Voxel::compound_id(const vec3i &chunk_id, const vec3u &sub_id) {
 	};
 }
 
-const std::map<vec3i, Chunk *> &Voxel::get_chunks() const {
+const std::map<glm::ivec3, Chunk *, ivec3_less> &Voxel::get_chunks() const {
 	return chunks;
 }
 

@@ -1,16 +1,16 @@
 ﻿#pragma once
 
 #include "glad/glad.h"
-#include "nixelib/nixelib.h"
 
 #include <vector>
 #include <glm/mat4x4.hpp>
+#include <common/types.h>
 
 struct RenderData {
 	glm::mat4 view;
 	glm::mat4 proj;
 
-	vec2u resolution;
+	glm::uvec2 resolution;
 };
 
 struct RenderObject {
@@ -49,10 +49,10 @@ protected:
 	virtual void _set_gl_state() const;
 
 	virtual glm::mat4x4 _get_transform() const { return glm::mat4(1.0f); }
-	virtual std::vector<vec3f> _get_vertices() const { return {}; }
-	virtual std::vector<vec3f> _get_colors() const { return {}; }
-	virtual std::vector<vec3f> _get_normals() const { return {}; }
-	virtual std::vector<vec2f> _get_uvs() const { return {}; }
+	virtual std::vector<glm::vec3> _get_vertices() const { return {}; }
+	virtual std::vector<glm::vec3> _get_colors() const { return {}; }
+	virtual std::vector<glm::vec3> _get_normals() const { return {}; }
+	virtual std::vector<glm::vec2> _get_uvs() const { return {}; }
 	virtual std::vector<u32> _get_indices() const { return {}; }
 	virtual GLuint _get_shader() const { return 0; }
 

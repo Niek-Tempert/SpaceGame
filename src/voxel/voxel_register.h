@@ -1,13 +1,13 @@
 #pragma once
 
-#include "nixelib/nixelib.h"
+#include "glm/vec3.hpp"
 
 class Voxel;
 
 struct VoxelRegister {
 	VoxelRegister() : voxel(nullptr), offset({ 0, 0, 0 }) {}
-	VoxelRegister(Voxel *voxel, vec3i offset) : voxel(voxel), offset(offset) {}
+	VoxelRegister(Voxel *voxel, glm::ivec3 offset) : voxel(voxel), offset(offset) {}
 
 	Voxel *voxel;
-	vec3i offset;
+	glm::ivec3 offset;
 };

@@ -14,7 +14,7 @@ public:
 		glLineWidth(4.0f);
 	}
 
-	std::vector<vec3f> _get_vertices() const override {
+	std::vector<glm::vec3> _get_vertices() const override {
 		return {
 			{ -16.0f, 0.0f, 0.0f },
 			{ 16.0f, 0.0f, 0.0f },

@@ -7,8 +7,8 @@
 
 class Cube : public MRenderable {
 protected:
-	std::vector<vec3f> _get_vertices() const override {
-		std::vector<vec3f> vertices;
+	std::vector<glm::vec3> _get_vertices() const override {
+		std::vector<glm::vec3> vertices;
 		for (const auto &cube_side : mesh_consts::cube_vertices) {
 			for (const auto &vertex : cube_side) {
 				vertices.push_back(vertex);
@@ -17,8 +17,8 @@ protected:
 		return vertices;
 	}
 
-	std::vector<vec3f> _get_colors() const override {
-		std::vector<vec3f> colors;
+	std::vector<glm::vec3> _get_colors() const override {
+		std::vector<glm::vec3> colors;
 		for (const auto &cube_side : mesh_consts::cube_vertices) {
 			for (const auto &vertex : cube_side) {
 				colors.push_back(vertex);

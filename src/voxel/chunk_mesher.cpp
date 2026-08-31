@@ -28,8 +28,8 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 					continue;
 				}
 
-				vec3i id = Voxel::compound_id(chunk_id, { x, y, z });
-				vec3f col = vec3f((float)id.x, (float)id.y, (float)id.z);
+				glm::ivec3 id = Voxel::compound_id(chunk_id, { x, y, z });
+				glm::vec3 col = glm::vec3((float)id.x, (float)id.y, (float)id.z);
 				for (u32 i = 0; i < 6; ++i) {
 					auto &dir = mesh_consts::axis[i];
 					auto *neighbor = voxel->get(id + dir);
@@ -62,19 +62,19 @@ glm::mat4x4 ChunkMesher::_get_transform() const {
 	return _voxel->transform * _transform;
 }
 
-std::vector<vec3f> ChunkMesher::_get_vertices() const {
+std::vector<glm::vec3> ChunkMesher::_get_vertices() const {
 	return _vertices;
 }
 
-std::vector<vec3f> ChunkMesher::_get_colors() const {
+std::vector<glm::vec3> ChunkMesher::_get_colors() const {
 	return _colors;
 }
 
-std::vector<vec3f> ChunkMesher::_get_normals() const {
+std::vector<glm::vec3> ChunkMesher::_get_normals() const {
 	return _normals;
 }
 
-std::vector<vec2f> ChunkMesher::_get_uvs() const {
+std::vector<glm::vec2> ChunkMesher::_get_uvs() const {
 	return _uvs;
 }
 

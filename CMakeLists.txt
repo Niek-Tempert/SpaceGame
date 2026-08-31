@@ -52,6 +52,7 @@ set(PROJ_SRC
     ${PROJ_DIR}/voxel/voxel.cpp
     ${PROJ_DIR}/common/error.c
     ${PROJ_DIR}/common/glutils.c
+    ${PROJ_DIR}/common/math.c
 )
 
 add_executable(${PROJECT_NAME}

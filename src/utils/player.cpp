@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "input.hpp"
+#include <common/math.h>
 
 #define WALK_SPEED 4.0f
 #define RUN_SPEED 8.0f
@@ -16,7 +17,7 @@ void Player::update(f32 deltaTime, const Input* input) {
     };
 	
 	m_rot.x = glm::clamp(m_rot.x - delta.y * LOOK_SPEED, -glm::half_pi<f32>(), glm::half_pi<f32>());
-	m_rot.y = nixemath::wrap(m_rot.y - delta.x * LOOK_SPEED, 0, glm::two_pi<f32>());
+	m_rot.y = wrap(m_rot.y - delta.x * LOOK_SPEED, 0, glm::two_pi<f32>());
 
 	glm::vec3 dir{};
 	if (input->is_key_down(GLFW_KEY_W)) dir.z -= 1;

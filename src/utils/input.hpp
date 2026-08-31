@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nixelib/nixelib.h"
-
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
+#include <common/types.h>
 
 #define KEY_COUNT (GLFW_KEY_LAST + 1)
 #define MOUSE_COUNT (GLFW_MOUSE_BUTTON_LAST + 1)
@@ -33,11 +33,11 @@ public:
 		last_cursor = cursor;
 	}
 	
-	vec2f64 get_cursor() const {
+	glm::vec2 get_cursor() const {
 		return cursor;
 	}
 
-	vec2f64 get_cursor_delta() const {
+	glm::vec2 get_cursor_delta() const {
 		return cursor - last_cursor;
 	}
 
@@ -72,8 +72,8 @@ public:
 	}
 
 private:
-	vec2f64 cursor;
-	vec2f64 last_cursor;
+	glm::vec2 cursor;
+	glm::vec2 last_cursor;
 	u8 mouse_down_flags = 0;
 	u8 mouse_press_flags = 0;
 	u8 mouse_release_flags = 0;
