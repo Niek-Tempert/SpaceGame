@@ -5,8 +5,6 @@
 
 #include <glad/glad.h>
 
-#include "utils/file.h"
-
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -47,35 +45,6 @@ bool has_succeeded(GLuint shader) {
 	}
 
 	return success;
-}
-
-GLuint compile_shader(const char *path, GLenum type) {
-	std::string shader_str = load_text(path);
-	const char *shader_code = shader_str.c_str();
-	const GLuint shader_id = glCreateShader(type);
-	glShaderSource(shader_id, 1, &shader_code, NULL);
-	glCompileShader(shader_id);
-
-	bool success = has_succeeded(shader_id);
-	if (success) {
-		return shader_id;
-	}
-
-	const char *fallback;
-	switch (type) {
-		default: // GL_VERTEX_SHADER
-			fallback = "#version 330\n uniform mat4 MVP; in vec3 vPos; void main() { gl_Position = MVP * vec4(vPos, 1.0); };";
-			break;
-
-		case GL_FRAGMENT_SHADER:
-			fallback = "#version 330\n out vec4 fragment; void main() { fragment = vec4(1.0, 0.0, 1.0, 1.0); };";
-			break;
-	}
-	glShaderSource(shader_id, 1, &fallback, NULL);
-	glCompileShader(shader_id);
-	has_succeeded(shader_id);
-
-	return shader_id;
 }
 
 void link_vbuffer(GLint buffer, GLuint location, GLint size) {
