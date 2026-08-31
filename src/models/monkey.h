@@ -1643,8 +1643,4 @@ public:
 		         { 0.988235f, 0.137255f, 0.905882f }
 		};
 	}
-
-	RenderType get_render_type() const override {
-		return RenderType::triangles;
-	}
 };
