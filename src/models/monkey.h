@@ -1,13 +1,19 @@
 ﻿#pragma once
 
-#include "rendering/renderable.h"
+#include "glad/glad.h"
+
+#include <common/glutils.h>
 #include <common/helpers.h>
+
+#include "rendering/renderable.h"
 
 class Monkey : public MRenderable {
 public:
 
-	Shader _get_shader() const override {
-		return Shader::from_file(SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag");
+	GLuint _get_shader() const override {
+		GLuint shader = 0;
+		if (shaderLoadVF(&shader, SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag")) throw;
+		return shader;
 	}
 
 	std::vector<vec3f> _get_vertices() const override {

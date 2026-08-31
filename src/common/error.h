@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "helpers.h"
 #include "types.h"
 #include "log.h"
@@ -21,3 +25,7 @@ code logErr(code err, const char* filename, i32 line, const char* func);
 #define CODE_SHADER_ERR ERR(-3)
 #define CODE_FILE_ERR   ERR(-4)
 #define CODE_GLFW_ERR   ERR(-5)
+
+#ifdef __cplusplus
+}
+#endif

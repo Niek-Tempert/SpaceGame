@@ -2,6 +2,8 @@
 #include "rendering/renderable.h"
 #include "utils/mesh_consts.h"
 #include <common/helpers.h>
+#include <common/glutils.h>
+#include "glad/glad.h"
 
 class Cube : public MRenderable {
 protected:
@@ -35,7 +37,9 @@ protected:
 		return indices;
 	}
 
-	Shader _get_shader() const override {
-		return Shader::from_file(SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag");
+	GLuint _get_shader() const override {
+		GLuint shader = 0;
+		if (shaderLoadVF(&shader, SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag")) throw;
+		return shader;
 	}
 };

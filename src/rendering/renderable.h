@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "shader.h"
+#include "glad/glad.h"
 #include "nixelib/nixelib.h"
 
 #include <vector>
@@ -15,7 +15,7 @@ struct RenderData {
 
 struct RenderObject {
 	u32 vao;
-	Shader shader;
+	GLuint shader;
 
 	i32 vertex_count;
 	i32 index_count;
@@ -54,7 +54,7 @@ protected:
 	virtual std::vector<vec3f> _get_normals() const { return {}; }
 	virtual std::vector<vec2f> _get_uvs() const { return {}; }
 	virtual std::vector<u32> _get_indices() const { return {}; }
-	virtual Shader _get_shader() const { return {}; }
+	virtual GLuint _get_shader() const { return 0; }
 
 	virtual void _before_render(RenderData *data) const;
 	virtual void _render() const;

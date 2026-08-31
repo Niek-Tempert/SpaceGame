@@ -2,6 +2,7 @@
 
 #include "rendering/line_renderable.h"
 #include <common/helpers.h>
+#include <common/glutils.h>
 
 class BlockCursor : public MLineRenderable {
 public:
@@ -35,8 +36,10 @@ protected:
 		};
 	}
 
-	Shader _get_shader() const override {
-		return Shader::from_file(SHADER_PATH "black.vert", SHADER_PATH "black.frag");
+	GLuint _get_shader() const override {
+		GLuint shader = 0;
+		if (shaderLoadVF(&shader, SHADER_PATH "black.vert", SHADER_PATH "black.frag")) throw;
+		return shader;
 	}
 
 	void _render() const override {

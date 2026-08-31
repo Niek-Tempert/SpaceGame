@@ -4,6 +4,7 @@
 #include "utils/mesh_consts.h"
 
 #include <common/helpers.h>
+#include <common/glutils.h>
 
 #include <glad/glad.h>
 
@@ -44,8 +45,10 @@ protected:
 		return indices;
 	}
 
-	Shader _get_shader() const override {
-		return Shader::from_file(SHADER_PATH "skybox.vert", SHADER_PATH "skybox.frag");
+	GLuint _get_shader() const override {
+		GLuint shader = 0;
+		if (shaderLoadVF(&shader, SHADER_PATH "skybox.vert", SHADER_PATH "skybox.frag")) throw;
+		return shader;
 	}
 
 	void _before_render(RenderData *data) const override {

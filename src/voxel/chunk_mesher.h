@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glad/glad.h"
 #include "nixelib/nixelib.h"
 #include "rendering/renderable.h"
 
@@ -23,7 +24,7 @@ protected:
 	std::vector<vec3f> _get_normals() const override;
 	std::vector<vec2f> _get_uvs() const override;
 	std::vector<u32> _get_indices() const override;
-	Shader _get_shader() const override;
+	GLuint _get_shader() const override;
 
 	std::vector<vec3f> _vertices;
 	std::vector<vec3f> _colors;

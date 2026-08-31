@@ -6,6 +6,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include <common/helpers.h>
+#include <common/glutils.h>
 
 void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 	_transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
@@ -81,6 +82,8 @@ std::vector<u32> ChunkMesher::_get_indices() const {
 	return _indices;
 }
 
-Shader ChunkMesher::_get_shader() const {
-	return Shader::from_file(SHADER_PATH "voxel.vert", SHADER_PATH "voxel.frag");
+GLuint ChunkMesher::_get_shader() const {
+	GLuint shader = 0;
+	if (shaderLoadVF(&shader, SHADER_PATH "voxel.vert", SHADER_PATH "voxel.frag")) throw;
+	return shader;
 }

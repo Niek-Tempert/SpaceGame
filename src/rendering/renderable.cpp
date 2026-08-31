@@ -89,7 +89,7 @@ void link_vbuffer(GLint buffer, GLuint location, GLint size) {
 }
 
 void dispose(RenderObject *object) {
-	object->shader.dispose();
+	glDeleteProgram(object->shader);
 
 	if (object->pos_buffer >= 0) {
 		u32 pos_buffer = object->pos_buffer;
@@ -152,10 +152,10 @@ void MRenderable::init() {
 	object.index_buffer = upload_ibuffer(indices);
 
 	_render_object->shader = _get_shader();
-	const GLint pos_loc = glGetAttribLocation(_render_object->shader.id, "vPos");
-	const GLint col_loc = glGetAttribLocation(_render_object->shader.id, "vCol");
-	const GLint norm_loc = glGetAttribLocation(_render_object->shader.id, "vNorm");
-	const GLint uv_loc = glGetAttribLocation(_render_object->shader.id, "vUV");
+	const GLint pos_loc = glGetAttribLocation(_render_object->shader, "vPos");
+	const GLint col_loc = glGetAttribLocation(_render_object->shader, "vCol");
+	const GLint norm_loc = glGetAttribLocation(_render_object->shader, "vNorm");
+	const GLint uv_loc = glGetAttribLocation(_render_object->shader, "vUV");
 
 	link_vbuffer(object.pos_buffer, pos_loc, sizeof(*verts.data()) / sizeof(f32));
 	link_vbuffer(object.col_buffer, col_loc, sizeof(*cols.data()) / sizeof(f32));
@@ -207,11 +207,11 @@ void MRenderable::_before_render(RenderData *data) const {
 	glm::mat4 proj = data->proj;
 	glm::mat4 mvp = proj * view * model;
 
-	_render_object->shader.use();
-	_render_object->shader.set_mat4("Model", model);
-	_render_object->shader.set_mat4("View", view);
-	_render_object->shader.set_mat4("Proj", proj);
-	_render_object->shader.set_mat4("MVP", mvp);
+	glUseProgram(_render_object->shader);
+	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "Model"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "View"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "Proj"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "MVP"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(mvp));
 
 	glBindTexture(GL_TEXTURE_2D, _render_object->texture_buffer);
 	glBindVertexArray(_render_object->vao);
