@@ -4,5 +4,5 @@
 
 class MLineRenderable : public MRenderable {
 protected:
-	void _render() const override;
+	void draw() const override;
 };

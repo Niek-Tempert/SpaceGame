@@ -17,16 +17,16 @@ struct RenderObject {
 	u32 vao;
 	GLuint shader;
 
-	i32 vertex_count;
-	i32 index_count;
+	i32 vertCt;
+	i32 idxCt;
 
-	i32 pos_buffer;
-	i32 col_buffer;
-	i32 norm_buffer;
-	i32 uv_buffer;
-	i32 index_buffer;
+	i32 posBuff;
+	i32 colBuff;
+	i32 normBuff;
+	i32 uvBuff;
+	i32 idxBuff;
 
-	u32 texture_buffer;
+	u32 texBuff;
 };
 
 class IRenderable {
@@ -39,25 +39,25 @@ public:
 
 class MRenderable : public IRenderable {
 public:
-	MRenderable() : m_render_object(NULL) {}
+	MRenderable() : m_renderObject(NULL) {}
 	~MRenderable() override;
 	
 	void init() override;
 	void render(RenderData *data) const final;
 
 protected:
-	virtual void _set_gl_state() const;
+	virtual void setGLState() const;
 
-	virtual glm::mat4x4 _get_transform() const { return glm::mat4(1.0f); }
-	virtual std::vector<glm::vec3> _get_vertices() const { return {}; }
-	virtual std::vector<glm::vec3> _get_colors() const { return {}; }
-	virtual std::vector<glm::vec3> _get_normals() const { return {}; }
-	virtual std::vector<glm::vec2> _get_uvs() const { return {}; }
-	virtual std::vector<u32> _get_indices() const { return {}; }
-	virtual GLuint _get_shader() const { return 0; }
+	virtual glm::mat4x4 getTransform() const { return glm::mat4(1.0f); }
+	virtual std::vector<glm::vec3> getVertices() const { return {}; }
+	virtual std::vector<glm::vec3> getColors() const { return {}; }
+	virtual std::vector<glm::vec3> getNormals() const { return {}; }
+	virtual std::vector<glm::vec2> getUVs() const { return {}; }
+	virtual std::vector<u32> getIndices() const { return {}; }
+	virtual GLuint getShader() const { return 0; }
 
-	virtual void _before_render(RenderData *data) const;
-	virtual void _render() const;
+	virtual void beforeRender(RenderData *data) const;
+	virtual void draw() const;
 
-	RenderObject* m_render_object;
+	RenderObject* m_renderObject;
 };

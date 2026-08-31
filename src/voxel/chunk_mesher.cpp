@@ -37,18 +37,18 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 						continue;
 					}
 
-					for (u32 index : mesh_consts::face_indices) {
+					for (u32 index : mesh_consts::faceIndices) {
 						m_indices.push_back(index + (u32)m_vertices.size());
 					}
 
-					for (const auto &vert : mesh_consts::cube_vertices[i]) {
+					for (const auto &vert : mesh_consts::cubeVerts[i]) {
 						m_vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
 						m_colors.emplace_back(col);
 					}
 
-					for (u32 j = 0; j < (u32)std::size(*mesh_consts::cube_vertices); ++j) {
-						m_uvs.emplace_back(mesh_consts::face_uvs[j]);
-						m_normals.emplace_back(mesh_consts::cube_normals[i]);
+					for (u32 j = 0; j < (u32)std::size(*mesh_consts::cubeVerts); ++j) {
+						m_uvs.emplace_back(mesh_consts::faceUVs[j]);
+						m_normals.emplace_back(mesh_consts::cubeNormals[i]);
 					}
 				}
 			}
@@ -58,31 +58,31 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 	init();
 }
 
-glm::mat4x4 ChunkMesher::_get_transform() const {
+glm::mat4x4 ChunkMesher::getTransform() const {
 	return m_voxel->m_transform * m_transform;
 }
 
-std::vector<glm::vec3> ChunkMesher::_get_vertices() const {
+std::vector<glm::vec3> ChunkMesher::getVertices() const {
 	return m_vertices;
 }
 
-std::vector<glm::vec3> ChunkMesher::_get_colors() const {
+std::vector<glm::vec3> ChunkMesher::getColors() const {
 	return m_colors;
 }
 
-std::vector<glm::vec3> ChunkMesher::_get_normals() const {
+std::vector<glm::vec3> ChunkMesher::getNormals() const {
 	return m_normals;
 }
 
-std::vector<glm::vec2> ChunkMesher::_get_uvs() const {
+std::vector<glm::vec2> ChunkMesher::getUVs() const {
 	return m_uvs;
 }
 
-std::vector<u32> ChunkMesher::_get_indices() const {
+std::vector<u32> ChunkMesher::getIndices() const {
 	return m_indices;
 }
 
-GLuint ChunkMesher::_get_shader() const {
+GLuint ChunkMesher::getShader() const {
 	GLuint shader = 0;
 	if (shaderLoadVF(&shader, SHADER_PATH "voxel.vert", SHADER_PATH "voxel.frag")) throw;
 	return shader;

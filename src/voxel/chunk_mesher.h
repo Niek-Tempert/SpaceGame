@@ -16,13 +16,13 @@ public:
 	void update(const Voxel *voxel, const ChunkID &chunk_id);
 
 protected:
-	glm::mat4x4 _get_transform() const override;
-	std::vector<glm::vec3> _get_vertices() const override;
-	std::vector<glm::vec3> _get_colors() const override;
-	std::vector<glm::vec3> _get_normals() const override;
-	std::vector<glm::vec2> _get_uvs() const override;
-	std::vector<u32> _get_indices() const override;
-	GLuint _get_shader() const override;
+	glm::mat4x4 getTransform() const override;
+	std::vector<glm::vec3> getVertices() const override;
+	std::vector<glm::vec3> getColors() const override;
+	std::vector<glm::vec3> getNormals() const override;
+	std::vector<glm::vec2> getUVs() const override;
+	std::vector<u32> getIndices() const override;
+	GLuint getShader() const override;
 
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;

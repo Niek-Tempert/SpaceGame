@@ -12,17 +12,17 @@ public:
 	BlockCursor() : m_visible(true), m_transform(glm::mat4(1.0f)) {}
 	
 protected:
-	void _set_gl_state() const override {
-		MRenderable::_set_gl_state();
+	void setGLState() const override {
+		MRenderable::setGLState();
 		glDisable(GL_DEPTH_TEST);
 		glLineWidth(4.0f);
 	}
 
-	glm::mat4x4 _get_transform() const override {
+	glm::mat4x4 getTransform() const override {
 		return m_transform;
 	}
 
-	std::vector<glm::vec3> _get_vertices() const override {
+	std::vector<glm::vec3> getVertices() const override {
 		return {
 			{ 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 },
 			{ 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 },
@@ -35,17 +35,17 @@ protected:
 		};
 	}
 
-	GLuint _get_shader() const override {
+	GLuint getShader() const override {
 		GLuint shader = 0;
 		if (shaderLoadVF(&shader, SHADER_PATH "black.vert", SHADER_PATH "black.frag")) throw;
 		return shader;
 	}
 
-	void _render() const override {
+	void draw() const override {
 		if (!m_visible) {
 			return;
 		}
 		
-		MLineRenderable::_render();
+		MLineRenderable::draw();
 	}
 };

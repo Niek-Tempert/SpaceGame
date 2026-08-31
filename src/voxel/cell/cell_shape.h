@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <common/types.h>
+
 /* All mesh types */
 /* Implemented this way for possible gpu mesh generation */
 enum class CellShape : u8 {

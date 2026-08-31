@@ -10,13 +10,13 @@
 class Monkey : public MRenderable {
 public:
 
-	GLuint _get_shader() const override {
+	GLuint getShader() const override {
 		GLuint shader = 0;
 		if (shaderLoadVF(&shader, SHADER_PATH "unlit.vert", SHADER_PATH "unlit.frag")) throw;
 		return shader;
 	}
 
-	std::vector<glm::vec3> _get_vertices() const override {
+	std::vector<glm::vec3> getVertices() const override {
 		return { { 0.467091f, -0.768123f, 0.308394f },
 		         { 0.411605f, -0.794655f, 0.129821f },
 		         { 0.633369f, -0.566534f, 0.242106f },
@@ -830,7 +830,7 @@ public:
 		};
 	}
 
-	std::vector<glm::vec3> _get_colors() const override {
+	std::vector<glm::vec3> getColors() const override {
 		return { { 0.411765f, 0.823529f, 0.949020f },
 		         { 0.811765f, 0.949020f, 0.227451f },
 		         { 0.701961f, 0.360784f, 0.984314f },

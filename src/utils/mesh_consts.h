@@ -2,7 +2,7 @@
 
 namespace mesh_consts {
 
-const glm::vec3 cube_vertices[6][4] {
+const glm::vec3 cubeVerts[6][4] {
 	{ { 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 } },
 	{ { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } },
 	{ { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 1, 1, 1 } },
@@ -11,7 +11,7 @@ const glm::vec3 cube_vertices[6][4] {
 	{ { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 }, { 0, 0, 0 } }
 };
 
-const glm::vec3 cube_split_vertices[6][6] {
+const glm::vec3 cubeSplitVerts[6][6] {
 	{ { 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 1 }, { 1, 0, 0 } },
 	{ { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } },
 	{ { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 1 } },
@@ -20,22 +20,22 @@ const glm::vec3 cube_split_vertices[6][6] {
 	{ { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 }, { 0, 0, 0 } }
 };
 
-constexpr u32 face_indices[6] {
+constexpr u32 faceIndices[6] {
 	2, 1, 0, 3, 2, 0
 };
 
-constexpr u32 face_indices_inv[6] {
+constexpr u32 faceIndicesInv[6] {
 	0, 1, 2, 0, 2, 3
 };
 
-const glm::vec2 face_uvs[4] {
+const glm::vec2 faceUVs[4] {
 	{ 1, 0 },
 	{ 1, 1 },
 	{ 0, 1 },
 	{ 0, 0 }
 };
 
-const glm::vec3 cube_normals[6] {
+const glm::vec3 cubeNormals[6] {
 	{  1,  0,  0 },
 	{ -1,  0,  0 },
 	{  0,  1,  0 },
