@@ -17,72 +17,72 @@ public:
 
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		cursor = last_cursor = { xpos, ypos };
+		m_cursor = m_last_cursor = { xpos, ypos };
 	}
 
 	void next() {
 		/* Reset mouse flags */
-		mouse_press_flags = 0;
-		mouse_release_flags = 0;
+		m_mouse_press_flags = 0;
+		m_mouse_release_flags = 0;
 
 		/* Reset keys */
-		for (u8 &key : keys) {
+		for (u8 &key : m_keys) {
 			key &= 1;
 		}
 		
-		last_cursor = cursor;
+		m_last_cursor = m_cursor;
 	}
 	
 	glm::vec2 get_cursor() const {
-		return cursor;
+		return m_cursor;
 	}
 
 	glm::vec2 get_cursor_delta() const {
-		return cursor - last_cursor;
+		return m_cursor - m_last_cursor;
 	}
 
 	bool is_key_down(int key) const {
 		u8 flag = 1 << 0;
-		return (keys[key] & flag) == flag;
+		return (m_keys[key] & flag) == flag;
 	}
 
 	bool is_key_press(int key) const {
 		u8 flag = 1 << 1;
-		return (keys[key] & flag) == flag;
+		return (m_keys[key] & flag) == flag;
 	}
 
 	bool is_key_release(int key) const {
 		u8 flag = 1 << 2;
-		return (keys[key] & flag) == flag;
+		return (m_keys[key] & flag) == flag;
 	}
 
 	bool is_mouse_press(int button) const {
 		u8 flag = 1 << button;
-		return (mouse_press_flags & flag) == flag;
+		return (m_mouse_press_flags & flag) == flag;
 	}
 
 	bool is_mouse_release(int button) const {
 		u8 flag = 1 << button;
-		return (mouse_release_flags & flag) == flag;
+		return (m_mouse_release_flags & flag) == flag;
 	}
 
 	bool is_mouse_down(int button) const {
 		u8 flag = 1 << button;
-		return (mouse_down_flags & flag) == flag;
+		return (m_mouse_down_flags & flag) == flag;
 	}
 
 private:
-	glm::vec2 cursor;
-	glm::vec2 last_cursor;
-	u8 mouse_down_flags = 0;
-	u8 mouse_press_flags = 0;
-	u8 mouse_release_flags = 0;
-	u8 keys[KEY_COUNT] = {};
+	glm::vec2 m_cursor;
+	glm::vec2 m_last_cursor;
+	u8 m_mouse_down_flags = 0;
+	u8 m_mouse_press_flags = 0;
+	u8 m_mouse_release_flags = 0;
+	u8 m_keys[KEY_COUNT] = {};
 	
 	static void _cursor_callback(GLFWwindow* window, double xpos, double ypos) {
 		Input *input = (Input*)glfwGetWindowUserPointer(window);
 		
-		input->cursor = { xpos, ypos };
+		input->m_cursor = { xpos, ypos };
 	}
 
 	static void _mouse_callback(GLFWwindow* window, int button, int action, int mods) {
@@ -93,15 +93,15 @@ private:
 			case GLFW_PRESS:
 				flag = 1 << button;
 
-				input->mouse_down_flags |= flag;
-				input->mouse_press_flags |= flag;
+				input->m_mouse_down_flags |= flag;
+				input->m_mouse_press_flags |= flag;
 			break;
 
 			case GLFW_RELEASE:
 				flag = 1 << button;
 
-				input->mouse_down_flags &= ~flag;
-				input->mouse_release_flags |= flag;
+				input->m_mouse_down_flags &= ~flag;
+				input->m_mouse_release_flags |= flag;
 			break;
 		}
 	}
@@ -111,12 +111,12 @@ private:
 		
 		switch (action) {
 			case GLFW_PRESS:
-				input->keys[key] |= 1 << 0 | ((input->keys[key] & 1) ^ 1) << 1;
+				input->m_keys[key] |= 1 << 0 | ((input->m_keys[key] & 1) ^ 1) << 1;
 			break;
 
 			case GLFW_RELEASE:
-				input->keys[key] &= ~1;
-				input->keys[key] |= 1 << 2;
+				input->m_keys[key] &= ~1;
+				input->m_keys[key] |= 1 << 2;
 			break;
 		}
 	}

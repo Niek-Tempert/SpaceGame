@@ -5,9 +5,9 @@
 class Voxel;
 
 struct VoxelRegister {
-	VoxelRegister() : voxel(nullptr), offset({ 0, 0, 0 }) {}
-	VoxelRegister(Voxel *voxel, glm::ivec3 offset) : voxel(voxel), offset(offset) {}
+	VoxelRegister() : m_voxel(nullptr), m_offset({ 0, 0, 0 }) {}
+	VoxelRegister(Voxel *voxel, glm::ivec3 offset) : m_voxel(voxel), m_offset(offset) {}
 
-	Voxel *voxel;
-	glm::ivec3 offset;
+	Voxel *m_voxel;
+	glm::ivec3 m_offset;
 };

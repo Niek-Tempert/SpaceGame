@@ -21,7 +21,7 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
-	voxel->transform = model;
+	voxel->m_transform = model;
 }
 
 void Scene::init() {
@@ -49,9 +49,9 @@ void Scene::update(const Input* input) {
     updateMoon();
 
     glm::mat4 rot = glm::mat4(1.0f);
-	rot = glm::rotate(rot, player.getRot().z, glm::vec3(0, 0, 1));
-	rot = glm::rotate(rot, player.getRot().y, glm::vec3(0, 1, 0));
-	rot = glm::rotate(rot, player.getRot().x, glm::vec3(1, 0, 0));
+	rot = glm::rotate(rot, m_player.getRot().z, glm::vec3(0, 0, 1));
+	rot = glm::rotate(rot, m_player.getRot().y, glm::vec3(0, 1, 0));
+	rot = glm::rotate(rot, m_player.getRot().x, glm::vec3(1, 0, 0));
 	glm::vec3 direction = rot * glm::vec4(0, 0, -1, 1);
 
 	f32 dist = 4.0f;
@@ -60,9 +60,9 @@ void Scene::update(const Input* input) {
 	for (Voxel* voxel : m_voxels) {
 		RaycastResult voxel_result = voxel->raycast(
             { 
-                player.getPos().x, 
-                player.getPos().y, 
-                player.getPos().z 
+                m_player.getPos().x, 
+                m_player.getPos().y, 
+                m_player.getPos().z 
             },
             {
                 direction.x,
@@ -79,13 +79,13 @@ void Scene::update(const Input* input) {
 		}
 	}
 
-	m_block_cursor.visible = result.hit;
+	m_block_cursor.m_visible = result.hit;
 	if (!result.hit) return;
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
-    model = hit_voxel->transform * model;
-    m_block_cursor.transform = model;
+    model = hit_voxel->m_transform * model;
+    m_block_cursor.m_transform = model;
 
     if (input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
         hit_voxel->set(result.id, { NULL, NULL });
@@ -107,17 +107,17 @@ std::vector<IRenderable*> Scene::getRenderables() {
 }
 
 void Scene::updatePlayer(const Input *input) {
-    player.update(getDeltaTime(), input);
+    m_player.update(getDeltaTime(), input);
 
     glm::mat4 rot = glm::mat4(1.0f);
-	rot = glm::rotate(rot, -player.getRot().x, glm::vec3(1, 0, 0));
-	rot = glm::rotate(rot, -player.getRot().y, glm::vec3(0, 1, 0));
-	rot = glm::rotate(rot, -player.getRot().z, glm::vec3(0, 0, 1));
-    m_view = rot * glm::translate(glm::mat4(1.0f), -player.getPos());
+	rot = glm::rotate(rot, -m_player.getRot().x, glm::vec3(1, 0, 0));
+	rot = glm::rotate(rot, -m_player.getRot().y, glm::vec3(0, 1, 0));
+	rot = glm::rotate(rot, -m_player.getRot().z, glm::vec3(0, 0, 1));
+    m_view = rot * glm::translate(glm::mat4(1.0f), -m_player.getPos());
 }
 
 void Scene::updateMoon() {
-    glm::vec3 position = glm::vec3(m_moon.transform[3]);
+    glm::vec3 position = glm::vec3(m_moon.m_transform[3]);
 	f64 t = getDeltaTime() * 0.05 * getSpeed();
 	f64 sin = glm::sin(t);
 	f64 cos = glm::cos(t);
@@ -127,5 +127,5 @@ void Scene::updateMoon() {
 		position.z * cos - position.x * sin
 	};
 
-	m_moon.transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+	m_moon.m_transform = glm::translate(glm::mat4(1.0f), rotated_pos);
 }

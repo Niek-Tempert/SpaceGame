@@ -19,9 +19,9 @@ public:
 	u32 get_count() const;
 
 private:
-	ChunkMesher *_mesher;
-	CellUser _cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	u32 _count;
+	ChunkMesher* m_mesher;
+	CellUser m_cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	u32 m_count;
 };
 
 #undef CHUNK_SIZE

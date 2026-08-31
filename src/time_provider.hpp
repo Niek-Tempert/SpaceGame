@@ -10,6 +10,6 @@ public:
 private:
     friend class Engine;
 
-    f32 time{};
-    f32 deltaTime{};
+    f32 m_deltaTime{};
+    f32 m_time{};
 };

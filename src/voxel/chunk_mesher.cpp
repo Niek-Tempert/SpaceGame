@@ -9,14 +9,14 @@
 #include <common/glutils.h>
 
 void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
-	_transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
-	this->_voxel = voxel;
+	m_transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
+	this->m_voxel = voxel;
 
-	_vertices.clear();
-	_colors.clear();
-	_normals.clear();
-	_uvs.clear();
-	_indices.clear();
+	m_vertices.clear();
+	m_colors.clear();
+	m_normals.clear();
+	m_uvs.clear();
+	m_indices.clear();
 
 	const Chunk *chunk = voxel->get_chunks().at(chunk_id);
 
@@ -38,17 +38,17 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 					}
 
 					for (u32 index : mesh_consts::face_indices) {
-						_indices.push_back(index + (u32)_vertices.size());
+						m_indices.push_back(index + (u32)m_vertices.size());
 					}
 
 					for (const auto &vert : mesh_consts::cube_vertices[i]) {
-						_vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
-						_colors.emplace_back(col);
+						m_vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
+						m_colors.emplace_back(col);
 					}
 
 					for (u32 j = 0; j < (u32)std::size(*mesh_consts::cube_vertices); ++j) {
-						_uvs.emplace_back(mesh_consts::face_uvs[j]);
-						_normals.emplace_back(mesh_consts::cube_normals[i]);
+						m_uvs.emplace_back(mesh_consts::face_uvs[j]);
+						m_normals.emplace_back(mesh_consts::cube_normals[i]);
 					}
 				}
 			}
@@ -59,27 +59,27 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 }
 
 glm::mat4x4 ChunkMesher::_get_transform() const {
-	return _voxel->transform * _transform;
+	return m_voxel->m_transform * m_transform;
 }
 
 std::vector<glm::vec3> ChunkMesher::_get_vertices() const {
-	return _vertices;
+	return m_vertices;
 }
 
 std::vector<glm::vec3> ChunkMesher::_get_colors() const {
-	return _colors;
+	return m_colors;
 }
 
 std::vector<glm::vec3> ChunkMesher::_get_normals() const {
-	return _normals;
+	return m_normals;
 }
 
 std::vector<glm::vec2> ChunkMesher::_get_uvs() const {
-	return _uvs;
+	return m_uvs;
 }
 
 std::vector<u32> ChunkMesher::_get_indices() const {
-	return _indices;
+	return m_indices;
 }
 
 GLuint ChunkMesher::_get_shader() const {

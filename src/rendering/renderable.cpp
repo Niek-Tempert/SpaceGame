@@ -91,16 +91,16 @@ void dispose(RenderObject *object) {
 }
 
 MRenderable::~MRenderable() {
-	dispose(_render_object);
+	dispose(m_render_object);
 }
 
 void MRenderable::init() {
-	if (_render_object) {
-		dispose(_render_object);
+	if (m_render_object) {
+		dispose(m_render_object);
 	}
 
-	_render_object = new RenderObject();
-	RenderObject &object = *this->_render_object;
+	m_render_object = new RenderObject();
+	RenderObject &object = *this->m_render_object;
 
 	glGenVertexArrays(1, &object.vao);
 	glBindVertexArray(object.vao);
@@ -120,19 +120,19 @@ void MRenderable::init() {
 	object.uv_buffer = upload_vbuffer(uvs);
 	object.index_buffer = upload_ibuffer(indices);
 
-	_render_object->shader = _get_shader();
-	const GLint pos_loc = glGetAttribLocation(_render_object->shader, "vPos");
-	const GLint col_loc = glGetAttribLocation(_render_object->shader, "vCol");
-	const GLint norm_loc = glGetAttribLocation(_render_object->shader, "vNorm");
-	const GLint uv_loc = glGetAttribLocation(_render_object->shader, "vUV");
+	m_render_object->shader = _get_shader();
+	const GLint pos_loc = glGetAttribLocation(m_render_object->shader, "vPos");
+	const GLint col_loc = glGetAttribLocation(m_render_object->shader, "vCol");
+	const GLint norm_loc = glGetAttribLocation(m_render_object->shader, "vNorm");
+	const GLint uv_loc = glGetAttribLocation(m_render_object->shader, "vUV");
 
 	link_vbuffer(object.pos_buffer, pos_loc, sizeof(*verts.data()) / sizeof(f32));
 	link_vbuffer(object.col_buffer, col_loc, sizeof(*cols.data()) / sizeof(f32));
 	link_vbuffer(object.norm_buffer, norm_loc, sizeof(*norms.data()) / sizeof(f32));
 	link_vbuffer(object.uv_buffer, uv_loc, sizeof(*uvs.data()) / sizeof(f32));
 
-	glGenTextures(1, &_render_object->texture_buffer);
-	glBindTexture(GL_TEXTURE_2D, _render_object->texture_buffer);
+	glGenTextures(1, &m_render_object->texture_buffer);
+	glBindTexture(GL_TEXTURE_2D, m_render_object->texture_buffer);
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -153,7 +153,7 @@ void MRenderable::init() {
 }
 
 void MRenderable::render(RenderData *data) const {
-	if (!_render_object) {
+	if (!m_render_object) {
 		return;
 	}
 
@@ -176,20 +176,21 @@ void MRenderable::_before_render(RenderData *data) const {
 	glm::mat4 proj = data->proj;
 	glm::mat4 mvp = proj * view * model;
 
-	glUseProgram(_render_object->shader);
-	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "Model"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "View"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "Proj"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(proj));
-	glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "MVP"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(mvp));
+	glUseProgram(m_render_object->shader);
+	glUniformMatrix4fv(glGetUniformLocation(m_render_object->shader, "Model"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(m_render_object->shader, "View"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(m_render_object->shader, "Proj"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(m_render_object->shader, "MVP"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(mvp));
 
-	glBindTexture(GL_TEXTURE_2D, _render_object->texture_buffer);
-	glBindVertexArray(_render_object->vao);
+	glBindTexture(GL_TEXTURE_2D, m_render_object->texture_buffer);
+	glBindVertexArray(m_render_object->vao);
 }
 
 void MRenderable::_render() const {
-	if (_render_object->index_count > 0) {
-		glDrawElements(GL_TRIANGLES, _render_object->index_count, GL_UNSIGNED_INT, (void *)0);
-	} else {
-		glDrawArrays(GL_TRIANGLES, 0, _render_object->vertex_count);
+	if (m_render_object->index_count > 0) {
+		glDrawElements(GL_TRIANGLES, m_render_object->index_count, GL_UNSIGNED_INT, (void *)0);
+		return;
 	}
+	
+	glDrawArrays(GL_TRIANGLES, 0, m_render_object->vertex_count);
 }

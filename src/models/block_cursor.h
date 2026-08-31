@@ -6,10 +6,10 @@
 
 class BlockCursor : public MLineRenderable {
 public:
-	bool visible;
-	glm::mat4 transform;
+	bool m_visible;
+	glm::mat4 m_transform;
 
-	BlockCursor() : visible(true), transform(glm::mat4(1.0f)) {}
+	BlockCursor() : m_visible(true), m_transform(glm::mat4(1.0f)) {}
 	
 protected:
 	void _set_gl_state() const override {
@@ -19,9 +19,8 @@ protected:
 	}
 
 	glm::mat4x4 _get_transform() const override {
-		return transform;
+		return m_transform;
 	}
-
 
 	std::vector<glm::vec3> _get_vertices() const override {
 		return {
@@ -43,7 +42,7 @@ protected:
 	}
 
 	void _render() const override {
-		if (!visible) {
+		if (!m_visible) {
 			return;
 		}
 		

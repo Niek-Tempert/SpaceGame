@@ -65,8 +65,8 @@ Engine::~Engine() {
 void Engine::exec() {
 	while (!glfwWindowShouldClose(m_window)) {
 		f32 time = glfwGetTime();
-		m_scene.deltaTime = time - m_scene.time;
-		m_scene.time = time;
+		m_scene.m_deltaTime = time - m_scene.m_time;
+		m_scene.m_time = time;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -135,7 +135,7 @@ void Engine::exec() {
 		}
 		
 		ImGui::Begin("Settings");
-		ImGui::DragFloat("Speed", &m_scene.speed, 0.01f);
+		ImGui::DragFloat("Speed", &m_scene.m_speed, 0.01f);
 		ImGui::End();
 
 		ImGui::Render();

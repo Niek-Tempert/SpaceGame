@@ -9,5 +9,5 @@ public:
 private:
     friend class Engine;
 
-    f32 speed{};
+    f32 m_speed{};
 };

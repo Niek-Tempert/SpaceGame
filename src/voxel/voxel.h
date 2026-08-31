@@ -32,7 +32,7 @@ public:
 	typedef glm::ivec3 ChunkID;
 	typedef glm::uvec3 SubID;
 
-	glm::mat4 transform;
+	glm::mat4 m_transform;
 
 	Voxel();
 	~Voxel() override;

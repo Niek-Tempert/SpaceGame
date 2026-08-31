@@ -3,33 +3,33 @@
 #include "chunk_mesher.h"
 #include "cell/cell_user.h"
 
-Chunk::Chunk(): _mesher(new ChunkMesher()), _cells(), _count(0) {
+Chunk::Chunk(): m_mesher(new ChunkMesher()), m_cells(), m_count(0) {
 }
 
 void Chunk::set(const glm::uvec3 &id, const CellUser &cell) {
 	if ((cell.type || cell.data)
-		&& (!_cells[id.x][id.y][id.z].type && !_cells[id.x][id.y][id.z].data)) {
-		_count++;
+		&& (!m_cells[id.x][id.y][id.z].type && !m_cells[id.x][id.y][id.z].data)) {
+		m_count++;
 	} else if ((!cell.type && !cell.data)
-		&& (_cells[id.x][id.y][id.z].type || _cells[id.x][id.y][id.z].data)) {
-		_count--;
+		&& (m_cells[id.x][id.y][id.z].type || m_cells[id.x][id.y][id.z].data)) {
+		m_count--;
 	}
 
-	_cells[id.x][id.y][id.z] = cell;
+	m_cells[id.x][id.y][id.z] = cell;
 }
 
 const CellUser &Chunk::get(const glm::uvec3 &id) const {
-	return _cells[id.x][id.y][id.z];
+	return m_cells[id.x][id.y][id.z];
 }
 
 ChunkMesher *Chunk::get_mesher() {
-	return _mesher;
+	return m_mesher;
 }
 
 const ChunkMesher *Chunk::get_mesher() const {
-	return _mesher;
+	return m_mesher;
 }
 
 u32 Chunk::get_count() const {
-	return _count;
+	return m_count;
 }

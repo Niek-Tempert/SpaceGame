@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "nixelib/nixelib.h"
-
 /* All mesh types */
 /* Implemented this way for possible gpu mesh generation */
 enum class CellShape : u8 {

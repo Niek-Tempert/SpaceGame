@@ -7,7 +7,7 @@
 #include <common/math.h>
 
 Voxel::Voxel() {
-	transform = glm::mat4(1.0f);
+	m_transform = glm::mat4(1.0f);
 }
 
 Voxel::~Voxel() {
@@ -49,7 +49,7 @@ const CellUser *Voxel::get(const glm::ivec3 &id) const {
 }
 
 RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction, f32 max_distance) {
-	glm::mat4 voxel_transform = this->transform;
+	glm::mat4 voxel_transform = this->m_transform;
 	glm::mat4 voxel_transform_inv = glm::inverse(voxel_transform);
 
 	glm::vec3 scale;

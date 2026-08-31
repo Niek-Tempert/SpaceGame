@@ -33,6 +33,6 @@ private:
     Cursor m_cursor{};
     std::vector<Voxel*> m_voxels{};
     
-    Player player{};
+    Player m_player{};
     glm::mat4 m_view = glm::mat4(1.0f);
 };

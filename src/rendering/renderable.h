@@ -39,7 +39,7 @@ public:
 
 class MRenderable : public IRenderable {
 public:
-	MRenderable() : _render_object(NULL) {}
+	MRenderable() : m_render_object(NULL) {}
 	~MRenderable() override;
 	
 	void init() override;
@@ -59,5 +59,5 @@ protected:
 	virtual void _before_render(RenderData *data) const;
 	virtual void _render() const;
 
-	RenderObject *_render_object;
+	RenderObject* m_render_object;
 };

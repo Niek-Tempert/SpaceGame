@@ -30,13 +30,13 @@ public:
 	}
 
 	void _before_render(RenderData *data) const override {
-		glUseProgram(_render_object->shader);
+		glUseProgram(m_render_object->shader);
 
 		glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3((float)data->resolution.x / 2.0f, (float)data->resolution.y / 2.0f, 0.0f));
 		glm::mat4 ortho = glm::ortho(0.0f, (f32)data->resolution.x, 0.0f, (f32)data->resolution.y, 1.0f, -1.0f);
 		glm::mat4 view = ortho * trans;
 
-		glUniformMatrix4fv(glGetUniformLocation(_render_object->shader, "view"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
-		glBindVertexArray(_render_object->vao);
+		glUniformMatrix4fv(glGetUniformLocation(m_render_object->shader, "view"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
+		glBindVertexArray(m_render_object->vao);
 	}
 };
