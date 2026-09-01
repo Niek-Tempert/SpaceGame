@@ -1,5 +1,8 @@
 #pragma once
 
+#include <glm/glm.hpp>
+#include <common/types.h>
+
 namespace MeshConsts {
 
 const glm::vec3 cubeVerts[6][4] {

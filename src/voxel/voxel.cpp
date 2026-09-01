@@ -1,7 +1,8 @@
 #include "voxel.h"
 
 #include "chunk.h"
-#include "utils/mesh_consts.h"
+
+#include <rendering/mesh_consts.h>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <common/math.h>
@@ -103,17 +104,22 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 				side_dist.x += delta_dist.x;
 				map_pos.x += step.x;
 				side = 0;
-			} else if (side_dist.y < side_dist.x && side_dist.y < side_dist.z) {
+
+				continue;
+			}
+			if (side_dist.y < side_dist.x && side_dist.y < side_dist.z) {
 				ray_dist = side_dist.y;
 				side_dist.y += delta_dist.y;
 				map_pos.y += step.y;
 				side = 1;
-			} else {
-				ray_dist = side_dist.z;
-				side_dist.z += delta_dist.z;
-				map_pos.z += step.z;
-				side = 2;
+
+				continue;
 			}
+
+			ray_dist = side_dist.z;
+			side_dist.z += delta_dist.z;
+			map_pos.z += step.z;
+			side = 2;
 			continue;
 		}
 
@@ -262,7 +268,7 @@ const std::map<glm::ivec3, Chunk *, ivec3_less> &Voxel::get_chunks() const {
 	return chunks;
 }
 
-void Voxel::init() {
+void Voxel::rebuildMesh() {
 	for (auto chunk : chunks) {
 		chunk.second->get_mesher()->update(this, chunk.first);
 	}

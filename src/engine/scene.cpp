@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "utils/input.hpp"
+#include "input.hpp"
 
 static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
@@ -22,17 +22,27 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
 	voxel->m_transform = model;
+	voxel->rebuildMesh();
+}
+
+Scene::Scene() 
+	: m_skybox()
+	, m_moon()
+	, m_planet()
+	, m_blockSelect()
+	, m_crossair()
+	, m_voxels()
+	, m_player()
+	, m_view(glm::mat4(1.0f)) {
 }
 
 void Scene::init() {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
-    m_skybox.init();
-    m_blockSelect.init();
-    m_crossair.init();
-    m_planet.init();
-    m_moon.init();
+	m_skybox.rebuildMesh();
+	m_blockSelect.rebuildMesh();
+	m_crossair.rebuildMesh();
 
     m_voxels.push_back(&m_planet);
     m_voxels.push_back(&m_moon);
@@ -79,13 +89,13 @@ void Scene::update(const Input* input) {
 		}
 	}
 
-	m_blockSelect.m_visible = result.hit;
+	m_blockSelect.setVisible(result.hit);
 	if (!result.hit) return;
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
     model = hit_voxel->m_transform * model;
-    m_blockSelect.m_transform = model;
+    m_blockSelect.setTransform(model);
 
     if (input->getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
         hit_voxel->set(result.id, { NULL, NULL });

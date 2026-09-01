@@ -1,6 +1,6 @@
 #include "cube.hpp"
 
-#include "utils/mesh_consts.h"
+#include <rendering/mesh_consts.h>
 #include <common/helpers.h>
 #include <common/glutils.h>
 #include <glad/glad.h>

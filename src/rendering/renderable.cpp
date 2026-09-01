@@ -90,11 +90,16 @@ void dispose(RenderObject *object) {
 	delete object;
 }
 
+MRenderable::MRenderable() 
+	: m_renderObject() {
+	rebuildMesh();
+}
+
 MRenderable::~MRenderable() {
 	dispose(m_renderObject);
 }
 
-void MRenderable::init() {
+void MRenderable::rebuildMesh() {
 	if (m_renderObject) {
 		dispose(m_renderObject);
 	}

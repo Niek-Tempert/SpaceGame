@@ -2,7 +2,8 @@
 
 #include "chunk.h"
 #include "voxel.h"
-#include "utils/mesh_consts.h"
+
+#include <rendering/mesh_consts.h>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <common/helpers.h>
@@ -55,7 +56,7 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 		}
 	}
 
-	init();
+	rebuildMesh();
 }
 
 glm::mat4x4 ChunkMesher::getTransform() const {

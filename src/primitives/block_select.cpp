@@ -3,8 +3,16 @@
 #include <common/helpers.h>
 #include <common/glutils.h>
 
+void BlockSelect::setTransform(glm::mat4 transform) {
+    m_transform = transform;
+}
+
+void BlockSelect::setVisible(bool visible) {
+    m_visible = visible;
+}
+
 void BlockSelect::setGLState() const {
-    MRenderable::setGLState();
+	MRenderable::setGLState();
     glDisable(GL_DEPTH_TEST);
     glLineWidth(4.0f);
 }

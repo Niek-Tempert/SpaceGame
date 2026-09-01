@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/input.hpp"
+#include "input.hpp"
 
 class GLFWwindow;
 

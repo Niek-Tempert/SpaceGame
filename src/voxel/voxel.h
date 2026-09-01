@@ -35,14 +35,14 @@ public:
 	glm::mat4 m_transform;
 
 	Voxel();
-	~Voxel() override;
+	~Voxel();
 
 	void set(const CellID &id, const CellUser &cell);
 	const CellUser *get(const CellID &id) const;
 	const std::map<glm::ivec3, Chunk*, ivec3_less> &get_chunks() const;
 
 	void update(const CellID &id);
-	void init() override;
+	void rebuildMesh();
 	void render(RenderData *data) const override;
 
 	RaycastResult raycast(const glm::vec3 &start, const glm::vec3 &direction, f32 max_distance);

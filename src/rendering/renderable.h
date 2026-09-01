@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 #include <vector>
 #include <glm/mat4x4.hpp>
@@ -31,18 +31,15 @@ struct RenderObject {
 
 class IRenderable {
 public:
-	virtual ~IRenderable() = default;
-	
-	virtual void init() = 0;
 	virtual void render(RenderData *data) const = 0;
 };
 
 class MRenderable : public IRenderable {
 public:
-	MRenderable() : m_renderObject(NULL) {}
-	~MRenderable() override;
+	MRenderable();
+	virtual ~MRenderable();
 	
-	void init() override;
+	void rebuildMesh();
 	void render(RenderData *data) const final;
 
 protected:

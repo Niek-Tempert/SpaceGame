@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include "error.h"
 
 NODISCARD code shaderLoadCompute(GLuint* shader, const char* filepath);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include "rendering/renderable.h"
 #include <glm/vec3.hpp>
 
