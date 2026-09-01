@@ -29,8 +29,8 @@ void Scene::init() {
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
     m_skybox.init();
-    m_block_cursor.init();
-    m_cursor.init();
+    m_blockSelect.init();
+    m_crossair.init();
     m_planet.init();
     m_moon.init();
 
@@ -40,8 +40,8 @@ void Scene::init() {
     m_renderables.push_back(&m_skybox);
 	m_renderables.push_back(&m_planet);
 	m_renderables.push_back(&m_moon);
-	m_renderables.push_back(&m_block_cursor);
-	m_renderables.push_back(&m_cursor);
+	m_renderables.push_back(&m_blockSelect);
+	m_renderables.push_back(&m_crossair);
 }
 
 void Scene::update(const Input* input) {
@@ -79,13 +79,13 @@ void Scene::update(const Input* input) {
 		}
 	}
 
-	m_block_cursor.m_visible = result.hit;
+	m_blockSelect.m_visible = result.hit;
 	if (!result.hit) return;
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
     model = hit_voxel->m_transform * model;
-    m_block_cursor.m_transform = model;
+    m_blockSelect.m_transform = model;
 
     if (input->getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
         hit_voxel->set(result.id, { NULL, NULL });

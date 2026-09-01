@@ -4,9 +4,9 @@
 #include "time_provider.hpp"
 
 #include "utils/player.hpp"
-#include "models/skybox.h"
-#include "models/cursor.h"
-#include "models/block_cursor.h"
+#include "models/skybox.hpp"
+#include "models/crossair.hpp"
+#include "models/block_select.hpp"
 #include "voxel/voxel.h"
 
 class Input;
@@ -29,8 +29,8 @@ private:
     Skybox m_skybox{};
     Voxel m_moon{};
     Voxel m_planet{};
-	BlockCursor m_block_cursor{};
-    Cursor m_cursor{};
+	BlockSelect m_blockSelect{};
+    Crossair m_crossair{};
     std::vector<Voxel*> m_voxels{};
     
     Player m_player{};

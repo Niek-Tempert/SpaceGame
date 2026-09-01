@@ -52,6 +52,10 @@ set(PROJ_SRC
     ${PROJ_DIR}/voxel/chunk.cpp
     ${PROJ_DIR}/voxel/chunk_mesher.cpp
     ${PROJ_DIR}/voxel/voxel.cpp
+    ${PROJ_DIR}/models/block_select.cpp
+    ${PROJ_DIR}/models/crossair.cpp
+    ${PROJ_DIR}/models/cube.cpp
+    ${PROJ_DIR}/models/skybox.cpp
     ${PROJ_DIR}/common/error.c
     ${PROJ_DIR}/common/glutils.c
     ${PROJ_DIR}/common/math.c
