@@ -42,6 +42,7 @@ set(PROJ_SRC
     ${PROJ_DIR}/main.cpp
     ${PROJ_DIR}/engine.cpp
     ${PROJ_DIR}/scene.cpp
+    ${PROJ_DIR}/glwindow.cpp
     ${PROJ_DIR}/state_provider.cpp
     ${PROJ_DIR}/time_provider.cpp
     ${PROJ_DIR}/rendering/line_renderable.cpp

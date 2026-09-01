@@ -31,24 +31,24 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 				glm::ivec3 id = Voxel::compound_id(chunk_id, { x, y, z });
 				glm::vec3 col = glm::vec3((float)id.x, (float)id.y, (float)id.z);
 				for (u32 i = 0; i < 6; ++i) {
-					auto &dir = mesh_consts::axis[i];
+					auto &dir = MeshConsts::axis[i];
 					auto *neighbor = voxel->get(id + dir);
 					if (neighbor && neighbor->type) {
 						continue;
 					}
 
-					for (u32 index : mesh_consts::faceIndices) {
+					for (u32 index : MeshConsts::faceIndices) {
 						m_indices.push_back(index + (u32)m_vertices.size());
 					}
 
-					for (const auto &vert : mesh_consts::cubeVerts[i]) {
+					for (const auto &vert : MeshConsts::cubeVerts[i]) {
 						m_vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
 						m_colors.emplace_back(col);
 					}
 
-					for (u32 j = 0; j < (u32)std::size(*mesh_consts::cubeVerts); ++j) {
-						m_uvs.emplace_back(mesh_consts::faceUVs[j]);
-						m_normals.emplace_back(mesh_consts::cubeNormals[i]);
+					for (u32 j = 0; j < (u32)std::size(*MeshConsts::cubeVerts); ++j) {
+						m_uvs.emplace_back(MeshConsts::faceUVs[j]);
+						m_normals.emplace_back(MeshConsts::cubeNormals[i]);
 					}
 				}
 			}

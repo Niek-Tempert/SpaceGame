@@ -9,7 +9,7 @@ class Cube : public MRenderable {
 protected:
 	std::vector<glm::vec3> getVertices() const override {
 		std::vector<glm::vec3> vertices;
-		for (const auto &cube_side : mesh_consts::cubeVerts) {
+		for (const auto &cube_side : MeshConsts::cubeVerts) {
 			for (const auto &vertex : cube_side) {
 				vertices.push_back(vertex);
 			}
@@ -19,7 +19,7 @@ protected:
 
 	std::vector<glm::vec3> getColors() const override {
 		std::vector<glm::vec3> colors;
-		for (const auto &cube_side : mesh_consts::cubeVerts) {
+		for (const auto &cube_side : MeshConsts::cubeVerts) {
 			for (const auto &vertex : cube_side) {
 				colors.push_back(vertex);
 			}
@@ -30,7 +30,7 @@ protected:
 	std::vector<u32> getIndices() const override {
 		std::vector<u32> indices;
 		for (int i = 0; i < 6; ++i) {
-			for (auto vertex : mesh_consts::faceIndices) {
+			for (auto vertex : MeshConsts::faceIndices) {
 				indices.push_back(vertex + 4 * i);
 			}
 		}

@@ -12,20 +12,20 @@
 
 void Player::update(f32 deltaTime, const Input* input) {
 	glm::vec2 delta = { 
-        input->get_cursor_delta().x, 
-        input->get_cursor_delta().y 
+        input->getCursorDelta().x, 
+        input->getCursorDelta().y 
     };
 	
 	m_rot.x = glm::clamp(m_rot.x - delta.y * LOOK_SPEED, -glm::half_pi<f32>(), glm::half_pi<f32>());
 	m_rot.y = wrap(m_rot.y - delta.x * LOOK_SPEED, 0, glm::two_pi<f32>());
 
 	glm::vec3 dir{};
-	if (input->is_key_down(GLFW_KEY_W)) dir.z -= 1;
-	if (input->is_key_down(GLFW_KEY_A)) dir.x -= 1;
-	if (input->is_key_down(GLFW_KEY_S)) dir.z += 1;
-	if (input->is_key_down(GLFW_KEY_D)) dir.x += 1;
-	if (input->is_key_down(GLFW_KEY_SPACE)) dir.y += 1;
-	if (input->is_key_down(GLFW_KEY_LEFT_CONTROL)) dir.y -= 1;
+	if (input->getKeyDown(GLFW_KEY_W)) dir.z -= 1;
+	if (input->getKeyDown(GLFW_KEY_A)) dir.x -= 1;
+	if (input->getKeyDown(GLFW_KEY_S)) dir.z += 1;
+	if (input->getKeyDown(GLFW_KEY_D)) dir.x += 1;
+	if (input->getKeyDown(GLFW_KEY_SPACE)) dir.y += 1;
+	if (input->getKeyDown(GLFW_KEY_LEFT_CONTROL)) dir.y -= 1;
 	if (glm::length(dir) <= 0) return;
 
     dir = normalize(dir);
@@ -37,7 +37,7 @@ void Player::update(f32 deltaTime, const Input* input) {
         dir.z * cos - dir.x * sin
     };
 
-    f32 speed = input->is_key_down(GLFW_KEY_LEFT_SHIFT) 
+    f32 speed = input->getKeyDown(GLFW_KEY_LEFT_SHIFT) 
         ? RUN_SPEED 
         : WALK_SPEED;
 

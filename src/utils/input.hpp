@@ -7,85 +7,89 @@
 #define KEY_COUNT (GLFW_KEY_LAST + 1)
 #define MOUSE_COUNT (GLFW_MOUSE_BUTTON_LAST + 1)
 
+#define KEY_UP_BIT 2
+#define KEY_HOLD_BIT 1
+#define KEY_DOWN_BIT 0
+
 class Input {
 public:
 	void init(GLFWwindow* window) {
 		glfwSetWindowUserPointer(window, this);
-		glfwSetCursorPosCallback(window, _cursor_callback);
-		glfwSetMouseButtonCallback(window, _mouse_callback);
-		glfwSetKeyCallback(window, _keyboard_callback);
+		glfwSetCursorPosCallback(window, cursorCallback);
+		glfwSetMouseButtonCallback(window, mouseCallback);
+		glfwSetKeyCallback(window, keyboardCallback);
 
-		double xpos, ypos;
+		f64 xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		m_cursor = m_last_cursor = { xpos, ypos };
+		m_cursor = m_lastCursor = { xpos, ypos };
 	}
 
 	void next() {
 		/* Reset mouse flags */
-		m_mouse_press_flags = 0;
-		m_mouse_release_flags = 0;
+		m_mousePressFlags = 0;
+		m_mouseReleaseFlags = 0;
 
 		/* Reset keys */
 		for (u8 &key : m_keys) {
-			key &= 1;
+			key &= KEY_HOLD_BIT;
 		}
 		
-		m_last_cursor = m_cursor;
+		m_lastCursor = m_cursor;
 	}
 	
-	glm::vec2 get_cursor() const {
+	glm::vec2 getCursor() const {
 		return m_cursor;
 	}
 
-	glm::vec2 get_cursor_delta() const {
-		return m_cursor - m_last_cursor;
+	glm::vec2 getCursorDelta() const {
+		return m_cursor - m_lastCursor;
 	}
 
-	bool is_key_down(int key) const {
-		u8 flag = 1 << 0;
+	bool getKeyDown(i32 key) const {
+		u8 flag = 1 << KEY_DOWN_BIT;
 		return (m_keys[key] & flag) == flag;
 	}
 
-	bool is_key_press(int key) const {
-		u8 flag = 1 << 1;
+	bool getKey(i32 key) const {
+		u8 flag = 1 << KEY_HOLD_BIT;
 		return (m_keys[key] & flag) == flag;
 	}
 
-	bool is_key_release(int key) const {
-		u8 flag = 1 << 2;
+	bool getKeyUp(i32 key) const {
+		u8 flag = 1 << KEY_UP_BIT;
 		return (m_keys[key] & flag) == flag;
 	}
 
-	bool is_mouse_press(int button) const {
+	bool getMouse(i32 button) const {
 		u8 flag = 1 << button;
-		return (m_mouse_press_flags & flag) == flag;
+		return (m_mousePressFlags & flag) == flag;
 	}
 
-	bool is_mouse_release(int button) const {
+	bool getMouseUp(i32 button) const {
 		u8 flag = 1 << button;
-		return (m_mouse_release_flags & flag) == flag;
+		return (m_mouseReleaseFlags & flag) == flag;
 	}
 
-	bool is_mouse_down(int button) const {
+	bool getMouseDown(i32 button) const {
 		u8 flag = 1 << button;
-		return (m_mouse_down_flags & flag) == flag;
+		return (m_mouseDownFlags & flag) == flag;
 	}
 
 private:
 	glm::vec2 m_cursor;
-	glm::vec2 m_last_cursor;
-	u8 m_mouse_down_flags = 0;
-	u8 m_mouse_press_flags = 0;
-	u8 m_mouse_release_flags = 0;
+	glm::vec2 m_lastCursor;
+	u8 m_mouseDownFlags = 0;
+	u8 m_mousePressFlags = 0;
+	u8 m_mouseReleaseFlags = 0;
 	u8 m_keys[KEY_COUNT] = {};
 	
-	static void _cursor_callback(GLFWwindow* window, double xpos, double ypos) {
+	static void cursorCallback(GLFWwindow* window, f64 xpos, f64 ypos) {
 		Input *input = (Input*)glfwGetWindowUserPointer(window);
 		
 		input->m_cursor = { xpos, ypos };
 	}
 
-	static void _mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+	static void mouseCallback(GLFWwindow* window, i32 button, i32 action, i32 mods) {
 		Input *input = (Input*)glfwGetWindowUserPointer(window);
 
 		u8 flag;
@@ -93,30 +97,30 @@ private:
 			case GLFW_PRESS:
 				flag = 1 << button;
 
-				input->m_mouse_down_flags |= flag;
-				input->m_mouse_press_flags |= flag;
+				input->m_mouseDownFlags |= flag;
+				input->m_mousePressFlags |= flag;
 			break;
 
 			case GLFW_RELEASE:
 				flag = 1 << button;
 
-				input->m_mouse_down_flags &= ~flag;
-				input->m_mouse_release_flags |= flag;
+				input->m_mouseDownFlags &= ~flag;
+				input->m_mouseReleaseFlags |= flag;
 			break;
 		}
 	}
 	
-	static void _keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	static void keyboardCallback(GLFWwindow* window, i32 key, i32 scancode, i32 action, i32 mods) {
 		Input *input = (Input*)glfwGetWindowUserPointer(window);
 		
 		switch (action) {
 			case GLFW_PRESS:
-				input->m_keys[key] |= 1 << 0 | ((input->m_keys[key] & 1) ^ 1) << 1;
+				input->m_keys[key] |= 1 << KEY_DOWN_BIT | ((input->m_keys[key] & 1) ^ 1) << 1;
 			break;
 
 			case GLFW_RELEASE:
-				input->m_keys[key] &= ~1;
-				input->m_keys[key] |= 1 << 2;
+				input->m_keys[key] &= ~KEY_HOLD_BIT;
+				input->m_keys[key] |= 1 << KEY_UP_BIT;
 			break;
 		}
 	}

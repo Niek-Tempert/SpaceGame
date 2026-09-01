@@ -87,12 +87,12 @@ void Scene::update(const Input* input) {
     model = hit_voxel->m_transform * model;
     m_block_cursor.m_transform = model;
 
-    if (input->is_mouse_press(GLFW_MOUSE_BUTTON_1) && result.hit) {
+    if (input->getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
         hit_voxel->set(result.id, { NULL, NULL });
         hit_voxel->update(result.id);
     }
 
-    if (input->is_mouse_press(GLFW_MOUSE_BUTTON_2) && result.hit) {
+    if (input->getMouse(GLFW_MOUSE_BUTTON_2) && result.hit) {
         hit_voxel->set(result.id + result.normal, { (ICell *)1, NULL });
         hit_voxel->update(result.id + result.normal);
     }

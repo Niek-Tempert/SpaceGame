@@ -27,7 +27,7 @@ protected:
 
 	std::vector<glm::vec3> getVertices() const override {
 		std::vector<glm::vec3> vertices;
-		for (const auto &cube_side : mesh_consts::cubeVerts) {
+		for (const auto &cube_side : MeshConsts::cubeVerts) {
 			for (const auto &vertex : cube_side) {
 				vertices.push_back(vertex);
 			}
@@ -38,7 +38,7 @@ protected:
 	std::vector<u32> getIndices() const override {
 		std::vector<u32> indices;
 		for (int i = 0; i < 6; ++i) {
-			for (auto vertex : mesh_consts::faceIndicesInv) {
+			for (auto vertex : MeshConsts::faceIndicesInv) {
 				indices.push_back(vertex + 4 * i);
 			}
 		}
