@@ -48,6 +48,7 @@ set(PROJ_SRC
     ${PROJ_DIR}/rendering/line_renderable.cpp
     ${PROJ_DIR}/rendering/renderable.cpp
     ${PROJ_DIR}/utils/player.cpp
+    ${PROJ_DIR}/utils/input.cpp
     ${PROJ_DIR}/voxel/chunk.cpp
     ${PROJ_DIR}/voxel/chunk_mesher.cpp
     ${PROJ_DIR}/voxel/voxel.cpp
