@@ -60,6 +60,9 @@ GLWindow::~GLWindow() {
 
 bool GLWindow::update() {
     if (glfwWindowShouldClose(m_window)) return false;
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
 	m_input.next();
 	glfwSwapBuffers(m_window);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <providers/input_provider.hpp>
-#include <providers/state_provider.hpp>
 #include <providers/time_provider.hpp>
 #include <primitives/skybox.hpp>
 #include <primitives/crossair.hpp>
@@ -15,7 +14,6 @@ class Engine;
 
 class Scene
     : public TimeProvider
-    , public StateProvider
     , public InputProvider {
 public:
     Scene(const InputProvider& input, const TimeProvider& time);
@@ -26,6 +24,7 @@ public:
 private:
     void updatePlayer();
     void updateMoon();
+    void makeUI();
 
     std::vector<IRenderable*> m_renderables{};
 
@@ -38,4 +37,5 @@ private:
     
     Player m_player;
     glm::mat4 m_view;
+    f32 m_moonSpeed;
 };

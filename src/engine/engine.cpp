@@ -22,10 +22,6 @@ Engine::Engine()
 
 void Engine::exec() {
 	while (m_window.update()) {
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
 		ImGuiIO& io = ImGui::GetIO();
 		if (m_window.isFocussed()) {
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
@@ -33,9 +29,7 @@ void Engine::exec() {
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 		}
 
-		if (m_window.isFocussed()) {
-			m_scene.update();
-		}
+		m_scene.update();
 
 		glm::ivec2 size = m_window.getSize();
 		glViewport(0, 0, size.x, size.y);
@@ -54,10 +48,6 @@ void Engine::exec() {
 			data.resolution = { (u32)size.x, (u32)size.y };
 			renderable->render(&data);
 		}
-
-		ImGui::Begin("Settings");
-		ImGui::DragFloat("Speed", &m_scene.m_speed, 0.01f);
-		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

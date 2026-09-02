@@ -5,6 +5,7 @@
 
 #include "input.hpp"
 #include "engine.hpp"
+#include <imgui.h>
 
 static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
@@ -36,7 +37,8 @@ Scene::Scene(const InputProvider& input, const TimeProvider& time)
 	, m_crossair()
 	, m_voxels()
 	, m_player(this)
-	, m_view(glm::mat4(1.0f)) {
+	, m_view(glm::mat4(1.0f))
+	, m_moonSpeed(1.f) {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
@@ -57,6 +59,7 @@ Scene::Scene(const InputProvider& input, const TimeProvider& time)
 void Scene::update() {
     updatePlayer();
     updateMoon();
+	makeUI();
 
     glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, m_player.getRot().z, glm::vec3(0, 0, 1));
@@ -128,7 +131,7 @@ void Scene::updatePlayer() {
 
 void Scene::updateMoon() {
     glm::vec3 position = glm::vec3(m_moon.m_transform[3]);
-	f64 t = getDeltaTime() * 0.05 * getSpeed();
+	f64 t = getDeltaTime() * 0.05 * m_moonSpeed;
 	f64 sin = glm::sin(t);
 	f64 cos = glm::cos(t);
 	glm::vec3 rotated_pos = {
@@ -138,4 +141,10 @@ void Scene::updateMoon() {
 	};
 
 	m_moon.m_transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+}
+
+void Scene::makeUI() {
+	ImGui::Begin("Settings");
+	ImGui::DragFloat("Moon speed", &m_moonSpeed, 0.01f);
+	ImGui::End();
 }

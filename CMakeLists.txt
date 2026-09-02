@@ -55,7 +55,6 @@ set(PROJ_SRC
     ${PROJ_DIR}/primitives/cube.cpp
     ${PROJ_DIR}/primitives/skybox.cpp
     ${PROJ_DIR}/providers/input_provider.cpp
-    ${PROJ_DIR}/providers/state_provider.cpp
     ${PROJ_DIR}/providers/time_provider.cpp
     ${PROJ_DIR}/rendering/line_renderable.cpp
     ${PROJ_DIR}/rendering/renderable.cpp
