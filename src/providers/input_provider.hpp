@@ -8,7 +8,7 @@ class Input;
 class InputProvider {
 public:
 	InputProvider(const Input* input);
-	InputProvider(const InputProvider& provider);
+	InputProvider(const InputProvider* provider);
 
 protected:
     glm::vec2 getCursor() const;

@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "input.hpp"
-#include <cstdio>
+#include "engine.hpp"
 
 static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
@@ -35,7 +35,7 @@ Scene::Scene(const InputProvider& input, const TimeProvider& time)
 	, m_blockSelect()
 	, m_crossair()
 	, m_voxels()
-	, m_player(input, time)
+	, m_player(this)
 	, m_view(glm::mat4(1.0f)) {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });

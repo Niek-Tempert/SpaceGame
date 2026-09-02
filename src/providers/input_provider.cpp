@@ -6,8 +6,8 @@ InputProvider::InputProvider(const Input* input) {
     m_input = input;
 }
 
-InputProvider::InputProvider(const InputProvider &provider) {
-	m_input = provider.m_input;
+InputProvider::InputProvider(const InputProvider* provider) {
+	m_input = provider->m_input;
 }
 
 glm::vec2 InputProvider::getCursor() const {

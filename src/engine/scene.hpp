@@ -11,6 +11,7 @@
 #include "player.hpp"
 
 class Input;
+class Engine;
 
 class Scene
     : public TimeProvider

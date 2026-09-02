@@ -6,13 +6,13 @@
 #include <providers/input_provider.hpp>
 #include <providers/time_provider.hpp>
 
-class Input;
+class Scene;
 
 class Player
 	: InputProvider
 	, TimeProvider {
 public:
-	Player(const InputProvider& input, const TimeProvider& time);
+	Player(const Scene* parent);
 	void update();
 	glm::vec3 getPos() const;
 	glm::vec3 getRot() const;

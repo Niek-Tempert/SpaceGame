@@ -12,22 +12,12 @@
 
 Engine::Engine() 
 	: m_window()
-	, m_scene(m_window.getInput(), m_window)  {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	, m_scene(m_window, m_window) {
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(m_window.getGLFW(), true);
-	ImGui_ImplOpenGL3_Init("#version 330");
-}
-
-Engine::~Engine() {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
 }
 
 void Engine::exec() {

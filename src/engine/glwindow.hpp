@@ -1,11 +1,15 @@
 #pragma once
 
-#include "input.hpp"
 #include <providers/time_provider.hpp>
+#include <providers/input_provider.hpp>
+
+#include "input.hpp"
 
 class GLFWwindow;
 
-class GLWindow : public TimeProvider {
+class GLWindow
+    : public TimeProvider
+    , public InputProvider {
 public:
     GLWindow();
     ~GLWindow();
@@ -13,7 +17,6 @@ public:
     const Input* getInput() const;
     glm::ivec2 getSize() const;
     bool isFocussed() const;
-    GLFWwindow* getGLFW() const;
     f32 getTime();
     f32 getDeltaTime();
 

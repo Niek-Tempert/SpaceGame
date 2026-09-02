@@ -4,12 +4,17 @@
 #include <cstdio>
 #include <imgui.h>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 static void error_callback(int error, const char *description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
 GLWindow::GLWindow()
     : TimeProvider(&m_time, &m_deltaTime)
+	, InputProvider(&m_input)
 	, m_window()
     , m_focussed(false)
     , m_fullscreen(false)
@@ -36,10 +41,19 @@ GLWindow::GLWindow()
 	gladLoadGL();
 	glfwSwapInterval(1);
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 	m_input.init(m_window);
 }
 
 GLWindow::~GLWindow() {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+	
     glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
@@ -74,10 +88,6 @@ bool GLWindow::update() {
 
 const Input *GLWindow::getInput() const {
 	return &m_input;
-}
-
-GLFWwindow *GLWindow::getGLFW() const {
-	return m_window;
 }
 
 f32 GLWindow::getTime() {

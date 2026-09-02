@@ -4,15 +4,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "input.hpp"
+#include "scene.hpp"
 #include <common/math.h>
 
 #define WALK_SPEED 4.0f
 #define RUN_SPEED 8.0f
 #define LOOK_SPEED 0.01f
 
-Player::Player(const InputProvider& input, const TimeProvider& time) 
-    : InputProvider(input)
-    , TimeProvider(time)
+Player::Player(const Scene* parent) 
+    : InputProvider(parent)
+    , TimeProvider(parent)
     , m_pos()
     , m_rot() {
 }

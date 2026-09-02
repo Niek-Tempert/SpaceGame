@@ -4,14 +4,14 @@
 
 class TimeProvider {
 public:
-    TimeProvider(f32* time, f32* deltaTime);
-    TimeProvider(const TimeProvider& provider);
+    TimeProvider(const f32* time, const f32* deltaTime);
+    TimeProvider(const TimeProvider* provider);
 
 protected:
     f32 getTime();
     f32 getDeltaTime();
 
 private:
-    f32* m_time;
-    f32* m_deltaTime;
+    const f32* m_time;
+    const f32* m_deltaTime;
 };
