@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "input.hpp"
+#include <cstdio>
 
 static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	for (int x = -length; x < length; ++x) {
@@ -25,18 +26,16 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	voxel->rebuildMesh();
 }
 
-Scene::Scene() 
-	: m_skybox()
+Scene::Scene(const InputProvider& provider)
+	: InputProvider(provider)
+	, m_skybox()
 	, m_moon()
 	, m_planet()
 	, m_blockSelect()
 	, m_crossair()
 	, m_voxels()
-	, m_player()
+	, m_player(provider)
 	, m_view(glm::mat4(1.0f)) {
-}
-
-void Scene::init() {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
@@ -54,8 +53,8 @@ void Scene::init() {
 	m_renderables.push_back(&m_crossair);
 }
 
-void Scene::update(const Input* input) {
-    updatePlayer(input);
+void Scene::update() {
+    updatePlayer();
     updateMoon();
 
     glm::mat4 rot = glm::mat4(1.0f);
@@ -97,12 +96,12 @@ void Scene::update(const Input* input) {
     model = hit_voxel->m_transform * model;
     m_blockSelect.setTransform(model);
 
-    if (input->getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
+    if (getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
         hit_voxel->set(result.id, { NULL, NULL });
         hit_voxel->update(result.id);
     }
 
-    if (input->getMouse(GLFW_MOUSE_BUTTON_2) && result.hit) {
+    if (getMouse(GLFW_MOUSE_BUTTON_2) && result.hit) {
         hit_voxel->set(result.id + result.normal, { (ICell *)1, NULL });
         hit_voxel->update(result.id + result.normal);
     }
@@ -116,8 +115,8 @@ std::vector<IRenderable*> Scene::getRenderables() {
 	return m_renderables;
 }
 
-void Scene::updatePlayer(const Input *input) {
-    m_player.update(getDeltaTime(), input);
+void Scene::updatePlayer() {
+    m_player.update(getDeltaTime());
 
     glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, -m_player.getRot().x, glm::vec3(1, 0, 0));

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <providers/input_provider.hpp>
 #include <providers/state_provider.hpp>
 #include <providers/time_provider.hpp>
 #include <primitives/skybox.hpp>
@@ -13,16 +14,16 @@ class Input;
 
 class Scene
     : public TimeProvider
-    , public StateProvider {
+    , public StateProvider
+    , public InputProvider {
 public:
-    Scene();
-    void init();
-    void update(const Input* input);
-    glm::mat4 getView();
+    Scene(const InputProvider& provider);
+	void update();
+	glm::mat4 getView();
     std::vector<IRenderable*> getRenderables();
 
 private:
-    void updatePlayer(const Input* input);
+    void updatePlayer();
     void updateMoon();
 
     std::vector<IRenderable*> m_renderables{};

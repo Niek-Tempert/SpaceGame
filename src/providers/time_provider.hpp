@@ -3,7 +3,7 @@
 #include <common/types.h>
 
 class TimeProvider {
-public:
+protected:
     f32 getDeltaTime();
     f32 getTime();
 

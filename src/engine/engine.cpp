@@ -1,8 +1,8 @@
 #include "engine.hpp"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -10,11 +10,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Engine::Engine()
+Engine::Engine() 
 	: m_window()
-	, m_scene() {
-	m_scene.init();
-
+	, m_scene(m_window.getInput())  {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO &io = ImGui::GetIO();
@@ -50,7 +48,7 @@ void Engine::exec() {
 		}
 
 		if (m_window.isFocussed()) {
-			m_scene.update(m_window.getInput());
+			m_scene.update();
 		}
 
 		glm::ivec2 size = m_window.getSize();
@@ -58,8 +56,8 @@ void Engine::exec() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		const f32 ratio = (f32)size.x / (f32)size.y;
-		glm::mat4 proj = glm::mat4(1.0f); 
-		if (!glm::isnan(ratio) && !glm::isinf(ratio)) { 
+		glm::mat4 proj = glm::mat4(1.0f);
+		if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
 			proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
 		}
 

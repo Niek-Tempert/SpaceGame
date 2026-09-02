@@ -3,7 +3,7 @@
 #include <common/types.h>
 
 class StateProvider {
-public:
+protected:
     f32 getSpeed();
 
 private:
