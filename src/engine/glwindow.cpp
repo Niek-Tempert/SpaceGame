@@ -9,10 +9,13 @@ static void error_callback(int error, const char *description) {
 }
 
 GLWindow::GLWindow()
-    : m_window()
+    : TimeProvider(&m_time, &m_deltaTime)
+	, m_window()
     , m_focussed(false)
     , m_fullscreen(false)
-    , m_input() {
+    , m_input() 
+	, m_time()
+	, m_deltaTime() {
     glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) return;
@@ -48,10 +51,14 @@ bool GLWindow::update() {
 	glfwSwapBuffers(m_window);
 	glfwPollEvents();
 
+	f32 now = glfwGetTime();
+	m_deltaTime = now - m_time;
+	m_time = now;
+
     if (m_input.getKey(GLFW_KEY_F11)) {
 		toggleFullscreen();
 	}
-	
+
 	if (!m_focussed && !ImGui::GetIO().WantCaptureMouse && m_input.getMouse(GLFW_MOUSE_BUTTON_1)) {
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		m_focussed = true;
@@ -73,6 +80,14 @@ GLFWwindow *GLWindow::getGLFW() const {
 	return m_window;
 }
 
+f32 GLWindow::getTime() {
+	return m_time;
+}
+
+f32 GLWindow::getDeltaTime() {
+	return m_deltaTime;
+}
+
 void GLWindow::toggleFullscreen() {
 	if (m_fullscreen) {
 		glfwSetWindowMonitor(m_window, NULL, 0, 0, 640, 480, GLFW_DONT_CARE);
@@ -83,10 +98,6 @@ void GLWindow::toggleFullscreen() {
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	glfwSetWindowMonitor(m_window, monitor, 0, 0, 640, 480, GLFW_DONT_CARE);
 	m_fullscreen = !m_fullscreen;
-}
-
-f32 GLWindow::getTime() const {
-	return glfwGetTime();
 }
 
 glm::ivec2 GLWindow::getSize() const {

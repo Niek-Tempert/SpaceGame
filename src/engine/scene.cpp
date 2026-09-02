@@ -26,15 +26,16 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	voxel->rebuildMesh();
 }
 
-Scene::Scene(const InputProvider& provider)
-	: InputProvider(provider)
+Scene::Scene(const InputProvider& input, const TimeProvider& time)
+	: InputProvider(input)
+	, TimeProvider(time)
 	, m_skybox()
 	, m_moon()
 	, m_planet()
 	, m_blockSelect()
 	, m_crossair()
 	, m_voxels()
-	, m_player(provider)
+	, m_player(input, time)
 	, m_view(glm::mat4(1.0f)) {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
@@ -116,7 +117,7 @@ std::vector<IRenderable*> Scene::getRenderables() {
 }
 
 void Scene::updatePlayer() {
-    m_player.update(getDeltaTime());
+    m_player.update();
 
     glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, -m_player.getRot().x, glm::vec3(1, 0, 0));

@@ -12,7 +12,7 @@
 
 Engine::Engine() 
 	: m_window()
-	, m_scene(m_window.getInput())  {
+	, m_scene(m_window.getInput(), m_window)  {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO &io = ImGui::GetIO();
@@ -32,10 +32,6 @@ Engine::~Engine() {
 
 void Engine::exec() {
 	while (m_window.update()) {
-		f32 time = m_window.getTime();
-		m_scene.m_deltaTime = time - m_scene.m_time;
-		m_scene.m_time = time;
-
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -68,7 +64,7 @@ void Engine::exec() {
 			data.resolution = { (u32)size.x, (u32)size.y };
 			renderable->render(&data);
 		}
-		
+
 		ImGui::Begin("Settings");
 		ImGui::DragFloat("Speed", &m_scene.m_speed, 0.01f);
 		ImGui::End();

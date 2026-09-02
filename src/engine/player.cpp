@@ -10,13 +10,14 @@
 #define RUN_SPEED 8.0f
 #define LOOK_SPEED 0.01f
 
-Player::Player(const InputProvider& provider) 
-    : InputProvider(provider) 
+Player::Player(const InputProvider& input, const TimeProvider& time) 
+    : InputProvider(input)
+    , TimeProvider(time)
     , m_pos()
     , m_rot() {
 }
 
-void Player::update(f32 deltaTime) {
+void Player::update() {
 	glm::vec2 delta = {
         getCursorDelta().x,
         getCursorDelta().y 
@@ -47,7 +48,7 @@ void Player::update(f32 deltaTime) {
         ? RUN_SPEED 
         : WALK_SPEED;
 
-    m_pos += rotated_dir * (f32)deltaTime * speed;
+    m_pos += rotated_dir * getDeltaTime() * speed;
 }
 
 glm::vec3 Player::getPos() const {

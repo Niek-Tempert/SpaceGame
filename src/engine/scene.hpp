@@ -17,7 +17,7 @@ class Scene
     , public StateProvider
     , public InputProvider {
 public:
-    Scene(const InputProvider& provider);
+    Scene(const InputProvider& input, const TimeProvider& time);
 	void update();
 	glm::mat4 getView();
     std::vector<IRenderable*> getRenderables();

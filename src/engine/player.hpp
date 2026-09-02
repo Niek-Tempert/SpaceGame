@@ -4,14 +4,16 @@
 
 #include <common/types.h>
 #include <providers/input_provider.hpp>
+#include <providers/time_provider.hpp>
 
 class Input;
 
 class Player
-	: InputProvider {
+	: InputProvider
+	, TimeProvider {
 public:
-	Player(const InputProvider& provider);
-	void update(f32 deltaTime);
+	Player(const InputProvider& input, const TimeProvider& time);
+	void update();
 	glm::vec3 getPos() const;
 	glm::vec3 getRot() const;
 
