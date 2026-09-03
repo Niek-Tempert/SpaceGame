@@ -41,12 +41,12 @@ GLWindow::GLWindow()
 	gladLoadGL();
 	glfwSwapInterval(1);
 
+	m_input.init(m_window);
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
-
-	m_input.init(m_window);
 }
 
 GLWindow::~GLWindow() {
@@ -76,14 +76,16 @@ bool GLWindow::update() {
 		toggleFullscreen();
 	}
 
-	if (!m_focussed && !ImGui::GetIO().WantCaptureMouse && m_input.getMouse(GLFW_MOUSE_BUTTON_1)) {
+	if (!m_focussed && m_input.getMouse(GLFW_MOUSE_BUTTON_1)) {
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		m_focussed = true;
+		m_input.setEnabled(m_focussed);
 	}
 
 	if (m_focussed && m_input.getKey(GLFW_KEY_ESCAPE)) {
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		m_focussed = false;
+		m_input.setEnabled(m_focussed);
 	}
 
 	return true;

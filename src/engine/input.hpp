@@ -18,6 +18,7 @@ public:
 	bool getMouse(i32 button) const;
 	bool getMouseUp(i32 button) const;
 	bool getMouseDown(i32 button) const;
+	void setEnabled(bool enabled);
 
 private:
 	glm::vec2 m_cursor;
@@ -26,6 +27,7 @@ private:
 	u8 m_mousePressFlags = 0;
 	u8 m_mouseReleaseFlags = 0;
 	u8 m_keys[KEY_COUNT] = {};
+	bool m_enabled = false;
 
 	static void keyboardCallback(GLFWwindow* window, i32 key, i32 scancode, i32 action, i32 mods);
 	static void mouseCallback(GLFWwindow* window, i32 button, i32 action, i32 mods);

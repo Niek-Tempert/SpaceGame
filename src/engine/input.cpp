@@ -1,5 +1,7 @@
 #include "input.hpp"
 
+#include <imgui.h>
+
 #define MOUSE_COUNT (GLFW_MOUSE_BUTTON_LAST + 1)
 
 #define KEY_UP_BIT 2
@@ -7,7 +9,9 @@
 #define KEY_DOWN_BIT 0
 
 void Input::keyboardCallback(GLFWwindow* window, i32 key, i32 scancode, i32 action, i32 mods) {
-    Input *input = (Input*)glfwGetWindowUserPointer(window);
+    Input* input = (Input*)glfwGetWindowUserPointer(window);
+    ImGuiIO& io = ImGui::GetIO();
+    if (!input->m_enabled || io.WantCaptureKeyboard) return;
     
     switch (action) {
         case GLFW_PRESS:
@@ -23,6 +27,8 @@ void Input::keyboardCallback(GLFWwindow* window, i32 key, i32 scancode, i32 acti
 
 void Input::mouseCallback(GLFWwindow* window, i32 button, i32 action, i32 mods) {
     Input *input = (Input*)glfwGetWindowUserPointer(window);
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.WantCaptureMouse) return;
 
     u8 flag;
     switch (action) {
@@ -44,6 +50,7 @@ void Input::mouseCallback(GLFWwindow* window, i32 button, i32 action, i32 mods) 
 
 void Input::cursorCallback(GLFWwindow* window, f64 xpos, f64 ypos) {
     Input *input = (Input*)glfwGetWindowUserPointer(window);
+    if (!input->m_enabled) return;
     
     input->m_cursor = { xpos, ypos };
 }
@@ -108,4 +115,8 @@ bool Input::getMouseUp(i32 button) const {
 bool Input::getMouseDown(i32 button) const {
     u8 flag = 1 << button;
     return (m_mouseDownFlags & flag) == flag;
+}
+
+void Input::setEnabled(bool enabled) {
+	m_enabled = enabled;
 }
