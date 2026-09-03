@@ -13,22 +13,10 @@
 Engine::Engine() 
 	: m_window()
 	, m_scene(m_window, m_window) {
-	ImGuiIO &io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	
-	ImGui::StyleColorsDark();
 }
 
 void Engine::exec() {
 	while (m_window.update()) {
-		ImGuiIO& io = ImGui::GetIO();
-		if (m_window.isFocussed()) {
-			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
-		} else {
-			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-		}
-
 		m_scene.update();
 
 		glm::ivec2 size = m_window.getSize();
@@ -51,13 +39,5 @@ void Engine::exec() {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
 	}
 }

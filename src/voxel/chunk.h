@@ -1,7 +1,7 @@
 #pragma once
 
 #include "chunk_mesher.h"
-#include "cell/cell_user.h"
+#include "block.hpp"
 
 #define CHUNK_SIZE 16u
 
@@ -11,8 +11,8 @@ public:
 
 	Chunk();
 	
-	void set(const glm::uvec3 &id, const CellUser &cell);
-	const CellUser &get(const glm::uvec3 &id) const;
+	void set(const glm::uvec3 &id, const Block &cell);
+	const Block &get(const glm::uvec3 &id) const;
 
 	ChunkMesher *get_mesher();
 	const ChunkMesher *get_mesher() const;
@@ -20,7 +20,7 @@ public:
 
 private:
 	ChunkMesher* m_mesher;
-	CellUser m_cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	Block m_cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	u32 m_count;
 };
 

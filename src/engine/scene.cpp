@@ -16,14 +16,14 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 					continue;
 				}
 
-				voxel->set({ x, y, z }, { (ICell *)1, NULL });
+				voxel->set({ x, y, z }, { (u32)BlockTypes::Wool, NULL });
 			}
 		}
 	}
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
-	voxel->m_transform = model;
+	voxel->setTransform(model);
 	voxel->rebuildMesh();
 }
 
@@ -97,16 +97,16 @@ void Scene::update() {
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(result.id.x, result.id.y, result.id.z));
-    model = hit_voxel->m_transform * model;
+    model = hit_voxel->getTransform() * model;
     m_blockSelect.setTransform(model);
 
     if (getMouse(GLFW_MOUSE_BUTTON_1) && result.hit) {
-        hit_voxel->set(result.id, { NULL, NULL });
+        hit_voxel->set(result.id, { (u32)BlockTypes::Air, NULL });
         hit_voxel->update(result.id);
     }
 
     if (getMouse(GLFW_MOUSE_BUTTON_2) && result.hit) {
-        hit_voxel->set(result.id + result.normal, { (ICell *)1, NULL });
+        hit_voxel->set(result.id + result.normal, { (u32)BlockTypes::Wool, NULL });
         hit_voxel->update(result.id + result.normal);
     }
 }
@@ -130,7 +130,7 @@ void Scene::updatePlayer() {
 }
 
 void Scene::updateMoon() {
-    glm::vec3 position = glm::vec3(m_moon.m_transform[3]);
+    glm::vec3 position = glm::vec3(m_moon.getTransform()[3]);
 	f64 t = getDeltaTime() * 0.05 * m_moonSpeed;
 	f64 sin = glm::sin(t);
 	f64 cos = glm::cos(t);
@@ -140,7 +140,7 @@ void Scene::updateMoon() {
 		position.z * cos - position.x * sin
 	};
 
-	m_moon.m_transform = glm::translate(glm::mat4(1.0f), rotated_pos);
+	m_moon.setTransform(glm::translate(glm::mat4(1.0f), rotated_pos));
 }
 
 void Scene::makeUI() {

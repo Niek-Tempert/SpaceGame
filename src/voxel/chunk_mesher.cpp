@@ -19,17 +19,17 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 	m_uvs.clear();
 	m_indices.clear();
 
-	const Chunk *chunk = voxel->get_chunks().at(chunk_id);
+	const Chunk *chunk = voxel->getChunks().at(chunk_id);
 
 	for (u32 x = 0; x < Chunk::size.x; ++x) {
 		for (u32 y = 0; y < Chunk::size.y; ++y) {
 			for (u32 z = 0; z < Chunk::size.z; ++z) {
-				const CellUser &cell = chunk->get({ x, y, z });
+				const Block &cell = chunk->get({ x, y, z });
 				if (!cell.type) {
 					continue;
 				}
 
-				glm::ivec3 id = Voxel::compound_id(chunk_id, { x, y, z });
+				glm::ivec3 id = Voxel::compoundID(chunk_id, { x, y, z });
 				glm::vec3 col = glm::vec3((float)id.x, (float)id.y, (float)id.z);
 				for (u32 i = 0; i < 6; ++i) {
 					auto &dir = MeshConsts::axis[i];
@@ -60,7 +60,7 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 }
 
 glm::mat4x4 ChunkMesher::getTransform() const {
-	return m_voxel->m_transform * m_transform;
+	return m_voxel->getTransform() * m_transform;
 }
 
 std::vector<glm::vec3> ChunkMesher::getVertices() const {

@@ -12,38 +12,38 @@ Voxel::Voxel() {
 }
 
 Voxel::~Voxel() {
-	for (std::pair<const glm::ivec3, Chunk *> &pair : chunks) {
+	for (std::pair<const glm::ivec3, Chunk *> &pair : m_chunks) {
 		delete pair.second;
 	}
 }
 
-void Voxel::set(const glm::ivec3 &id, const CellUser &cell) {
-	glm::ivec3 chunkid = id_to_chunkid(id);
-	const glm::uvec3 subid = id_to_subid(id);
+void Voxel::set(const glm::ivec3 &id, const Block &cell) {
+	glm::ivec3 chunkid = id2chunkID(id);
+	const glm::uvec3 subid = id2subID(id);
 
 	Chunk *chunk;
 
-	const auto it = chunks.find(chunkid);
-	if (it != chunks.end()) {
+	const auto it = m_chunks.find(chunkid);
+	if (it != m_chunks.end()) {
 		chunk = it->second;
 	} else {
 		chunk = new Chunk();
-		chunks.insert({ chunkid, chunk });
+		m_chunks.insert({ chunkid, chunk });
 	}
 
 	chunk->set(subid, cell);
 	if (chunk->get_count() == 0) {
 		delete chunk;
-		chunks.erase(chunkid);
+		m_chunks.erase(chunkid);
 	}
 }
 
-const CellUser *Voxel::get(const glm::ivec3 &id) const {
-	const glm::ivec3 chunkid = id_to_chunkid(id);
-	const glm::uvec3 subid = id_to_subid(id);
+const Block *Voxel::get(const glm::ivec3 &id) const {
+	const glm::ivec3 chunkid = id2chunkID(id);
+	const glm::uvec3 subid = id2subID(id);
 
-	const auto it = chunks.find(chunkid);
-	if (it == chunks.end()) {
+	const auto it = m_chunks.find(chunkid);
+	if (it == m_chunks.end()) {
 		return NULL;
 	}
 	return &it->second->get(subid);
@@ -97,7 +97,7 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 	int side = -1;
 
 	while (ray_dist < max_distance) {
-		const CellUser *cell = get(map_pos);
+		const Block *cell = get(map_pos);
 		if (!cell || !cell->type) {
 			if (side_dist.x < side_dist.y && side_dist.x < side_dist.z) {
 				ray_dist = side_dist.x;
@@ -169,12 +169,12 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 	return {};
 }
 
-void Voxel::update(const glm::ivec3 &id) {
-	const glm::ivec3 chunk_id = id_to_chunkid(id);
-	const glm::uvec3 sub_id = id_to_subid(id);
+void Voxel::update(const CellID &id) {
+	const glm::ivec3 chunk_id = id2chunkID(id);
+	const glm::uvec3 sub_id = id2subID(id);
 
-	const auto it = chunks.find(chunk_id);
-	if (it != chunks.end()) {
+	const auto it = m_chunks.find(chunk_id);
+	if (it != m_chunks.end()) {
 		it->second->get_mesher()->update(this, chunk_id);
 	}
 
@@ -183,8 +183,8 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		--neighbor_id.x;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
@@ -193,8 +193,8 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		--neighbor_id.y;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
@@ -203,8 +203,8 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		--neighbor_id.z;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
@@ -213,8 +213,8 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		++neighbor_id.x;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
@@ -223,8 +223,8 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		++neighbor_id.y;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
@@ -233,14 +233,14 @@ void Voxel::update(const glm::ivec3 &id) {
 		neighbor_id = chunk_id;
 		++neighbor_id.z;
 
-		const auto it = chunks.find(neighbor_id);
-		if (it != chunks.end()) {
+		const auto it = m_chunks.find(neighbor_id);
+		if (it != m_chunks.end()) {
 			it->second->get_mesher()->update(this, neighbor_id);
 		}
 	}
 }
 
-glm::ivec3 Voxel::id_to_chunkid(const glm::ivec3 &id) {
+glm::ivec3 Voxel::id2chunkID(const glm::ivec3 &id) {
 	return {
 		floor_to_i32((f64)id.x / Chunk::size.x),
 		floor_to_i32((f64)id.y / Chunk::size.y),
@@ -248,7 +248,7 @@ glm::ivec3 Voxel::id_to_chunkid(const glm::ivec3 &id) {
 	};
 }
 
-glm::uvec3 Voxel::id_to_subid(const glm::ivec3 &cell_id) {
+glm::uvec3 Voxel::id2subID(const glm::ivec3 &cell_id) {
 	return {
 		(u32)floor_mod(cell_id.x, (i32)Chunk::size.x),
 		(u32)floor_mod(cell_id.y, (i32)Chunk::size.y),
@@ -256,7 +256,7 @@ glm::uvec3 Voxel::id_to_subid(const glm::ivec3 &cell_id) {
 	};
 }
 
-glm::ivec3 Voxel::compound_id(const glm::ivec3 &chunk_id, const glm::uvec3 &sub_id) {
+glm::ivec3 Voxel::compoundID(const glm::ivec3 &chunk_id, const glm::uvec3 &sub_id) {
 	return {
 		chunk_id.x * (i32)Chunk::size.x + (i32)sub_id.x,
 		chunk_id.y * (i32)Chunk::size.y + (i32)sub_id.y,
@@ -264,18 +264,34 @@ glm::ivec3 Voxel::compound_id(const glm::ivec3 &chunk_id, const glm::uvec3 &sub_
 	};
 }
 
-const std::map<glm::ivec3, Chunk *, ivec3_less> &Voxel::get_chunks() const {
-	return chunks;
+const std::map<glm::ivec3, Chunk *, ivec3Less> &Voxel::getChunks() const {
+	return m_chunks;
+}
+
+const glm::mat4 &Voxel::getTransform() const {
+	return m_transform;
+}
+
+void Voxel::setTransform(const glm::mat4 &transform) {
+	m_transform = transform;
 }
 
 void Voxel::rebuildMesh() {
-	for (auto chunk : chunks) {
+	for (auto chunk : m_chunks) {
 		chunk.second->get_mesher()->update(this, chunk.first);
 	}
 }
 
 void Voxel::render(RenderData *data) const {
-	for (auto chunk : chunks) {
+	for (auto chunk : m_chunks) {
 		chunk.second->get_mesher()->render(data);
 	}
+}
+
+bool ivec3Less::operator()(const glm::ivec3 &a, const glm::ivec3 &b) const noexcept {
+	if (a.x != b.x)
+		return a.x < b.x;
+	if (a.y != b.y)
+		return a.y < b.y;
+	return a.z < b.z;
 }
