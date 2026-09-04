@@ -1,15 +1,16 @@
 #pragma once
 
+#include "voxel.h"
 #include "chunk_mesher.h"
 #include "block.hpp"
 
 #define CHUNK_SIZE 16u
 
-class Chunk {
+class Chunk : public CameraProvider {
 public:
 	inline static const glm::uvec3 size = glm::uvec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
 
-	Chunk();
+	Chunk(const Voxel* voxel);
 	
 	void set(const glm::uvec3 &id, const Block &cell);
 	const Block &get(const glm::uvec3 &id) const;

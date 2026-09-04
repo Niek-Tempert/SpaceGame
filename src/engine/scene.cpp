@@ -30,21 +30,18 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 Scene::Scene(const InputProvider& input, const TimeProvider& time)
 	: InputProvider(input)
 	, TimeProvider(time)
-	, m_skybox()
+	, CameraProvider(&m_view, &m_proj)
+	, m_skybox(this)
 	, m_moon()
 	, m_planet()
-	, m_blockSelect()
-	, m_crossair()
+	, m_blockSelect(this)
+	, m_crossair(this)
 	, m_voxels()
 	, m_player(this)
 	, m_view(glm::mat4(1.0f))
 	, m_moonSpeed(1.f) {
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
-
-	m_skybox.rebuildMesh();
-	m_blockSelect.rebuildMesh();
-	m_crossair.rebuildMesh();
 
     m_voxels.push_back(&m_planet);
     m_voxels.push_back(&m_moon);
@@ -111,12 +108,10 @@ void Scene::update() {
     }
 }
 
-glm::mat4 Scene::getView() {
-	return m_view;
-}
-
-std::vector<IRenderable*> Scene::getRenderables() {
-	return m_renderables;
+void Scene::render() {
+	for (IRenderable* renderable : m_renderables) {
+		renderable->render();
+	}
 }
 
 void Scene::updatePlayer() {

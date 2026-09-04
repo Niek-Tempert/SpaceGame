@@ -54,9 +54,10 @@ set(PROJ_SRC
     ${PROJ_DIR}/primitives/crossair.cpp
     ${PROJ_DIR}/primitives/cube.cpp
     ${PROJ_DIR}/primitives/skybox.cpp
+    ${PROJ_DIR}/providers/camera_provider.cpp
     ${PROJ_DIR}/providers/input_provider.cpp
+    ${PROJ_DIR}/providers/canvas_provider.cpp
     ${PROJ_DIR}/providers/time_provider.cpp
-    ${PROJ_DIR}/rendering/line_renderable.cpp
     ${PROJ_DIR}/rendering/renderable.cpp
     ${PROJ_DIR}/voxel/chunk.cpp
     ${PROJ_DIR}/voxel/chunk_mesher.cpp

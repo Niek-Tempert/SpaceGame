@@ -2,7 +2,11 @@
 
 #include "chunk_mesher.h"
 
-Chunk::Chunk(): m_mesher(new ChunkMesher()), m_cells(), m_count(0) {
+Chunk::Chunk(const Voxel* voxel)
+	: CameraProvider(voxel)
+	, m_mesher(new ChunkMesher())
+	, m_cells()
+	, m_count() {
 }
 
 void Chunk::set(const glm::uvec3 &id, const Block &cell) {

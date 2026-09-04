@@ -23,20 +23,7 @@ void Engine::exec() {
 		glViewport(0, 0, size.x, size.y);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		const f32 ratio = (f32)size.x / (f32)size.y;
-		glm::mat4 proj = glm::mat4(1.0f);
-		if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
-			proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
-		}
-
-		for (IRenderable* renderable : m_scene.getRenderables()) {
-			RenderData data;
-			data.view = m_scene.getView();
-			data.proj = proj;
-			data.resolution = { (u32)size.x, (u32)size.y };
-			renderable->render(&data);
-		}
-
+		m_scene.render();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}

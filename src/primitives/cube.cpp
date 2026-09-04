@@ -5,8 +5,12 @@
 #include <common/glutils.h>
 #include <glad/glad.h>
 
+Cube::Cube(const Scene* scene) 
+    : Renderable(scene){
+}
+
 std::vector<glm::vec3> Cube::getVertices() const {
-    std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> vertices;
     for (const auto &cube_side : MeshConsts::cubeVerts) {
         for (const auto &vertex : cube_side) {
             vertices.push_back(vertex);

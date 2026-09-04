@@ -1,7 +1,9 @@
 #pragma once
 
 #include "block.hpp"
-#include "rendering/renderable.h"
+#include "rendering/renderable.hpp"
+#include "providers/camera_provider.hpp"
+#include "engine/scene.hpp"
 #include <glm/vec3.hpp>
 
 #include <map>
@@ -25,9 +27,11 @@ struct RaycastResult {
 	f32 distance;
 };
 
-class Voxel : public IRenderable {
+class Voxel 
+	: public IRenderable
+	, public CameraProvider {
 public:
-	Voxel();
+	Voxel(const Scene* parent);
 	~Voxel();
 
 	void set(const CellID &id, const Block &cell);
@@ -38,7 +42,7 @@ public:
 
 	void update(const CellID &id);
 	void rebuildMesh();
-	void render(RenderData *data) const override;
+	void render() const override;
 
 	RaycastResult raycast(const glm::vec3 &start, const glm::vec3 &direction, f32 max);
 	

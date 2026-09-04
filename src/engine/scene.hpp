@@ -2,6 +2,7 @@
 
 #include <providers/input_provider.hpp>
 #include <providers/time_provider.hpp>
+#include <providers/camera_provider.hpp>
 #include <primitives/skybox.hpp>
 #include <primitives/crossair.hpp>
 #include <primitives/block_select.hpp>
@@ -14,12 +15,12 @@ class Engine;
 
 class Scene
     : public TimeProvider
-    , public InputProvider {
+    , public InputProvider
+    , public CameraProvider {
 public:
     Scene(const InputProvider& input, const TimeProvider& time);
 	void update();
-	glm::mat4 getView();
-    std::vector<IRenderable*> getRenderables();
+	void render();
 
 private:
     void updatePlayer();
@@ -36,6 +37,8 @@ private:
     std::vector<Voxel*> m_voxels;
     
     Player m_player;
-    glm::mat4 m_view;
     f32 m_moonSpeed;
+    
+    glm::mat4 m_view;
+    glm::mat4 m_proj;
 };

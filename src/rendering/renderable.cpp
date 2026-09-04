@@ -1,4 +1,4 @@
-﻿#include "renderable.h"
+﻿#include "renderable.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -8,194 +8,136 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <common/helpers.h>
+#include <engine/scene.hpp>
+#include "renderable.hpp"
 
-template <typename T>
-GLint upload_vbuffer(std::vector<T> data) {
-	if (data.empty()) {
-		return -1;
+Renderable::Renderable(const Scene* parent)
+	: CameraProvider(parent)
+	, m_vertBuff()
+	, m_colBuff()
+	, m_normBuff()
+	, m_uvBuff()
+	, m_idxBuff()
+	, m_renderType(GL_TRIANGLES) {
+	m_vertCt = 0;
+	m_idxCt = 0;
+
+	glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
+
+	m_shader = getShader();
+
+	GLint vertAttr = glGetAttribLocation(m_shader, "vPos");
+	if (vertAttr >= 0) {
+		std::vector<glm::vec3> verts = getVertices();
+		glGenBuffers(1, &m_vertBuff);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertBuff);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(*verts.data()) * verts.size(), verts.data(), GL_STATIC_DRAW);
+		glEnableVertexAttribArray(vertAttr);
+		glVertexAttribPointer(vertAttr, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		m_vertCt = (u32)verts.size();
 	}
 
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(*data.data()) * data.size(), data.data(), GL_STATIC_DRAW);
-	return (GLint)buffer;
-}
-
-template <typename T>
-GLint upload_ibuffer(std::vector<T> data) {
-	if (data.empty()) {
-		return -1;
+	GLint colAttr = glGetAttribLocation(m_shader, "vCol");
+	if (colAttr >= 0) {
+		std::vector<glm::vec3> cols = getColors();
+		glGenBuffers(1, &m_colBuff);
+		glBindBuffer(GL_ARRAY_BUFFER, m_colBuff);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(*cols.data()) * cols.size(), cols.data(), GL_STATIC_DRAW);
+		glEnableVertexAttribArray(colAttr);
+		glVertexAttribPointer(colAttr, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*data.data()) * data.size(), data.data(), GL_STATIC_DRAW);
-	return (GLint)buffer;
-}
-
-bool has_succeeded(GLuint shader) {
-	GLint success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetShaderInfoLog(shader, sizeof(infoLog), NULL, infoLog);
-		fprintf(stderr, "Shader compilation error:\n%s\n", infoLog);
+	GLint normAttr = glGetAttribLocation(m_shader, "vNorm");
+	if (normAttr >= 0) {
+		std::vector<glm::vec3> norms = getNormals();
+		glGenBuffers(1, &m_normBuff);
+		glBindBuffer(GL_ARRAY_BUFFER, m_normBuff);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(*norms.data()) * norms.size(), norms.data(), GL_STATIC_DRAW);
+		glEnableVertexAttribArray(normAttr);
+		glVertexAttribPointer(normAttr, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	}
+	
+	GLint uvAttr = glGetAttribLocation(m_shader, "vUV");
+	if (uvAttr >= 0) {
+		std::vector<glm::vec2> uvs = getUVs();
+		glGenBuffers(1, &m_uvBuff);
+		glBindBuffer(GL_ARRAY_BUFFER, m_uvBuff);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(*uvs.data()) * uvs.size(), uvs.data(), GL_STATIC_DRAW);
+		glEnableVertexAttribArray(uvAttr);
+		glVertexAttribPointer(uvAttr, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	return success;
-}
+	std::vector<u32> indices = getIndices();
+	if (indices.size() > 0) {
+		glGenBuffers(1, &m_idxBuff);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuff);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*indices.data()) * indices.size(), indices.data(), GL_STATIC_DRAW);
+		m_idxCt = (u32)indices.size();
+	}
+	
+	i32 width, height, nrChannels;
+	u8* data = stbi_load(IMAGE_PATH "white_wool.png", &width, &height, &nrChannels, 0);
+	if (data) {
+		glGenTextures(1, &m_texture);
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-void link_vbuffer(GLint buffer, GLuint location, GLint size) {
-	if (buffer < 0 || location < 0) {
+		stbi_image_free(data);
 		return;
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)buffer);
-	glEnableVertexAttribArray(location);
-	glVertexAttribPointer(location, size, GL_FLOAT, GL_FALSE, 0, 0);
-}
-
-void dispose(RenderObject *object) {
-	glDeleteProgram(object->shader);
-
-	if (object->posBuff >= 0) {
-		u32 pos_buffer = object->posBuff;
-		glDeleteBuffers(1, &pos_buffer);
-	}
-
-	if (object->colBuff >= 0) {
-		u32 col_buffer = object->colBuff;
-		glDeleteBuffers(1, &col_buffer);
-	}
-
-	if (object->normBuff >= 0) {
-		u32 norm_buffer = object->normBuff;
-		glDeleteBuffers(1, &norm_buffer);
-	}
-
-	if (object->uvBuff >= 0) {
-		u32 uv_buffer = object->uvBuff;
-		glDeleteBuffers(1, &uv_buffer);
-	}
-
-	if (object->idxBuff >= 0) {
-		u32 index_buffer = object->idxBuff;
-		glDeleteBuffers(1, &index_buffer);
-	}
-
-	glDeleteVertexArrays(1, &object->vao);
-
-	delete object;
-}
-
-MRenderable::MRenderable() 
-	: m_renderObject() {
-	rebuildMesh();
-}
-
-MRenderable::~MRenderable() {
-	dispose(m_renderObject);
-}
-
-void MRenderable::rebuildMesh() {
-	if (m_renderObject) {
-		dispose(m_renderObject);
-	}
-
-	m_renderObject = new RenderObject();
-	RenderObject &object = *this->m_renderObject;
-
-	glGenVertexArrays(1, &object.vao);
-	glBindVertexArray(object.vao);
-
-	auto verts = getVertices();
-	auto cols = getColors();
-	auto norms = getNormals();
-	auto uvs = getUVs();
-	auto indices = getIndices();
-
-	object.vertCt = (i32)verts.size();
-	object.idxCt = (i32)indices.size();
-
-	object.posBuff = upload_vbuffer(verts);
-	object.colBuff = upload_vbuffer(cols);
-	object.normBuff = upload_vbuffer(norms);
-	object.uvBuff = upload_vbuffer(uvs);
-	object.idxBuff = upload_ibuffer(indices);
-
-	m_renderObject->shader = getShader();
-	const GLint pos_loc = glGetAttribLocation(m_renderObject->shader, "vPos");
-	const GLint col_loc = glGetAttribLocation(m_renderObject->shader, "vCol");
-	const GLint norm_loc = glGetAttribLocation(m_renderObject->shader, "vNorm");
-	const GLint uv_loc = glGetAttribLocation(m_renderObject->shader, "vUV");
-
-	link_vbuffer(object.posBuff, pos_loc, sizeof(*verts.data()) / sizeof(f32));
-	link_vbuffer(object.colBuff, col_loc, sizeof(*cols.data()) / sizeof(f32));
-	link_vbuffer(object.normBuff, norm_loc, sizeof(*norms.data()) / sizeof(f32));
-	link_vbuffer(object.uvBuff, uv_loc, sizeof(*uvs.data()) / sizeof(f32));
-
-	glGenTextures(1, &m_renderObject->texBuff);
-	glBindTexture(GL_TEXTURE_2D, m_renderObject->texBuff);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// load and generate the texture
-	int width, height, nrChannels;
-	u8 *data = stbi_load("assets/images/white_wool.png", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
+	std::cout << "Failed to load texture" << std::endl;
 	stbi_image_free(data);
 }
 
-void MRenderable::render(RenderData *data) const {
-	if (!m_renderObject) {
-		return;
-	}
-
-	setGLState();
-	beforeRender(data);
-	draw();
+Renderable::~Renderable() {
+	glDeleteProgram(m_shader);
+	glDeleteTextures(1, &m_texture);
+	glDeleteBuffers(1, &m_vertBuff);
+	glDeleteBuffers(1, &m_colBuff);
+	glDeleteBuffers(1, &m_normBuff);
+	glDeleteBuffers(1, &m_uvBuff);
+	glDeleteBuffers(1, &m_idxBuff);
+	glDeleteVertexArrays(1, &m_vao);
 }
 
-void MRenderable::setGLState() const {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LEQUAL);
-	glLineWidth(1.0f);
-}
-
-void MRenderable::beforeRender(RenderData *data) const {
+void Renderable::render() const {
 	glm::mat4 model = getTransform();
-	glm::mat4 view = data->view;
-	glm::mat4 proj = data->proj;
+	glm::mat4 view = getView();
+	glm::mat4 proj = getProj();
 	glm::mat4 mvp = proj * view * model;
 
-	glUseProgram(m_renderObject->shader);
-	glUniformMatrix4fv(glGetUniformLocation(m_renderObject->shader, "Model"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(m_renderObject->shader, "View"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(m_renderObject->shader, "Proj"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(proj));
-	glUniformMatrix4fv(glGetUniformLocation(m_renderObject->shader, "MVP"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(mvp));
+	// glEnable(GL_DEPTH_TEST);
+	// glDepthMask(GL_TRUE);
+	// glEnable(GL_CULL_FACE);
+	// glDepthFunc(GL_LEQUAL);
+	// glLineWidth(1.0f);
 
-	glBindTexture(GL_TEXTURE_2D, m_renderObject->texBuff);
-	glBindVertexArray(m_renderObject->vao);
-}
+	glUseProgram(m_shader);
 
-void MRenderable::draw() const {
-	if (m_renderObject->idxCt > 0) {
-		glDrawElements(GL_TRIANGLES, m_renderObject->idxCt, GL_UNSIGNED_INT, (void *)0);
+	glUniformMatrix4fv(glGetUniformLocation(m_shader, "Model"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(m_shader, "View"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(view));
+	glUniformMatrix4fv(glGetUniformLocation(m_shader, "Proj"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(proj));
+	glUniformMatrix4fv(glGetUniformLocation(m_shader, "MVP"), 1, GL_FALSE, (const GLfloat*)glm::value_ptr(mvp));
+
+	glBindVertexArray(m_vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuff);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+
+	if (m_idxCt > 0) {
+		glDrawElements(m_renderType, m_idxCt, GL_UNSIGNED_INT, (void *)0);
 		return;
 	}
-	
-	glDrawArrays(GL_TRIANGLES, 0, m_renderObject->vertCt);
+	glDrawArrays(m_renderType, 0, m_vertCt);
+}
+
+void Renderable::setRenderType(GLenum type) {
+	m_renderType = type;
 }
