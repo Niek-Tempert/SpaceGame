@@ -24,17 +24,19 @@ static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
 	voxel->setTransform(model);
-	voxel->rebuildMesh();
+	voxel->remesh();
 }
 
-Scene::Scene(const InputProvider& input, const TimeProvider& time)
-	: InputProvider(input)
-	, TimeProvider(time)
-	, m_skybox()
-	, m_moon()
-	, m_planet()
-	, m_blockSelect()
-	, m_crossair()
+Scene::Scene(const Engine* parent)
+	: InputProvider(parent)
+	, CanvasProvider(parent)
+	, TimeProvider(parent)
+	, CameraProvider(&m_view, &m_proj)
+	, m_skybox(this)
+	, m_moon(this)
+	, m_planet(this)
+	, m_blockSelect(this)
+	, m_crossair(this)
 	, m_voxels()
 	, m_player(this)
 	, m_view(glm::mat4(1.0f))
@@ -42,9 +44,9 @@ Scene::Scene(const InputProvider& input, const TimeProvider& time)
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
-	m_skybox.rebuildMesh();
-	m_blockSelect.rebuildMesh();
-	m_crossair.rebuildMesh();
+	m_skybox.remesh();
+	m_blockSelect.remesh();
+	m_crossair.remesh();
 
     m_voxels.push_back(&m_planet);
     m_voxels.push_back(&m_moon);
@@ -57,6 +59,13 @@ Scene::Scene(const InputProvider& input, const TimeProvider& time)
 }
 
 void Scene::update() {
+	glm::ivec2 size = getSize();
+	f32 ratio = (f32)size.x / size.y;
+	glm::mat4 m_proj = glm::mat4(1.0f);
+	if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
+		m_proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
+	}
+
     updatePlayer();
     updateMoon();
 	makeUI();
@@ -111,12 +120,10 @@ void Scene::update() {
     }
 }
 
-glm::mat4 Scene::getView() {
-	return m_view;
-}
-
-std::vector<IRenderable*> Scene::getRenderables() {
-	return m_renderables;
+void Scene::render() {
+	for (IRenderable* renderable : m_renderables) {
+		renderable->render();
+	}
 }
 
 void Scene::updatePlayer() {

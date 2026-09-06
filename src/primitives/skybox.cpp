@@ -9,13 +9,19 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <engine/scene.hpp>
 
-void Skybox::setGLState() const {
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+Skybox::Skybox(const Scene* parent)
+    : Renderable(parent) {
 }
 
-glm::mat4x4 Skybox::getTransform() const {
+void Skybox::render() const {
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    Renderable::render();
+}
+
+glm::mat4 Skybox::getTransform() const {
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, -0.5f, -0.5f));
     return model;
 }
@@ -41,13 +47,7 @@ std::vector<u32> Skybox::getIndices() const {
 }
 
 GLuint Skybox::getShader() const {
-    GLuint shader = 0;
+	GLuint shader = 0;
     if (shaderLoadVF(&shader, SHADER_PATH "skybox.vert", SHADER_PATH "skybox.frag")) throw;
     return shader;
-}
-
-void Skybox::beforeRender(RenderData *data) const {
-    RenderData skyboxData = *data;
-    skyboxData.view = glm::mat4(glm::mat3(data->view));
-    MRenderable::beforeRender(&skyboxData);
 }

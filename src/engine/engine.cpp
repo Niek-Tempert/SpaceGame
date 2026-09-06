@@ -10,33 +10,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Engine::Engine() 
-	: m_window()
-	, m_scene(m_window, m_window) {
+Engine::Engine()
+	: InputProvider(&m_window)
+	, CanvasProvider(&m_window)
+	, TimeProvider(&m_time, &m_deltaTime)
+	, m_window()
+	, m_scene(this) {
 }
 
 void Engine::exec() {
 	while (m_window.update()) {
+		f32 now = glfwGetTime();
+		m_deltaTime = now - m_time;
+		m_time = now;
+
 		m_scene.update();
 
 		glm::ivec2 size = m_window.getSize();
 		glViewport(0, 0, size.x, size.y);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		const f32 ratio = (f32)size.x / (f32)size.y;
-		glm::mat4 proj = glm::mat4(1.0f);
-		if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
-			proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
-		}
-
-		for (IRenderable* renderable : m_scene.getRenderables()) {
-			RenderData data;
-			data.view = m_scene.getView();
-			data.proj = proj;
-			data.resolution = { (u32)size.x, (u32)size.y };
-			renderable->render(&data);
-		}
-
+		m_scene.render();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}

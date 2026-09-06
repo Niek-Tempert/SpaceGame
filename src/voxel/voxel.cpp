@@ -3,11 +3,13 @@
 #include "chunk.h"
 
 #include <rendering/mesh_consts.h>
+#include <engine/scene.hpp>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <common/math.h>
 
-Voxel::Voxel() {
+Voxel::Voxel(const Scene* parent) 
+	: CameraProvider(parent) {
 	m_transform = glm::mat4(1.0f);
 }
 
@@ -27,7 +29,7 @@ void Voxel::set(const glm::ivec3 &id, const Block &cell) {
 	if (it != m_chunks.end()) {
 		chunk = it->second;
 	} else {
-		chunk = new Chunk();
+		chunk = new Chunk(this);
 		m_chunks.insert({ chunkid, chunk });
 	}
 
@@ -276,15 +278,15 @@ void Voxel::setTransform(const glm::mat4 &transform) {
 	m_transform = transform;
 }
 
-void Voxel::rebuildMesh() {
-	for (auto chunk : m_chunks) {
+void Voxel::remesh() {
+	for (auto& chunk : m_chunks) {
 		chunk.second->get_mesher()->update(this, chunk.first);
 	}
 }
 
-void Voxel::render(RenderData *data) const {
-	for (auto chunk : m_chunks) {
-		chunk.second->get_mesher()->render(data);
+void Voxel::render() const {
+	for (auto& chunk : m_chunks) {
+		chunk.second->get_mesher()->render();
 	}
 }
 

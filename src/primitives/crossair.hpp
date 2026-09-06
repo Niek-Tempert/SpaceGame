@@ -1,13 +1,13 @@
 #pragma once
 
-#include "rendering/line_renderable.h"
+#include "rendering/renderable.hpp"
 
-class Crossair : public MLineRenderable {
+class Crossair : public Renderable {
 public:
-	void setGLState() const override;
-	
+	Crossair(const Scene* parent);
+	void render() const override;
+
+protected:
 	std::vector<glm::vec3> getVertices() const override;
 	GLuint getShader() const override;
-
-	void beforeRender(RenderData *data) const override;
 };

@@ -2,8 +2,12 @@
 
 #include "glwindow.hpp"
 #include "scene.hpp"
+#include <providers/canvas_provider.hpp>
 
-class Engine {
+class Engine 
+	: public InputProvider
+	, public CanvasProvider
+	, public TimeProvider {
 public:
 	Engine();
 
@@ -12,4 +16,5 @@ public:
 private:
 	GLWindow m_window;
 	Scene m_scene;
+	f32 m_time, m_deltaTime;
 };

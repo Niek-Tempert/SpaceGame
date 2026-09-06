@@ -7,9 +7,7 @@
 
 class GLFWwindow;
 
-class GLWindow
-    : public TimeProvider
-    , public InputProvider {
+class GLWindow {
 public:
     GLWindow();
     ~GLWindow();
@@ -17,8 +15,6 @@ public:
     const Input* getInput() const;
     glm::ivec2 getSize() const;
     bool isFocussed() const;
-    f32 getTime();
-    f32 getDeltaTime();
 
 private:
     void toggleFullscreen();
@@ -27,7 +23,4 @@ private:
 	bool m_fullscreen;
 	bool m_focussed;
 	Input m_input;
-
-    f32 m_time;
-    f32 m_deltaTime;
 };

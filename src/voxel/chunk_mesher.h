@@ -1,17 +1,22 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "rendering/renderable.h"
+#include "voxel.h"
+#include "rendering/renderable.hpp"
 #include <glm/vec3.hpp>
 
 class Voxel;
 
-class ChunkMesher : public MRenderable {
+class ChunkMesher : public Renderable {
 public:
 	typedef glm::ivec3 ChunkID;
 	typedef glm::ivec3 CellID;
 
-	ChunkMesher() : m_transform(glm::mat4(1.0f)), m_voxel(NULL) {}
+	ChunkMesher(const Voxel* parent) 
+		: Renderable(parent)
+		, m_transform(glm::mat4(1.0f))
+		, m_voxel(NULL) {
+	}
 
 	void update(const Voxel *voxel, const ChunkID &chunk_id);
 

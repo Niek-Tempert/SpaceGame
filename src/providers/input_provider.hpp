@@ -3,11 +3,11 @@
 #include <common/types.h>
 #include <glm/glm.hpp>
 
-class Input;
+class GLWindow;
 
 class InputProvider {
 public:
-	InputProvider(const Input* input);
+	InputProvider(const GLWindow* window);
 	InputProvider(const InputProvider* provider);
 
 protected:
@@ -21,5 +21,5 @@ protected:
 	bool getMouseDown(i32 button) const;
 
 private:
-    const Input* m_input;
+    const GLWindow* m_window;
 };
