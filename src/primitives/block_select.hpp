@@ -9,13 +9,13 @@ public:
 	BlockSelect(const Scene* parent);
 	void setTransform(glm::mat4 transform);
 	void setVisible(bool visible);
-
-	void render();
+	void render() const override;
 
 protected:
 	GLuint getShader() const override;
 	std::vector<glm::vec3> getVertices() const override;
 	glm::mat4x4 getTransform() const override;
+	void setState() const override;
 
 private:
 	bool m_visible = true;

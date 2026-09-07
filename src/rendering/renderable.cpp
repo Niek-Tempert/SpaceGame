@@ -43,11 +43,7 @@ void Renderable::render() const {
 	glm::mat4 proj = getProj();
 	glm::mat4 mvp = proj * view * model;
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LEQUAL);
-	glLineWidth(1.0f);
+	setState();
 
 	glUseProgram(m_shader);
 
@@ -152,6 +148,14 @@ void Renderable::remesh() {
 
 	std::cout << "Failed to load texture" << std::endl;
 	stbi_image_free(data);
+}
+
+void Renderable::setState() const {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
+	glLineWidth(1.0f);
 }
 
 GLuint Renderable::getShader() const {

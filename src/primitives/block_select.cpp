@@ -17,18 +17,18 @@ void BlockSelect::setVisible(bool visible) {
     m_visible = visible;
 }
 
-void BlockSelect::render() {
-    if (!m_visible) {
-        return;
-    }
-
-    glDisable(GL_DEPTH_TEST);
-    glLineWidth(4.0f);
+void BlockSelect::render() const {
+    if (!m_visible) return;
     Renderable::render();
 }
 
 glm::mat4 BlockSelect::getTransform() const {
     return m_transform;
+}
+
+void BlockSelect::setState() const {
+    glDisable(GL_DEPTH_TEST);
+    glLineWidth(4.0f);
 }
 
 std::vector<glm::vec3> BlockSelect::getVertices() const {

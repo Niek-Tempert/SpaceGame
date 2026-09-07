@@ -25,6 +25,7 @@ public:
 	void remesh();
 
 protected:
+	virtual void setState() const;
 	virtual GLuint getShader() const;
 	virtual std::vector<glm::vec3> getVertices() const;
 	virtual std::vector<glm::vec3> getColors() const;
@@ -33,7 +34,7 @@ protected:
 	virtual std::vector<u32> getIndices() const;
 	virtual glm::mat4 getTransform() const;
 
-	void setRenderType(GLenum type);
+	void setRenderType(GLenum type); // TODO: Make enum to encode rendering method config
 
 private:
 	GLuint m_vao;

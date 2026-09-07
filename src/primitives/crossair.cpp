@@ -11,9 +11,8 @@ Crossair::Crossair(const Scene* parent)
     setRenderType(GL_LINES);
 }
 
-void Crossair::render() const {
-	glLineWidth(4.0f);
-    Renderable::render();
+void Crossair::setState() const {
+    glLineWidth(4.0f);
 }
 
 std::vector<glm::vec3> Crossair::getVertices() const {

@@ -15,10 +15,9 @@ Skybox::Skybox(const Scene* parent)
     : Renderable(parent) {
 }
 
-void Skybox::render() const {
+void Skybox::setState() const {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    Renderable::render();
 }
 
 glm::mat4 Skybox::getTransform() const {
