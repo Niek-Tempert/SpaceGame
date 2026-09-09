@@ -5,7 +5,15 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Renderable::Renderable(const CameraProvider* parent)
+static GLenum getRenderMode(u32 config) {
+	if ((config & (u32)RenderConfig::Lines) == (u32)RenderConfig::Lines) {
+		return GL_LINES;
+	}
+	
+	return GL_TRIANGLES;
+}
+
+Renderable::Renderable(const CameraProvider* parent, u32 config)
 	: CameraProvider(parent)
 	, m_shader()
 	, m_vertBuff()
@@ -14,18 +22,12 @@ Renderable::Renderable(const CameraProvider* parent)
 	, m_uvBuff()
 	, m_idxBuff()
 	, m_vao()
-	, m_renderType(GL_TRIANGLES) {
-	remesh();
+	, m_renderConfig(config) {
+	setup();
 }
 
 Renderable::~Renderable() {
-	glDeleteProgram(m_shader);
-	glDeleteBuffers(1, &m_vertBuff);
-	glDeleteBuffers(1, &m_colBuff);
-	glDeleteBuffers(1, &m_normBuff);
-	glDeleteBuffers(1, &m_uvBuff);
-	glDeleteBuffers(1, &m_idxBuff);
-	glDeleteVertexArrays(1, &m_vao);
+	dispose();
 }
 
 void Renderable::render() const {
@@ -46,22 +48,55 @@ void Renderable::render() const {
 	glBindVertexArray(m_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuff);
 
-	if (m_idxCt > 0) {
-		glDrawElements(m_renderType, m_idxCt, GL_UNSIGNED_INT, (void *)0);
+	if ((m_renderConfig & (u32)RenderConfig::Indexed) == (u32)RenderConfig::Indexed) {
+		glDrawElements(getRenderMode(m_renderConfig), m_idxCt, GL_UNSIGNED_INT, (void*)0);
 		return;
 	}
-	glDrawArrays(m_renderType, 0, m_vertCt);
+	glDrawArrays(getRenderMode(m_renderConfig), 0, m_vertCt);
 }
 
 void Renderable::remesh() {
-	glDeleteProgram(m_shader);
-	glDeleteBuffers(1, &m_vertBuff);
-	glDeleteBuffers(1, &m_colBuff);
-	glDeleteBuffers(1, &m_normBuff);
-	glDeleteBuffers(1, &m_uvBuff);
-	glDeleteBuffers(1, &m_idxBuff);
-	glDeleteVertexArrays(1, &m_vao);
+	dispose();
+	setup();
+}
 
+void Renderable::setGLState() const {
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
+	glLineWidth(1.0f);
+}
+
+GLuint Renderable::getShader() const {
+	return 0;
+}
+
+std::vector<glm::vec3> Renderable::getVertices() const {
+	return {};
+}
+
+std::vector<glm::vec3> Renderable::getColors() const {
+	return {};
+}
+
+std::vector<glm::vec3> Renderable::getNormals() const {
+	return {};
+}
+
+std::vector<glm::vec2> Renderable::getUVs() const {
+	return {};
+}
+
+std::vector<u32> Renderable::getIndices() const {
+	return {};
+}
+
+glm::mat4 Renderable::getTransform() const {
+	return glm::mat4(1.0f);
+}
+
+void Renderable::setup() {
 	m_vertCt = 0;
 	m_idxCt = 0;
 
@@ -120,42 +155,23 @@ void Renderable::remesh() {
 	}
 }
 
-void Renderable::setGLState() const {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LEQUAL);
-	glLineWidth(1.0f);
-}
+void Renderable::dispose() {
+	glDeleteProgram(m_shader);
+	glDeleteBuffers(1, &m_vertBuff);
+	glDeleteBuffers(1, &m_colBuff);
+	glDeleteBuffers(1, &m_normBuff);
+	glDeleteBuffers(1, &m_uvBuff);
+	glDeleteBuffers(1, &m_idxBuff);
+	glDeleteVertexArrays(1, &m_vao);
 
-GLuint Renderable::getShader() const {
-	return 0;
-}
+	m_shader = 0;
+	m_vertBuff = 0;
+	m_colBuff = 0;
+	m_normBuff = 0;
+	m_uvBuff = 0;
+	m_idxBuff = 0;
+	m_vao = 0;
 
-std::vector<glm::vec3> Renderable::getVertices() const {
-	return {};
-}
-
-std::vector<glm::vec3> Renderable::getColors() const {
-	return {};
-}
-
-std::vector<glm::vec3> Renderable::getNormals() const {
-	return {};
-}
-
-std::vector<glm::vec2> Renderable::getUVs() const {
-	return {};
-}
-
-std::vector<u32> Renderable::getIndices() const {
-	return {};
-}
-
-glm::mat4 Renderable::getTransform() const {
-	return glm::mat4(1.0f);
-}
-
-void Renderable::setRenderType(GLenum type) {
-	m_renderType = type;
+	m_vertCt = 0;
+	m_idxCt = 0;
 }

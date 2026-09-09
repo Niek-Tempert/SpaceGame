@@ -6,8 +6,7 @@
 #include <engine/scene.hpp>
 
 BlockSelect::BlockSelect(const Scene *parent) 
-    : Renderable(parent) {
-    setRenderType(GL_LINES);
+    : Renderable(parent, (u32)RenderConfig::Lines) {
 }
 
 void BlockSelect::setTransform(glm::mat4 transform) {

@@ -7,9 +7,8 @@
 #include <engine/scene.hpp>
 
 Crossair::Crossair(const Scene* parent) 
-    : Renderable(parent)
+    : Renderable(parent, (u32)RenderConfig::Lines)
     , CanvasProvider(parent) {
-    setRenderType(GL_LINES);
 }
 
 void Crossair::setGLState() const {

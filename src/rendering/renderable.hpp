@@ -8,6 +8,12 @@
 
 #include <providers/camera_provider.hpp>
 
+enum class RenderConfig {
+	Tris = 0 << 0,
+	Lines = 1 << 0,
+	Indexed = 1 << 1
+};
+
 class IRenderable {
 public:
 	virtual void render() const = 0;
@@ -17,7 +23,7 @@ class Renderable
 	: public IRenderable
 	, public CameraProvider {
 public:
-	Renderable(const CameraProvider* parent);
+	Renderable(const CameraProvider* parent, u32 config = (u32)RenderConfig::Tris | (u32)RenderConfig::Indexed);
 	virtual ~Renderable();
 	
 	void render() const override;
@@ -33,9 +39,10 @@ protected:
 	virtual std::vector<u32> getIndices() const;
 	virtual glm::mat4 getTransform() const;
 
-	void setRenderType(GLenum type); // TODO: Make enum to encode rendering method config
-
 private:
+	void setup();
+	void dispose();
+
 	GLuint m_vao;
 	GLuint m_shader;
 	
@@ -48,5 +55,5 @@ private:
 	GLuint m_uvBuff;
 	GLuint m_idxBuff;
 
-	GLenum m_renderType;
+	u32 m_renderConfig;
 };
