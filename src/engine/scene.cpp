@@ -61,7 +61,7 @@ Scene::Scene(const Engine* parent)
 void Scene::update() {
 	glm::ivec2 size = getSize();
 	f32 ratio = (f32)size.x / size.y;
-	glm::mat4 m_proj = glm::mat4(1.0f);
+	m_proj = glm::mat4(1.0f);
 	if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
 		m_proj = glm::perspective(glm::radians(90.0f), ratio, 0.01f, 500.0f);
 	}
