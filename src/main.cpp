@@ -1,6 +1,6 @@
 #include <engine/engine.hpp>
 
-int main() {
+i32 main() {
 	Engine engine{};
 	engine.exec();
 }

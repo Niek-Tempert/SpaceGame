@@ -7,14 +7,12 @@
 #include "engine.hpp"
 #include <imgui.h>
 
-static void buildVoxel(Voxel *voxel, int length, glm::vec3 position) {
-	for (int x = -length; x < length; ++x) {
-		for (int y = -length; y < length; ++y) {
-			for (int z = -length; z < length; ++z) {
-				glm::vec3 vec = { (float)x, (float)y, (float)z };
-				if (glm::length(vec) > (float)length) {
-					continue;
-				}
+static void buildVoxel(Voxel *voxel, i32 length, glm::vec3 position) {
+	for (i32 x = -length; x < length; ++x) {
+		for (i32 y = -length; y < length; ++y) {
+			for (i32 z = -length; z < length; ++z) {
+				glm::vec3 vec = { (f32)x, (f32)y, (f32)z };
+				if (glm::length(vec) > (f32)length) continue;
 
 				voxel->set({ x, y, z }, { (u32)BlockTypes::Wool, NULL });
 			}

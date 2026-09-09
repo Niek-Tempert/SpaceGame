@@ -8,7 +8,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-static void error_callback(int error, const char *description) {
+static void error_callback(i32 error, const char* description) {
 	fprintf(stderr, "Error: %s\n", description);
 }
 

@@ -1,8 +1,5 @@
 ﻿#include "renderable.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include <glad/glad.h>
 
 #include <iostream>
@@ -15,7 +12,6 @@
 Renderable::Renderable(const CameraProvider* parent)
 	: CameraProvider(parent)
 	, m_shader()
-	, m_texture()
 	, m_vertBuff()
 	, m_colBuff()
 	, m_normBuff()
@@ -28,7 +24,6 @@ Renderable::Renderable(const CameraProvider* parent)
 
 Renderable::~Renderable() {
 	glDeleteProgram(m_shader);
-	glDeleteTextures(1, &m_texture);
 	glDeleteBuffers(1, &m_vertBuff);
 	glDeleteBuffers(1, &m_colBuff);
 	glDeleteBuffers(1, &m_normBuff);
@@ -54,7 +49,6 @@ void Renderable::render() const {
 
 	glBindVertexArray(m_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuff);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	if (m_idxCt > 0) {
 		glDrawElements(m_renderType, m_idxCt, GL_UNSIGNED_INT, (void *)0);
@@ -65,7 +59,6 @@ void Renderable::render() const {
 
 void Renderable::remesh() {
 	glDeleteProgram(m_shader);
-	glDeleteTextures(1, &m_texture);
 	glDeleteBuffers(1, &m_vertBuff);
 	glDeleteBuffers(1, &m_colBuff);
 	glDeleteBuffers(1, &m_normBuff);
@@ -129,25 +122,6 @@ void Renderable::remesh() {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*indices.data()) * indices.size(), indices.data(), GL_STATIC_DRAW);
 		m_idxCt = (u32)indices.size();
 	}
-	
-	i32 width, height, nrChannels;
-	u8* data = stbi_load(IMAGE_PATH "white_wool.png", &width, &height, &nrChannels, 0);
-	if (data) {
-		glGenTextures(1, &m_texture);
-		glBindTexture(GL_TEXTURE_2D, m_texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		stbi_image_free(data);
-		return;
-	}
-
-	std::cout << "Failed to load texture" << std::endl;
-	stbi_image_free(data);
 }
 
 void Renderable::setGLState() const {

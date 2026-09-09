@@ -12,11 +12,8 @@ public:
 	typedef glm::ivec3 ChunkID;
 	typedef glm::ivec3 CellID;
 
-	ChunkMesher(const Voxel* parent) 
-		: Renderable(parent)
-		, m_transform(glm::mat4(1.0f))
-		, m_voxel(NULL) {
-	}
+	ChunkMesher(const Voxel* parent);
+	~ChunkMesher();
 
 	void update(const Voxel *voxel, const ChunkID &chunk_id);
 
@@ -29,6 +26,7 @@ protected:
 	std::vector<u32> getIndices() const override;
 	GLuint getShader() const override;
 
+private:
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;
 	std::vector<glm::vec3> m_normals;
@@ -37,4 +35,6 @@ protected:
 
 	glm::mat4 m_transform;
 	const Voxel* m_voxel;
+	
+	GLuint m_texture;
 };

@@ -32,7 +32,7 @@ std::vector<glm::vec3> Cube::getColors() const {
 
 std::vector<u32> Cube::getIndices() const {
     std::vector<u32> indices;
-    for (int i = 0; i < 6; ++i) {
+    for (i32 i = 0; i < 6; ++i) {
         for (auto vertex : MeshConsts::faceIndices) {
             indices.push_back(vertex + 4 * i);
         }

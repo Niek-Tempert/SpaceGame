@@ -95,8 +95,8 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 			(local_direction.z < 0.0f ? voxel_space.z - (f32)map_pos.z : (f32)map_pos.z + 1.0f - voxel_space.z) * delta_dist.z
 			);
 
-	float ray_dist = 0;
-	int side = -1;
+	f32 ray_dist = 0;
+	i32 side = -1;
 
 	while (ray_dist < max_distance) {
 		const Block *cell = get(map_pos);

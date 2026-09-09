@@ -9,6 +9,37 @@
 #include <common/helpers.h>
 #include <common/glutils.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include <iostream>
+
+ChunkMesher::ChunkMesher(const Voxel *parent) : 
+	Renderable(parent)
+	, m_transform(glm::mat4(1.0f))
+	, m_voxel(NULL) {
+	i32 width, height, nrChannels;
+	u8* data = stbi_load(IMAGE_PATH "white_wool.png", &width, &height, &nrChannels, 0);
+	if (!data) {
+		std::cout << "Failed to load texture" << std::endl;
+		return;
+	}
+	
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(data);
+}
+
+ChunkMesher::~ChunkMesher() {
+	glDeleteTextures(1, &m_texture);
+}
+
 void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 	m_transform = glm::translate(glm::mat4(1.0f), glm::vec3(chunk_id.x * (i32)Chunk::size.x, chunk_id.y * (i32)Chunk::size.y, chunk_id.z * (i32)Chunk::size.z));
 	this->m_voxel = voxel;
@@ -25,25 +56,21 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 		for (u32 y = 0; y < Chunk::size.y; ++y) {
 			for (u32 z = 0; z < Chunk::size.z; ++z) {
 				const Block &cell = chunk->get({ x, y, z });
-				if (!cell.type) {
-					continue;
-				}
+				if (!cell.type) continue;
 
 				glm::ivec3 id = Voxel::compoundID(chunk_id, { x, y, z });
-				glm::vec3 col = glm::vec3((float)id.x, (float)id.y, (float)id.z);
+				glm::vec3 col = glm::vec3((f32)id.x, (f32)id.y, (f32)id.z);
 				for (u32 i = 0; i < 6; ++i) {
 					auto &dir = MeshConsts::axis[i];
 					auto *neighbor = voxel->get(id + dir);
-					if (neighbor && neighbor->type) {
-						continue;
-					}
+					if (neighbor && neighbor->type) continue;
 
 					for (u32 index : MeshConsts::faceIndices) {
 						m_indices.push_back(index + (u32)m_vertices.size());
 					}
 
 					for (const auto &vert : MeshConsts::cubeVerts[i]) {
-						m_vertices.emplace_back((float)x + vert.x, (float)y + vert.y, (float)z + vert.z);
+						m_vertices.emplace_back((f32)x + vert.x, (f32)y + vert.y, (f32)z + vert.z);
 						m_colors.emplace_back(col);
 					}
 

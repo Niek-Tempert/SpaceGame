@@ -39,7 +39,6 @@ protected:
 private:
 	GLuint m_vao;
 	GLuint m_shader;
-	GLuint m_texture;
 	
 	u32 m_vertCt;
 	u32 m_idxCt;
