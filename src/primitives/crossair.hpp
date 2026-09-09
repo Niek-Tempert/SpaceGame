@@ -14,5 +14,7 @@ protected:
 	GLuint getShader() const override;
 	void setGLState() const override;
 
+	glm::mat4 getTransform() const override;
 	glm::mat4 getView() const override;
+	glm::mat4 getProj() const override;
 };
