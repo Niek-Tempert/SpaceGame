@@ -9,11 +9,8 @@ in vec3 vNorm;
 out vec3 w_norm;
 out vec3 w_pos;
 
-out vec4 col;
-
-void main()
-{
+void main() {
     gl_Position = MVP * vec4(vPos, 1.0);
     w_norm = vec3(Model * vec4(vNorm, 0.0));
     w_pos = vec3(Model * vec4(vPos, 1.0));
-};
+}

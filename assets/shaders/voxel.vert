@@ -264,8 +264,7 @@ float wang_hash_noise(uint s)
   return fract(float(s) / 4294967296.0);
 }
 
-void main()
-{
+void main() {
     gl_Position = MVP * vec4(vPos, 1.0);
     cam_pos = vec3(inverse(View)[3]);
     w_pos = vec3(Model * vec4(vPos, 1.0));
@@ -273,4 +272,4 @@ void main()
     
     col = hash_vec3_to_vec3(vCol);
     uv0 = vUV;
-};
+}

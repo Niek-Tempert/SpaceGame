@@ -13,8 +13,7 @@ out vec4 fragment;
 
 const vec3 light_dir = vec3(0.0, 1.0, 0.0);
 
-void main()
-{
+void main() {
     vec3 light_dir = normalize(light_dir);
     vec3 normal = normalize(w_norm);
 

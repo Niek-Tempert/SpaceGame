@@ -7,8 +7,7 @@ out vec4 fragment;
 const vec3 light_pos = vec3(-0.9, 1, 0.8);
 const vec3 light_col = vec3(1.0, 1.0, 1.0);
 
-void main()
-{
+void main() {
     vec3 w_normal = normalize(w_norm);
     vec3 light_dir = normalize(light_pos);
     
@@ -18,4 +17,4 @@ void main()
     vec3 result = lambert * light_col;
     
     fragment = vec4(result, 1.0);
-};
+}
