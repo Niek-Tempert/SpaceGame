@@ -43,7 +43,7 @@ void Renderable::render() const {
 	glm::mat4 proj = getProj();
 	glm::mat4 mvp = proj * view * model;
 
-	setState();
+	setGLState();
 
 	glUseProgram(m_shader);
 
@@ -150,7 +150,7 @@ void Renderable::remesh() {
 	stbi_image_free(data);
 }
 
-void Renderable::setState() const {
+void Renderable::setGLState() const {
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_CULL_FACE);

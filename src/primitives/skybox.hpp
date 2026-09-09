@@ -11,5 +11,7 @@ protected:
 	std::vector<glm::vec3> getVertices() const override;
 	std::vector<u32> getIndices() const override;
 	glm::mat4 getTransform() const override;
-	void setState() const override;
+	void setGLState() const override;
+
+	glm::mat4 getView() const override;
 };

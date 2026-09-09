@@ -25,7 +25,7 @@ public:
 	void remesh();
 
 protected:
-	virtual void setState() const;
+	virtual void setGLState() const;
 	virtual GLuint getShader() const;
 	virtual std::vector<glm::vec3> getVertices() const;
 	virtual std::vector<glm::vec3> getColors() const;

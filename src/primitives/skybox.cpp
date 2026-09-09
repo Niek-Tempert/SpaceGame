@@ -15,13 +15,17 @@ Skybox::Skybox(const Scene* parent)
     : Renderable(parent) {
 }
 
-void Skybox::setState() const {
+void Skybox::setGLState() const {
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 }
 
+glm::mat4 Skybox::getView() const {
+	return glm::mat4(1.f);
+}
+
 glm::mat4 Skybox::getTransform() const {
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, -0.5f, -0.5f));
+    glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(-0.5f, -0.5f, -0.5f));
     return model;
 }
 

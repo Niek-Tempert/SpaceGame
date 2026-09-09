@@ -10,6 +10,6 @@ CanvasProvider::CanvasProvider(const CanvasProvider *provider) {
 	m_window = provider->m_window;
 }
 
-glm::ivec2 CanvasProvider::getSize() {
+glm::ivec2 CanvasProvider::getSize() const {
 	return m_window->getSize();
 }

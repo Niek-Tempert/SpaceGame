@@ -26,7 +26,8 @@ glm::mat4 BlockSelect::getTransform() const {
     return m_transform;
 }
 
-void BlockSelect::setState() const {
+void BlockSelect::setGLState() const {
+	Renderable::setGLState();
     glDisable(GL_DEPTH_TEST);
     glLineWidth(4.0f);
 }

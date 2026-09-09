@@ -8,8 +8,8 @@ public:
     TimeProvider(const TimeProvider* provider);
 
 protected:
-    f32 getTime();
-    f32 getDeltaTime();
+    f32 getTime() const;
+    f32 getDeltaTime() const;
 
 private:
     const f32* m_time;

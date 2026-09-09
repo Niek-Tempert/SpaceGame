@@ -15,7 +15,7 @@ protected:
 	GLuint getShader() const override;
 	std::vector<glm::vec3> getVertices() const override;
 	glm::mat4x4 getTransform() const override;
-	void setState() const override;
+	void setGLState() const override;
 
 private:
 	bool m_visible = true;

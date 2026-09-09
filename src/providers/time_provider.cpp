@@ -10,10 +10,10 @@ TimeProvider::TimeProvider(const TimeProvider* provider) {
 	m_deltaTime = provider->m_deltaTime;
 }
 
-f32 TimeProvider::getTime() {
+f32 TimeProvider::getTime() const {
 	return *m_time;
 }
 
-f32 TimeProvider::getDeltaTime() {
+f32 TimeProvider::getDeltaTime() const {
 	return *m_deltaTime;
 }
