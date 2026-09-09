@@ -1,26 +1,28 @@
-#include "chunk_mesher.h"
+#include "chunk_mesher.hpp"
 
-#include "chunk.h"
-#include "voxel.h"
-
-#include <rendering/mesh_consts.h>
-
-#include <glm/ext/matrix_transform.hpp>
-#include <common/helpers.h>
-#include <common/glutils.h>
+#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include <iostream>
 
-ChunkMesher::ChunkMesher(const Voxel *parent) : 
+#include <common/helpers.h>
+#include <common/glutils.h>
+#include <glm/ext/matrix_transform.hpp>
+
+#include <rendering/mesh_consts.hpp>
+
+#include "voxel.hpp"
+#include "chunk.hpp"
+
+ChunkMesher::ChunkMesher(const Voxel* parent) : 
 	Renderable(parent)
 	, m_transform(glm::mat4(1.0f))
-	, m_voxel(NULL) {
+	, m_voxel(NULL)
+	, m_texture() {
 	i32 width, height, nrChannels;
 	u8* data = stbi_load(IMAGE_PATH "white_wool.png", &width, &height, &nrChannels, 0);
 	if (!data) {
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture\n";
 		return;
 	}
 	

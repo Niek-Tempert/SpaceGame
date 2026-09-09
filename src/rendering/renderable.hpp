@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-#include <glad/glad.h>
-
 #include <vector>
+
+#include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include <common/types.h>
-#include <providers/camera_provider.hpp>
 
-class Scene;
+#include <providers/camera_provider.hpp>
 
 class IRenderable {
 public:

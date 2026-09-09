@@ -1,13 +1,15 @@
 #pragma once
 
 #include <providers/input_provider.hpp>
+#include <providers/canvas_provider.hpp>
 #include <providers/time_provider.hpp>
 #include <providers/camera_provider.hpp>
-#include <providers/canvas_provider.hpp>
+
 #include <primitives/skybox.hpp>
 #include <primitives/crossair.hpp>
 #include <primitives/block_select.hpp>
-#include <voxel/voxel.h>
+
+#include <voxel/voxel.hpp>
 
 #include "player.hpp"
 

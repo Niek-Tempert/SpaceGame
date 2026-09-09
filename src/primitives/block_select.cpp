@@ -1,8 +1,9 @@
 #include "block_select.hpp"
-#include "engine/scene.hpp"
 
 #include <common/helpers.h>
 #include <common/glutils.h>
+
+#include <engine/scene.hpp>
 
 BlockSelect::BlockSelect(const Scene *parent) 
     : Renderable(parent) {

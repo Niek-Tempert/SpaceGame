@@ -1,8 +1,11 @@
 #pragma once
 
+#include <providers/input_provider.hpp>
+#include <providers/canvas_provider.hpp>
+#include <providers/time_provider.hpp>
+
 #include "glwindow.hpp"
 #include "scene.hpp"
-#include <providers/canvas_provider.hpp>
 
 class Engine 
 	: public InputProvider
@@ -10,6 +13,7 @@ class Engine
 	, public TimeProvider {
 public:
 	Engine();
+	~Engine();
 
 	void exec();
 

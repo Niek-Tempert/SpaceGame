@@ -1,6 +1,8 @@
 #pragma once
 
-#include "rendering/renderable.hpp"
+#include <rendering/renderable.hpp>
+
+class Scene;
 
 class Skybox : public Renderable {
 public:

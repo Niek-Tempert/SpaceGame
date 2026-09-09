@@ -1,12 +1,10 @@
-#include "voxel.h"
+#include "voxel.hpp"
 
-#include "chunk.h"
-
-#include <rendering/mesh_consts.h>
-#include <engine/scene.hpp>
-
-#include <glm/ext/matrix_transform.hpp>
 #include <common/math.h>
+#include <glm/ext/matrix_transform.hpp>
+
+#include <engine/scene.hpp>
+#include "chunk.hpp"
 
 Voxel::Voxel(const Scene* parent) 
 	: CameraProvider(parent) {
@@ -34,7 +32,7 @@ void Voxel::set(const glm::ivec3 &id, const Block &cell) {
 	}
 
 	chunk->set(subid, cell);
-	if (chunk->get_count() == 0) {
+	if (chunk->getCount() == 0) {
 		delete chunk;
 		m_chunks.erase(chunkid);
 	}
@@ -177,7 +175,7 @@ void Voxel::update(const CellID &id) {
 
 	const auto it = m_chunks.find(chunk_id);
 	if (it != m_chunks.end()) {
-		it->second->get_mesher()->update(this, chunk_id);
+		it->second->getMesher()->update(this, chunk_id);
 	}
 
 	glm::ivec3 neighbor_id;
@@ -187,7 +185,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 
@@ -197,7 +195,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 
@@ -207,7 +205,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 
@@ -217,7 +215,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 
@@ -227,7 +225,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 
@@ -237,7 +235,7 @@ void Voxel::update(const CellID &id) {
 
 		const auto it = m_chunks.find(neighbor_id);
 		if (it != m_chunks.end()) {
-			it->second->get_mesher()->update(this, neighbor_id);
+			it->second->getMesher()->update(this, neighbor_id);
 		}
 	}
 }
@@ -280,13 +278,13 @@ void Voxel::setTransform(const glm::mat4 &transform) {
 
 void Voxel::remesh() {
 	for (auto& chunk : m_chunks) {
-		chunk.second->get_mesher()->update(this, chunk.first);
+		chunk.second->getMesher()->update(this, chunk.first);
 	}
 }
 
 void Voxel::render() const {
 	for (auto& chunk : m_chunks) {
-		chunk.second->get_mesher()->render();
+		chunk.second->getMesher()->render();
 	}
 }
 

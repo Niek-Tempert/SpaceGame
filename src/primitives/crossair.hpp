@@ -1,7 +1,9 @@
 #pragma once
 
-#include "rendering/renderable.hpp"
-#include "providers/canvas_provider.hpp"
+#include <rendering/renderable.hpp>
+#include <providers/canvas_provider.hpp>
+
+class Scene;
 
 class Crossair 
 	: public Renderable

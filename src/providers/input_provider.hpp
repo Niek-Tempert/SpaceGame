@@ -1,7 +1,8 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
 #include <common/types.h>
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
 
 class GLWindow;
 

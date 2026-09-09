@@ -1,13 +1,9 @@
 ﻿#include "renderable.hpp"
 
-#include <glad/glad.h>
-
-#include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <common/helpers.h>
-#include <engine/scene.hpp>
-#include "renderable.hpp"
+
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Renderable::Renderable(const CameraProvider* parent)
 	: CameraProvider(parent)

@@ -1,14 +1,13 @@
 #include "skybox.hpp"
 
-#include <rendering/mesh_consts.h>
-
+#include <glad/glad.h>
 #include <common/helpers.h>
 #include <common/glutils.h>
 
-#include <glad/glad.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <rendering/mesh_consts.hpp>
 #include <engine/scene.hpp>
 
 Skybox::Skybox(const Scene* parent)

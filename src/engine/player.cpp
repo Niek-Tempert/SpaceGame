@@ -1,10 +1,8 @@
 #include "player.hpp"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "input.hpp"
 #include "scene.hpp"
+
+#include <glm/gtc/matrix_transform.hpp>
 #include <common/math.h>
 
 #define WALK_SPEED 4.0f

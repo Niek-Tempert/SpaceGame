@@ -1,10 +1,10 @@
-#include "chunk.h"
+#include "chunk.hpp"
 
-#include "chunk_mesher.h"
+#include "voxel.hpp"
 
 Chunk::Chunk(const Voxel* voxel)
 	: CameraProvider(voxel)
-	, m_mesher(new ChunkMesher(voxel))
+	, m_mesher(voxel)
 	, m_cells()
 	, m_count() {
 }
@@ -21,18 +21,14 @@ void Chunk::set(const glm::uvec3 &id, const Block &cell) {
 	m_cells[id.x][id.y][id.z] = cell;
 }
 
-const Block &Chunk::get(const glm::uvec3 &id) const {
+const Block& Chunk::get(const glm::uvec3 &id) const {
 	return m_cells[id.x][id.y][id.z];
 }
 
-ChunkMesher *Chunk::get_mesher() {
-	return m_mesher;
+ChunkMesher* Chunk::getMesher() {
+	return &m_mesher;
 }
 
-const ChunkMesher *Chunk::get_mesher() const {
-	return m_mesher;
-}
-
-u32 Chunk::get_count() const {
+u32 Chunk::getCount() const {
 	return m_count;
 }

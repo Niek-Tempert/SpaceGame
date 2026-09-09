@@ -1,10 +1,11 @@
 #pragma once
 
-#include "voxel.h"
-#include "chunk_mesher.h"
+#include "chunk_mesher.hpp"
 #include "block.hpp"
 
 #define CHUNK_SIZE 16u
+
+class Voxel;
 
 class Chunk : public CameraProvider {
 public:
@@ -12,15 +13,14 @@ public:
 
 	Chunk(const Voxel* voxel);
 	
-	void set(const glm::uvec3 &id, const Block &cell);
-	const Block &get(const glm::uvec3 &id) const;
+	void set(const glm::uvec3& id, const Block& cell);
+	const Block& get(const glm::uvec3& id) const;
 
-	ChunkMesher *get_mesher();
-	const ChunkMesher *get_mesher() const;
-	u32 get_count() const;
+	ChunkMesher* getMesher();
+	u32 getCount() const;
 
 private:
-	ChunkMesher* m_mesher;
+	ChunkMesher m_mesher;
 	Block m_cells[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	u32 m_count;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <common/types.h>
+#include <glm/vec3.hpp>
 
 namespace MeshConsts {
 

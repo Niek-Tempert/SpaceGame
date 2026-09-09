@@ -1,11 +1,12 @@
 #include "scene.hpp"
 
-#include <glm/glm.hpp>
+#include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "input.hpp"
+#include <providers/input_provider.hpp>
+#include <voxel/block.hpp>
+
 #include "engine.hpp"
-#include <imgui.h>
 
 static void buildVoxel(Voxel *voxel, i32 length, glm::vec3 position) {
 	for (i32 x = -length; x < length; ++x) {

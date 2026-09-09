@@ -1,15 +1,10 @@
 #include "glwindow.hpp"
 
 #include <glad/glad.h>
-#include <cstdio>
-#include <imgui.h>
-
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include <iostream>
 
 static void error_callback(i32 error, const char* description) {
-	fprintf(stderr, "Error: %s\n", description);
+	std::cerr << "Error: " << description << "\n";
 }
 
 GLWindow::GLWindow()
@@ -38,28 +33,15 @@ GLWindow::GLWindow()
 	glfwSwapInterval(1);
 
 	m_input.init(m_window);
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 GLWindow::~GLWindow() {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-	
     glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
 
-bool GLWindow::update() {
+bool GLWindow::next() {
     if (glfwWindowShouldClose(m_window)) return false;
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
 	m_input.next();
 	glfwSwapBuffers(m_window);
 	glfwPollEvents();
@@ -79,6 +61,10 @@ bool GLWindow::update() {
 		m_focussed = false;
 		m_input.setEnabled(m_focussed);
 	}
+
+	glm::ivec2 size = getSize();
+	glViewport(0, 0, size.x, size.y);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return true;
 }
@@ -101,4 +87,8 @@ glm::ivec2 GLWindow::getSize() const {
 
 bool GLWindow::isFocussed() const {
 	return m_focussed;
+}
+
+GLFWwindow *GLWindow::getGLFW() const {
+	return m_window;
 }

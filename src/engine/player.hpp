@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 
 #include <common/types.h>
+
 #include <providers/input_provider.hpp>
 #include <providers/time_provider.hpp>
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "voxel.h"
-#include "rendering/renderable.hpp"
 #include <glm/vec3.hpp>
+
+#include <rendering/renderable.hpp>
 
 class Voxel;
 

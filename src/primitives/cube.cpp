@@ -1,10 +1,11 @@
 #include "cube.hpp"
 
-#include <rendering/mesh_consts.h>
+#include <glad/glad.h>
 #include <common/helpers.h>
 #include <common/glutils.h>
-#include <glad/glad.h>
+
 #include <engine/scene.hpp>
+#include <rendering/mesh_consts.hpp>
 
 Cube::Cube(const Scene* scene) 
     : Renderable(scene){
