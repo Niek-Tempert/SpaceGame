@@ -52,4 +52,4 @@ void main() {
 
     // use the gamma corrected color in the fragment
     fragment = vec4(colorGammaCorrected, 1.0);
-};
+}

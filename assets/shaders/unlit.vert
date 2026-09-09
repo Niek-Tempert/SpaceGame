@@ -9,4 +9,4 @@ void main()
 {
     gl_Position = MVP * vec4(vPos, 1.0);
     color = vCol;
-};
+}

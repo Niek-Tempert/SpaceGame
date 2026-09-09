@@ -14,4 +14,4 @@ void main()
     gl_Position = MVP * vec4(vPos, 1.0);
     cam_pos = vec3(inverse(View)[3]);
     w_pos = vec3(Model * vec4(vPos, 1.0));
-};
+}

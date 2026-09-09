@@ -19,4 +19,4 @@ void main()
     w_norm = vec3(Model * vec4(vNorm, 0.0));
     w_pos = vec3(Model * vec4(vPos, 1.0));
     cam_pos = vec3(inverse(View)[3]);
-};
+}

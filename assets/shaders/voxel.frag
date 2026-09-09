@@ -22,4 +22,4 @@ void main()
     vec3 blinn_dir = normalize(light_dir - view_dir);
     vec3 result = clamp(dot(normal, blinn_dir), 0.0, 1.0) * col * texture(ourTexture, uv0).xyz;
     fragment = vec4(result, 1.0);
-};
+}
