@@ -10,7 +10,7 @@ public:
     ~GLWindow();
     bool next();
     const Input* getInput() const;
-    glm::ivec2 getSize() const;
+    glm::ivec2 getResolution() const;
     bool isFocussed() const;
     GLFWwindow* getGLFW() const;
 

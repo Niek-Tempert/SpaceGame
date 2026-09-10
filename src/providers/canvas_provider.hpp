@@ -9,7 +9,8 @@ public:
     CanvasProvider(const GLWindow* window);
 	CanvasProvider(const CanvasProvider* provider);
 
-    glm::ivec2 getSize() const;
+protected:
+    glm::ivec2 getResolution() const;
 
 private:
     const GLWindow* m_window;

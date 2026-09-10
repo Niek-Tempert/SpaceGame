@@ -54,7 +54,7 @@ std::vector<u32> BlockSelect::getIndices() const {
         0, 4,
         1, 5,
         2, 6,
-        3, 7,
+        3, 7
     };
 }
 

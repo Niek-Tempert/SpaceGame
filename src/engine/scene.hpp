@@ -29,7 +29,7 @@ public:
 private:
     void updatePlayer();
     void updateMoon();
-    void makeUI();
+    void makeGui();
 
     std::vector<IRenderable*> m_renderables{};
 

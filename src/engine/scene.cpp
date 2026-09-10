@@ -54,7 +54,7 @@ Scene::Scene(const Engine* parent)
 }
 
 void Scene::update() {
-	glm::ivec2 size = getSize();
+	glm::ivec2 size = getResolution();
 	f32 ratio = (f32)size.x / size.y;
 	m_proj = glm::mat4(1.0f);
 	if (!glm::isnan(ratio) && !glm::isinf(ratio)) {
@@ -63,7 +63,7 @@ void Scene::update() {
 
     updatePlayer();
     updateMoon();
-	makeUI();
+	makeGui();
 
     glm::mat4 rot = glm::mat4(1.0f);
 	rot = glm::rotate(rot, m_player.getRot().z, glm::vec3(0, 0, 1));
@@ -145,7 +145,7 @@ void Scene::updateMoon() {
 	m_moon.setTransform(glm::translate(glm::mat4(1.0f), rotated_pos));
 }
 
-void Scene::makeUI() {
+void Scene::makeGui() {
 	ImGui::Begin("Settings");
 	ImGui::DragFloat("Moon speed", &m_moonSpeed, 0.01f);
 	ImGui::End();

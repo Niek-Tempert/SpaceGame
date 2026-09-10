@@ -15,7 +15,7 @@ void Input::keyboardCallback(GLFWwindow* window, i32 key, i32 scancode, i32 acti
     
     switch (action) {
         case GLFW_PRESS:
-            input->m_keys[key] |= 1 << KEY_DOWN_BIT | ((input->m_keys[key] & 1) ^ 1) << 1;
+            input->m_keys[key] |= 1 << KEY_DOWN_BIT | ((input->m_keys[key] & 1) ^ 1) << KEY_HOLD_BIT;
         break;
 
         case GLFW_RELEASE:

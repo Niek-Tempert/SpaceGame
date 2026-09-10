@@ -62,7 +62,7 @@ bool GLWindow::next() {
 		m_input.setEnabled(m_focussed);
 	}
 
-	glm::ivec2 size = getSize();
+	glm::ivec2 size = getResolution();
 	glViewport(0, 0, size.x, size.y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -79,7 +79,7 @@ void GLWindow::toggleFullscreen() {
 	m_fullscreen = !m_fullscreen;
 }
 
-glm::ivec2 GLWindow::getSize() const {
+glm::ivec2 GLWindow::getResolution() const {
     i32 width, height;
     glfwGetFramebufferSize(m_window, &width, &height);
 	return { width, height };
