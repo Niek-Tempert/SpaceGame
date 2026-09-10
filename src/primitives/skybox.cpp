@@ -12,6 +12,7 @@
 
 Skybox::Skybox(const Scene* parent)
     : Renderable(parent) {
+    Renderable::init();
 }
 
 void Skybox::setGLState() const {

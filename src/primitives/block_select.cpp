@@ -7,6 +7,7 @@
 
 BlockSelect::BlockSelect(const Scene *parent) 
     : Renderable(parent, (u32)RenderConfig::Lines) {
+    Renderable::init();
 }
 
 void BlockSelect::setTransform(glm::mat4 transform) {

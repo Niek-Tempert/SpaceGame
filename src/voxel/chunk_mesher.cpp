@@ -19,6 +19,8 @@ ChunkMesher::ChunkMesher(const Voxel* parent) :
 	, m_transform(glm::mat4(1.0f))
 	, m_voxel(NULL)
 	, m_texture() {
+	Renderable::init();
+
 	i32 width, height, nrChannels;
 	u8* data = stbi_load(IMAGE_PATH "white_wool.png", &width, &height, &nrChannels, 0);
 	if (!data) {
@@ -85,7 +87,7 @@ void ChunkMesher::update(const Voxel *voxel, const ChunkID &chunk_id) {
 		}
 	}
 
-	remesh();
+	init();
 }
 
 glm::mat4 ChunkMesher::getTransform() const {

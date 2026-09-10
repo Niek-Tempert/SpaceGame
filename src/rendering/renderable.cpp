@@ -23,7 +23,6 @@ Renderable::Renderable(const CameraProvider* parent, u32 config)
 	, m_idxBuff()
 	, m_vao()
 	, m_renderConfig(config) {
-	setup();
 }
 
 Renderable::~Renderable() {
@@ -55,7 +54,7 @@ void Renderable::render() const {
 	glDrawArrays(getRenderMode(m_renderConfig), 0, m_vertCt);
 }
 
-void Renderable::remesh() {
+void Renderable::init() {
 	dispose();
 	setup();
 }
@@ -135,7 +134,7 @@ void Renderable::setup() {
 		glEnableVertexAttribArray(normAttr);
 		glVertexAttribPointer(normAttr, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
-	
+
 	GLint uvAttr = glGetAttribLocation(m_shader, "vUV");
 	if (uvAttr >= 0) {
 		std::vector<glm::vec2> uvs = getUVs();

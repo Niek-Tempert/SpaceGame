@@ -27,9 +27,10 @@ public:
 	virtual ~Renderable();
 	
 	void render() const override;
-	void remesh();
-
+	
 protected:
+	void init();
+	
 	virtual void setGLState() const;
 	virtual GLuint getShader() const;
 	virtual std::vector<glm::vec3> getVertices() const;

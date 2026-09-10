@@ -9,6 +9,7 @@
 
 Cube::Cube(const Scene* scene) 
     : Renderable(scene){
+    Renderable::init();
 }
 
 std::vector<glm::vec3> Cube::getVertices() const {

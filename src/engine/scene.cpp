@@ -43,10 +43,6 @@ Scene::Scene(const Engine* parent)
 	buildVoxel(&m_planet, 16, { 0, -17, 0 });
 	buildVoxel(&m_moon, 8, { 0, 0, 32 });
 
-	m_skybox.remesh();
-	m_blockSelect.remesh();
-	m_crossair.remesh();
-
     m_voxels.push_back(&m_planet);
     m_voxels.push_back(&m_moon);
     

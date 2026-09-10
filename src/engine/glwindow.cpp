@@ -29,7 +29,7 @@ GLWindow::GLWindow()
 	}
 
 	glfwMakeContextCurrent(m_window);
-	gladLoadGL();
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glfwSwapInterval(1);
 
 	m_input.init(m_window);

@@ -9,6 +9,7 @@
 Crossair::Crossair(const Scene* parent) 
     : Renderable(parent, (u32)RenderConfig::Lines)
     , CanvasProvider(parent) {
+    Renderable::init();
 }
 
 void Crossair::setGLState() const {
