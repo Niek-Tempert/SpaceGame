@@ -5,15 +5,15 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-static GLenum getRenderMode(u32 config) {
-	if ((config & (u32)RenderConfig::Lines) == (u32)RenderConfig::Lines) {
+static GLenum getRenderMode(RenderConfig config) {
+	if (hasFlag(config, RenderConfig::Lines)) {
 		return GL_LINES;
 	}
 	
 	return GL_TRIANGLES;
 }
 
-Renderable::Renderable(const CameraProvider* parent, u32 config)
+Renderable::Renderable(const CameraProvider* parent, RenderConfig config)
 	: CameraProvider(parent)
 	, m_shader()
 	, m_vertBuff()
@@ -47,7 +47,7 @@ void Renderable::render() const {
 	glBindVertexArray(m_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuff);
 
-	if ((m_renderConfig & (u32)RenderConfig::Indexed) == (u32)RenderConfig::Indexed) {
+	if (hasFlag(m_renderConfig, RenderConfig::Indexed)) {
 		glDrawElements(getRenderMode(m_renderConfig), m_idxCt, GL_UNSIGNED_INT, (void*)0);
 		return;
 	}

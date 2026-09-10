@@ -7,7 +7,7 @@
 #include <engine/scene.hpp>
 
 Crossair::Crossair(const Scene* parent) 
-    : Renderable(parent, (u32)RenderConfig::Lines)
+    : Renderable(parent, RenderConfig::Lines)
     , CanvasProvider(parent) {
     Renderable::init();
 }

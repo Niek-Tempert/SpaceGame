@@ -7,7 +7,7 @@
 #include <rendering/mesh_consts.hpp>
 
 BlockSelect::BlockSelect(const Scene *parent) 
-    : Renderable(parent, (u32)RenderConfig::Lines | (u32)RenderConfig::Indexed) {
+    : Renderable(parent, RenderConfig::Lines | RenderConfig::Indexed) {
     Renderable::init();
 }
 

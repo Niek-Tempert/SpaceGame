@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include <common/types.h>
+#include <coppon/enum_utils.hpp>
 
 #include <providers/camera_provider.hpp>
 
@@ -13,6 +14,7 @@ enum class RenderConfig {
 	Lines = 1 << 0,
 	Indexed = 1 << 1
 };
+ENUM_CLASS_FLAGS(RenderConfig);
 
 class IRenderable {
 public:
@@ -23,7 +25,7 @@ class Renderable
 	: public IRenderable
 	, public CameraProvider {
 public:
-	Renderable(const CameraProvider* parent, u32 config = (u32)RenderConfig::Tris | (u32)RenderConfig::Indexed);
+	Renderable(const CameraProvider* parent, RenderConfig config = RenderConfig::Tris | RenderConfig::Indexed);
 	virtual ~Renderable();
 	
 	void render() const override;
@@ -56,5 +58,5 @@ private:
 	GLuint m_uvBuff;
 	GLuint m_idxBuff;
 
-	u32 m_renderConfig;
+	RenderConfig m_renderConfig;
 };
