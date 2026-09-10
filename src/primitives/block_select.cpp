@@ -4,9 +4,10 @@
 #include <common/glutils.h>
 
 #include <engine/scene.hpp>
+#include <rendering/mesh_consts.hpp>
 
 BlockSelect::BlockSelect(const Scene *parent) 
-    : Renderable(parent, (u32)RenderConfig::Lines) {
+    : Renderable(parent, (u32)RenderConfig::Lines | (u32)RenderConfig::Indexed) {
     Renderable::init();
 }
 
@@ -35,14 +36,25 @@ void BlockSelect::setGLState() const {
 
 std::vector<glm::vec3> BlockSelect::getVertices() const {
     return {
-        { 1, 0, 1 }, { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 },
-        { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 },
-        { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 }, { 1, 1, 1 },
-        { 0, 0, 0 }, { 0, 0, 1 }, { 1, 0, 1 }, { 1, 0, 0 },
-        { 0, 0, 1 }, { 0, 1, 1 }, { 1, 1, 1 }, { 1, 0, 1 },
-        { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 }, { 0, 0, 0 },
-        { 0, 0, 0 }, { 1, 0, 0 }, { 0, 0, 1 }, { 1, 0, 1 },
-        { 0, 1, 0 }, { 1, 1, 0 }, { 0, 1, 1 }, { 1, 1, 1 }
+	    { 0, 0, 0 }, { 0, 0, 1 }, { 0, 1, 0 }, { 0, 1, 1 },
+	    { 1, 0, 0 }, { 1, 0, 1 }, { 1, 1, 0 }, { 1, 1, 1 }
+    };
+}
+
+std::vector<u32> BlockSelect::getIndices() const {
+	return {
+        0, 1,
+        0, 2,
+        1, 3,
+        2, 3,
+        4, 5,
+        4, 6,
+        5, 7,
+        6, 7,
+        0, 4,
+        1, 5,
+        2, 6,
+        3, 7,
     };
 }
 
