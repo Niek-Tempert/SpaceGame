@@ -1,3 +1,7 @@
 #!/bin/bash
 
-cd build && cmake ../ && cmake --build . && ./bin/SpaceGame
+if [ ! -d "build" ]; then
+  mkdir build
+fi
+
+cd build && cmake ../ && cmake --build . --config Release && ./bin/SpaceGame
