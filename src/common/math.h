@@ -12,11 +12,12 @@ extern "C" {
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 f32 lerp(f32 a, f32 b, f32 t);
-i32 floor_mod(i32 a, i32 b);
-i32 floor_to_i32(f32 a);
+i32 floorMod(i32 a, i32 b);
+i32 floorToi32(f32 a);
 f32 snap(f32 v, f32 i);
 f32 wrap(f32 v, f32 a, f32 b);
-f32 save_divide(f32 a, f32 b);
+f32 saveDivide(f32 a, f32 b);
+u32 nextPow2(u32 a);
 
 #ifdef __cplusplus
 }

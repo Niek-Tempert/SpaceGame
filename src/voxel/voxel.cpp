@@ -62,9 +62,9 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 	local_direction = glm::normalize(local_direction);
 
 	max_distance = glm::length(glm::vec3{
-		save_divide(local_direction.x * max_distance, scale.x),
-		save_divide(local_direction.y * max_distance, scale.y),
-		save_divide(local_direction.z * max_distance, scale.z)
+		saveDivide(local_direction.x * max_distance, scale.x),
+		saveDivide(local_direction.y * max_distance, scale.y),
+		saveDivide(local_direction.z * max_distance, scale.z)
 	}); //scale distance from world scale to voxel scale
 
 	glm::vec3 delta_dist = {
@@ -82,9 +82,9 @@ RaycastResult Voxel::raycast(const glm::vec3 &start, const glm::vec3 &direction,
 	glm::vec3 voxel_space = voxel_transform_inv * glm::vec4(start.x, start.y, start.z, 1.0f);
 
 	glm::ivec3 map_pos = {
-		floor_to_i32(voxel_space.x),
-		floor_to_i32(voxel_space.y),
-		floor_to_i32(voxel_space.z)
+		floorToi32(voxel_space.x),
+		floorToi32(voxel_space.y),
+		floorToi32(voxel_space.z)
 	};
 
 	glm::vec3 side_dist = glm::vec3(
@@ -242,17 +242,17 @@ void Voxel::update(const CellID &id) {
 
 glm::ivec3 Voxel::id2chunkID(const glm::ivec3 &id) {
 	return {
-		floor_to_i32((f64)id.x / Chunk::size.x),
-		floor_to_i32((f64)id.y / Chunk::size.y),
-		floor_to_i32((f64)id.z / Chunk::size.z)
+		floorToi32((f64)id.x / Chunk::size.x),
+		floorToi32((f64)id.y / Chunk::size.y),
+		floorToi32((f64)id.z / Chunk::size.z)
 	};
 }
 
 glm::uvec3 Voxel::id2subID(const glm::ivec3 &cell_id) {
 	return {
-		(u32)floor_mod(cell_id.x, (i32)Chunk::size.x),
-		(u32)floor_mod(cell_id.y, (i32)Chunk::size.y),
-		(u32)floor_mod(cell_id.z, (i32)Chunk::size.z)
+		(u32)floorMod(cell_id.x, (i32)Chunk::size.x),
+		(u32)floorMod(cell_id.y, (i32)Chunk::size.y),
+		(u32)floorMod(cell_id.z, (i32)Chunk::size.z)
 	};
 }
 

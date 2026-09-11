@@ -19,12 +19,14 @@ code logErr(code err, const char* filename, i32 line, const char* func);
 #define ERR(err) err
 #endif
 
-#define CODE_OK              0
-#define CODE_ERR        ERR(-1)
-#define CODE_MEM_ERR    ERR(-2)
-#define CODE_SHADER_ERR ERR(-3)
-#define CODE_FILE_ERR   ERR(-4)
-#define CODE_GLFW_ERR   ERR(-5)
+#define CODE_OK                      0
+#define CODE_ERR                ERR(-1)
+#define CODE_MEM_ERR            ERR(-2)
+#define CODE_SHADER_ERR         ERR(-3)
+#define CODE_FILE_ERR           ERR(-4)
+#define CODE_GLFW_ERR           ERR(-5)
+#define CODE_OUTOFBOUNDS_ERR    ERR(-6)
+#define CODE_RANGE_ERR          ERR(-7)
 
 #ifdef __cplusplus
 }

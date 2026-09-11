@@ -5,12 +5,14 @@
 
 const char* codeToStr(code err) {
     switch (err) {
-        case CODE_OK:           return "Ok";
-        case CODE_ERR:          return "Error";
-        case CODE_MEM_ERR:      return "Memory error";
-        case CODE_SHADER_ERR:   return "Shader error";
-        case CODE_FILE_ERR:     return "File error";
-        default:                return "Unknown error";
+        case CODE_OK:               return "Ok";
+        case CODE_ERR:              return "Error";
+        case CODE_MEM_ERR:          return "Memory error";
+        case CODE_SHADER_ERR:       return "Shader error";
+        case CODE_FILE_ERR:         return "File error";
+        case CODE_OUTOFBOUNDS_ERR:  return "Out of bounds error";
+        case CODE_RANGE_ERR:        return "Range error";
+        default:                    return "Unknown error";
     }
 }
 

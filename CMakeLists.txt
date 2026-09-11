@@ -42,6 +42,7 @@ set(COMMON_SRC
     ${PROJ_DIR}/common/error.c
     ${PROJ_DIR}/common/glutils.c
     ${PROJ_DIR}/common/math.c
+    ${PROJ_DIR}/common/strbuff.c
 )
 
 set(PROJ_SRC
